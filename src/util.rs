@@ -4,6 +4,8 @@
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value,
            ptr_wrapping_offset_from, register_tool)]
 
+use log::debug;
+use anyhow::{Context, Result};
 use rand::{
     RngCore,
     rngs::OsRng,
@@ -1848,36 +1850,23 @@ pub unsafe extern "C" fn UTI_RemoveFile(mut basedir: *const libc::c_char,
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn UTI_DropRoot(mut uid: uid_t, mut gid: gid_t) {
-    /* Drop supplementary groups */
-    if setgroups(0 as libc::c_int as size_t, 0 as *const __gid_t) != 0 {
-        LOG_Message(LOGS_FATAL,
-                    b"setgroups() failed : %s\x00" as *const u8 as
-                        *const libc::c_char, strerror(*__errno_location()));
+    if let Err(e) = drop_root(uid as u32, gid as u32) {
+        LOG_Message(LOGS_FATAL, format!("{}", e).as_ptr() as *const i8);
         exit(1 as libc::c_int);
     }
-    /* Set effective, saved and real group ID */
-    if setgid(gid) != 0 {
-        LOG_Message(LOGS_FATAL,
-                    b"setgid(%u) failed : %s\x00" as *const u8 as
-                        *const libc::c_char, gid,
-                    strerror(*__errno_location()));
-        exit(1 as libc::c_int);
-    }
-    /* Set effective, saved and real user ID */
-    if setuid(uid) != 0 {
-        LOG_Message(LOGS_FATAL,
-                    b"setuid(%u) failed : %s\x00" as *const u8 as
-                        *const libc::c_char, uid,
-                    strerror(*__errno_location()));
-        exit(1 as libc::c_int);
-    }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Dropped root privileges: UID %u GID %u\x00" as *const u8
-                        as *const libc::c_char, uid, gid);
-    };
 }
+
+pub fn drop_root(uid: u32, gid: u32) -> Result<(), anyhow::Error> {
+    nix::unistd::setgroups(&[nix::unistd::Gid::from_raw(0)])
+        .context("setgroups() failed")?;
+    nix::unistd::setgid(nix::unistd::Gid::from_raw(gid))
+        .with_context(|| format!("setgid({}) failed", gid))?;
+    nix::unistd::setuid(nix::unistd::Uid::from_raw(uid))
+        .with_context(|| format!("setuid({}) failed", uid))?;
+    debug!("Dropped root privileges: UID {} GID {}", uid, gid);
+    Ok(())
+}
+
 #[no_mangle]
 pub unsafe extern "C" fn UTI_GetRandomBytesUrandom(mut buf: *mut libc::c_void, mut len: libc::c_uint) {
     let bytes = get_random_bytes(len as usize);

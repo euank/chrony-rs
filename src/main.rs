@@ -4,6 +4,7 @@
 #![feature(asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
            register_tool, ptr_wrapping_offset_from, c_variadic)]
 
+use std::io::Write;
 
 mod addrfilt;
 mod array;
@@ -1236,12 +1237,34 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     }
     /* Turn into a daemon */
     if nofork == 0 { go_daemon(); }
+    // TODO: logging rework here too
     if !log_file.is_null() {
         LOG_OpenFileLog(log_file);
     } else if system_log != 0 { LOG_OpenSystemLog(); }
-    LOG_SetMinSeverity(if debug >= 2 as libc::c_int {
-                           LOGS_DEBUG as libc::c_int
-                       } else { log_severity } as LOG_Severity);
+
+    let log_level = if debug >= 2 {
+        log::LevelFilter::Debug
+    } else {
+        match log_severity {
+            LOGS_FATAL => panic!("TODO"),
+            LOGS_ERR => log::LevelFilter::Error,
+            LOGS_WARN => log::LevelFilter::Warn,
+            LOGS_INFO=> log::LevelFilter::Info,
+            LOGS_DEBUG => log::LevelFilter::Debug,
+            _ => panic!("invalid log level"),
+        }
+    };
+    env_logger::builder()
+        .format(|buf, record| writeln!(buf, "{}", record.args()))
+        .filter_level(log_level)
+        .init();
+
+    if debug >= 2 {
+        LOG_SetMinSeverity(debug);
+    } else {
+        // TODO: log
+        LOG_SetMinSeverity(log_severity);
+    }
     LOG_Message(LOGS_INFO,
                 b"chronyd version %s starting (%s)\x00" as *const u8 as
                     *const libc::c_char,
