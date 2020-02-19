@@ -3,6 +3,12 @@
 #![register_tool(c2rust)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value,
            ptr_wrapping_offset_from, register_tool)]
+
+use rand::{
+    RngCore,
+    rngs::OsRng,
+};
+
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
@@ -1031,6 +1037,7 @@ pub unsafe extern "C" fn UTI_DoubleToNtp32(mut x: libc::c_double)
     }
     return htonl(r);
 }
+
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn UTI_ZeroNtp64(mut ts: *mut NTP_int64) {
@@ -1762,6 +1769,8 @@ pub unsafe extern "C" fn UTI_OpenFile(mut basedir: *const libc::c_char,
         }
     };
 }
+
+
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn UTI_RenameTempFile(mut basedir: *const libc::c_char,
@@ -1870,26 +1879,29 @@ pub unsafe extern "C" fn UTI_DropRoot(mut uid: uid_t, mut gid: gid_t) {
     };
 }
 #[no_mangle]
-pub unsafe extern "C" fn UTI_GetRandomBytesUrandom(mut buf: *mut libc::c_void,
-                                                   mut len: libc::c_uint) {
-    static mut f: *mut FILE = 0 as *const FILE as *mut FILE;
-    if f.is_null() {
-        f =
-            UTI_OpenFile(0 as *const libc::c_char,
-                         b"/dev/urandom\x00" as *const u8 as
-                             *const libc::c_char, 0 as *const libc::c_char,
-                         'R' as i32 as libc::c_char,
-                         0 as libc::c_int as mode_t)
-    }
-    if fread(buf, 1 as libc::c_int as size_t, len as size_t, f) !=
-           len as libc::c_ulong {
-        LOG_Message(LOGS_FATAL,
-                    b"Can\'t read from %s\x00" as *const u8 as
-                        *const libc::c_char,
-                    b"/dev/urandom\x00" as *const u8 as *const libc::c_char);
-        exit(1 as libc::c_int);
-    };
+pub unsafe extern "C" fn UTI_GetRandomBytesUrandom(mut buf: *mut libc::c_void, mut len: libc::c_uint) {
+    let bytes = get_random_bytes(len as usize);
+    std::ptr::copy(bytes.as_ptr() as *const libc::c_void, buf as *mut libc::c_void, len as usize);
 }
+
+#[test]
+fn test_get_random_bytes_urandom() {
+    let mut buf = vec![0; 100];
+
+    unsafe {
+        UTI_GetRandomBytesUrandom(buf.as_mut_ptr() as *mut libc::c_void, buf.len() as libc::c_uint);
+    }
+
+    // Just test that at least one bit isn't zero. Testing randomness is hard.
+    assert!(buf.iter().any(|&e| e != 0));
+}
+
+pub fn get_random_bytes(len: usize) -> Vec<u8> {
+    let mut v = vec![0; len];
+    OsRng.fill_bytes(&mut v);
+    v
+}
+
 /* ================================================== */
 unsafe extern "C" fn get_random_bytes_getrandom(mut buf: *mut libc::c_char,
                                                 mut len: libc::c_uint) {
