@@ -528,10 +528,6 @@ static mut bind_cmd_path: *mut libc::c_char =
 /* Path to Samba (ntp_signd) socket. */
 static mut ntp_signd_socket: *mut libc::c_char =
     0 as *const libc::c_char as *mut libc::c_char;
-/* Filename to use for storing pid of running chronyd, to prevent multiple
- * chronyds being started. */
-static mut pidfile: *mut libc::c_char =
-    0 as *const libc::c_char as *mut libc::c_char;
 /* Rate limiting parameters */
 static mut ntp_ratelimit_enabled: libc::c_int = 0 as libc::c_int;
 static mut ntp_ratelimit_interval: libc::c_int = 3 as libc::c_int;
@@ -712,14 +708,10 @@ pub unsafe extern "C" fn CNF_Initialise(mut r: libc::c_int,
         ntp_port = 0 as libc::c_int;
         cmd_port = ntp_port;
         bind_cmd_path = Strdup(b"\x00" as *const u8 as *const libc::c_char);
-        pidfile = Strdup(b"\x00" as *const u8 as *const libc::c_char)
     } else {
         bind_cmd_path =
             Strdup(b"/var/run/chrony/chronyd.sock\x00" as *const u8 as
                        *const libc::c_char);
-        pidfile =
-            Strdup(b"/var/run/chrony/chronyd.pid\x00" as *const u8 as
-                       *const libc::c_char)
     };
 }
 /* ================================================== */
@@ -753,7 +745,6 @@ pub unsafe extern "C" fn CNF_Finalise() {
     free(logdir as *mut libc::c_void);
     free(bind_cmd_path as *mut libc::c_void);
     free(ntp_signd_socket as *mut libc::c_void);
-    free(pidfile as *mut libc::c_void);
     free(rtc_device as *mut libc::c_void);
     free(rtc_file as *mut libc::c_void);
     free(user as *mut libc::c_void);
@@ -989,10 +980,6 @@ pub unsafe extern "C" fn CNF_ParseLine(mut filename: *const libc::c_char,
                              b"peer\x00" as *const u8 as *const libc::c_char)
                       == 0 {
             parse_source(p, NTP_PEER, 0 as libc::c_int);
-        } else if strcasecmp(command,
-                             b"pidfile\x00" as *const u8 as
-                                 *const libc::c_char) == 0 {
-            parse_string(p, &mut pidfile);
         } else if strcasecmp(command,
                              b"pool\x00" as *const u8 as *const libc::c_char)
                       == 0 {
@@ -2492,10 +2479,6 @@ pub unsafe extern "C" fn CNF_GetNtpSigndSocket() -> *mut libc::c_char {
     return ntp_signd_socket;
 }
 /* ================================================== */
-#[no_mangle]
-pub unsafe extern "C" fn CNF_GetPidFile() -> *mut libc::c_char {
-    return pidfile;
-}
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn CNF_GetLeapSecMode() -> REF_LeapMode {

@@ -4,8 +4,9 @@
 #![feature(asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
            register_tool, ptr_wrapping_offset_from, c_variadic)]
 
+use anyhow::{Result, Error};
 use log::error;
-use std::io::Write;
+use std::io::Read;
 
 mod addrfilt;
 mod array;
@@ -73,8 +74,6 @@ extern "C" {
     static mut optind: libc::c_int;
     #[no_mangle]
     static mut optarg: *mut libc::c_char;
-    #[no_mangle]
-    fn fork() -> __pid_t;
     #[no_mangle]
     fn geteuid() -> __uid_t;
     #[no_mangle]
@@ -383,8 +382,6 @@ extern "C" {
     fn CNF_AddBroadcasts();
     #[no_mangle]
     fn CNF_GetDumpDir() -> *mut libc::c_char;
-    #[no_mangle]
-    fn CNF_GetPidFile() -> *mut libc::c_char;
     #[no_mangle]
     fn CNF_SetupAccessRestrictions();
     #[no_mangle]
@@ -805,13 +802,6 @@ unsafe extern "C" fn do_platform_checks() {
                                                 &[libc::c_char; 30]>(b"void do_platform_checks(void)\x00")).as_ptr());
     };
 }
-/* ================================================== */
-unsafe extern "C" fn delete_pidfile() {
-    let mut pidfile: *const libc::c_char = CNF_GetPidFile();
-    if *pidfile.offset(0 as libc::c_int as isize) == 0 { return }
-    (UTI_RemoveFile(0 as *const libc::c_char, pidfile,
-                    0 as *const libc::c_char)) == 0;
-}
 /*
   chronyd/chronyc - Programs for keeping computer clocks accurate.
 
@@ -867,7 +857,6 @@ pub unsafe extern "C" fn MAI_CleanupAndExit() {
     SYS_Finalise();
     SCH_Finalise();
     LCL_Finalise();
-    delete_pidfile();
     CNF_Finalise();
     HSH_Finalise();
     LOG_Finalise();
@@ -968,41 +957,6 @@ unsafe extern "C" fn post_init_rtc_hook(mut anything: *mut libc::c_void) {
         }
         /* Wait for mode end notification */
     } else { post_init_ntp_hook(0 as *mut libc::c_void); };
-}
-/* ================================================== */
-unsafe extern "C" fn check_pidfile() {
-    let mut pidfile: *const libc::c_char = CNF_GetPidFile();
-    let mut in_0: *mut FILE = 0 as *mut FILE;
-    let mut pid: libc::c_int = 0;
-    let mut count: libc::c_int = 0;
-    if *pidfile.offset(0 as libc::c_int as isize) == 0 { return }
-    in_0 =
-        UTI_OpenFile(0 as *const libc::c_char, pidfile,
-                     0 as *const libc::c_char, 'r' as i32 as libc::c_char,
-                     0 as libc::c_int as mode_t);
-    if in_0.is_null() { return }
-    count =
-        fscanf(in_0, b"%d\x00" as *const u8 as *const libc::c_char,
-               &mut pid as *mut libc::c_int);
-    fclose(in_0);
-    if count != 1 as libc::c_int { return }
-    if getsid(pid) < 0 as libc::c_int { return }
-    LOG_Message(LOGS_FATAL,
-                b"Another chronyd may already be running (pid=%d), check %s\x00"
-                    as *const u8 as *const libc::c_char, pid, pidfile);
-    exit(1 as libc::c_int);
-}
-/* ================================================== */
-unsafe extern "C" fn write_pidfile() {
-    let mut pidfile: *const libc::c_char = CNF_GetPidFile();
-    let mut out: *mut FILE = 0 as *mut FILE;
-    if *pidfile.offset(0 as libc::c_int as isize) == 0 { return }
-    out =
-        UTI_OpenFile(0 as *const libc::c_char, pidfile,
-                     0 as *const libc::c_char, 'W' as i32 as libc::c_char,
-                     0o644 as libc::c_int as mode_t);
-    fprintf(out, b"%d\n\x00" as *const u8 as *const libc::c_char, getpid());
-    fclose(out);
 }
 /* ================================================== */
 unsafe extern "C" fn print_help(mut progname: *const libc::c_char) {
@@ -1176,8 +1130,6 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             optind += 1
         }
     }
-    /* Check whether another chronyd may already be running */
-    check_pidfile();
     if user.is_null() { user = CNF_GetUser() }
     pw = getpwnam(user);
     if pw.is_null() {
@@ -1188,8 +1140,6 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     }
     /* Create directories for sockets, log files, and dump files */
     CNF_CreateDirs((*pw).pw_uid, (*pw).pw_gid);
-    /* Write our pidfile to prevent other instances from running */
-    write_pidfile();
     LCL_Initialise();
     SCH_Initialise();
     SYS_Initialise(clock_control);
