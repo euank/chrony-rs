@@ -4,6 +4,7 @@
 #![feature(asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
            register_tool, ptr_wrapping_offset_from, c_variadic)]
 
+use log::error;
 use std::io::Write;
 
 mod addrfilt;
@@ -1003,113 +1004,9 @@ unsafe extern "C" fn write_pidfile() {
     fprintf(out, b"%d\n\x00" as *const u8 as *const libc::c_char, getpid());
     fclose(out);
 }
-unsafe extern "C" fn go_daemon() {
-    let mut pid: libc::c_int = 0;
-    let mut fd: libc::c_int = 0;
-    let mut pipefd: [libc::c_int; 2] = [0; 2];
-    /* Create pipe which will the daemon use to notify the grandparent
-     when it's initialised or send an error message */
-    if pipe(pipefd.as_mut_ptr()) != 0 {
-        LOG_Message(LOGS_FATAL,
-                    b"pipe() failed : %s\x00" as *const u8 as
-                        *const libc::c_char, strerror(*__errno_location()));
-        exit(1 as libc::c_int);
-    }
-    /* Does this preserve existing signal handlers? */
-    pid = fork();
-    if pid < 0 as libc::c_int {
-        LOG_Message(LOGS_FATAL,
-                    b"fork() failed : %s\x00" as *const u8 as
-                        *const libc::c_char, strerror(*__errno_location()));
-        exit(1 as libc::c_int);
-    } else {
-        if pid > 0 as libc::c_int {
-            /* In the 'grandparent' */
-            let mut message: [libc::c_char; 1024] = [0; 1024];
-            let mut r: libc::c_int = 0;
-            close(pipefd[1 as libc::c_int as usize]);
-            r =
-                read(pipefd[0 as libc::c_int as usize],
-                     message.as_mut_ptr() as *mut libc::c_void,
-                     ::std::mem::size_of::<[libc::c_char; 1024]>() as
-                         libc::c_ulong) as libc::c_int;
-            if r != 0 {
-                if r > 0 as libc::c_int {
-                    /* Print the error message from the child */
-                    message[(::std::mem::size_of::<[libc::c_char; 1024]>() as
-                                 libc::c_ulong).wrapping_sub(1 as libc::c_int
-                                                                 as
-                                                                 libc::c_ulong)
-                                as usize] = '\u{0}' as i32 as libc::c_char;
-                    fprintf(stderr,
-                            b"%s\n\x00" as *const u8 as *const libc::c_char,
-                            message.as_mut_ptr());
-                }
-                exit(1 as libc::c_int);
-            } else { exit(0 as libc::c_int); }
-        } else {
-            close(pipefd[0 as libc::c_int as usize]);
-            setsid();
-            /* Do 2nd fork, as-per recommended practice for launching daemons. */
-            pid = fork();
-            if pid < 0 as libc::c_int {
-                LOG_Message(LOGS_FATAL,
-                            b"fork() failed : %s\x00" as *const u8 as
-                                *const libc::c_char,
-                            strerror(*__errno_location()));
-                exit(1 as libc::c_int);
-            } else {
-                if pid > 0 as libc::c_int {
-                    exit(0 as libc::c_int);
-                    /* In the 'parent' */
-                } else {
-                    /* In the child we want to leave running as the daemon */
-                    /* Change current directory to / */
-                    if chdir(b"/\x00" as *const u8 as *const libc::c_char) <
-                           0 as libc::c_int {
-                        LOG_Message(LOGS_FATAL,
-                                    b"chdir() failed : %s\x00" as *const u8 as
-                                        *const libc::c_char,
-                                    strerror(*__errno_location()));
-                        exit(1 as libc::c_int);
-                    }
-                    /* Don't keep stdin/out/err from before. But don't close
-         the parent pipe yet. */
-                    fd = 0 as libc::c_int;
-                    while fd < 1024 as libc::c_int {
-                        if fd != pipefd[1 as libc::c_int as usize] {
-                            close(fd);
-                        }
-                        fd += 1
-                    }
-                    LOG_SetParentFd(pipefd[1 as libc::c_int as usize]);
-                    /* Open /dev/null as new stdin/out/err */
-                    *__errno_location() = 0 as libc::c_int;
-                    if open(b"/dev/null\x00" as *const u8 as
-                                *const libc::c_char, 0 as libc::c_int) !=
-                           0 as libc::c_int ||
-                           open(b"/dev/null\x00" as *const u8 as
-                                    *const libc::c_char, 0o1 as libc::c_int)
-                               != 1 as libc::c_int ||
-                           open(b"/dev/null\x00" as *const u8 as
-                                    *const libc::c_char, 0o2 as libc::c_int)
-                               != 2 as libc::c_int {
-                        LOG_Message(LOGS_FATAL,
-                                    b"Could not open %s : %s\x00" as *const u8
-                                        as *const libc::c_char,
-                                    b"/dev/null\x00" as *const u8 as
-                                        *const libc::c_char,
-                                    strerror(*__errno_location()));
-                        exit(1 as libc::c_int);
-                    }
-                }
-            }
-        }
-    };
-}
 /* ================================================== */
 unsafe extern "C" fn print_help(mut progname: *const libc::c_char) {
-    printf(b"Usage: %s [-4|-6] [-n|-d] [-q|-Q] [-r] [-R] [-s] [-t TIMEOUT] [-f FILE|COMMAND...]\n\x00"
+    printf(b"Usage: %s [-4|-6] [-d] [-q|-Q] [-r] [-R] [-s] [-t TIMEOUT] [-f FILE|COMMAND...]\n\x00"
                as *const u8 as *const libc::c_char, progname);
 }
 /* ================================================== */
@@ -1145,7 +1042,6 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     let mut pw: *mut passwd = 0 as *mut passwd;
     let mut opt: libc::c_int = 0;
     let mut debug: libc::c_int = 0 as libc::c_int;
-    let mut nofork: libc::c_int = 0 as libc::c_int;
     let mut address_family: libc::c_int = 0 as libc::c_int;
     let mut do_init_rtc: libc::c_int = 0 as libc::c_int;
     let mut restarted: libc::c_int = 0 as libc::c_int;
@@ -1182,7 +1078,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
          {
         opt =
             getopt(argc, argv,
-                   b"46df:F:hl:L:mnP:qQrRst:u:vx\x00" as *const u8 as
+                   b"46df:F:hl:L:mP:qQrRst:u:vx\x00" as *const u8 as
                        *const libc::c_char);
         if !(opt != -(1 as libc::c_int)) { break ; }
         match opt {
@@ -1194,7 +1090,6 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             }
             100 => {
                 debug += 1;
-                nofork = 1 as libc::c_int;
                 system_log = 0 as libc::c_int
             }
             102 => { conf_file = optarg }
@@ -1202,17 +1097,14 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             108 => { log_file = optarg }
             76 => { log_severity = parse_int_arg(optarg) }
             109 => { lock_memory = 1 as libc::c_int }
-            110 => { nofork = 1 as libc::c_int }
             80 => { sched_priority = parse_int_arg(optarg) }
             113 => {
                 ref_mode = REF_ModeUpdateOnce;
-                nofork = 1 as libc::c_int;
                 client_only = 0 as libc::c_int;
                 system_log = 0 as libc::c_int
             }
             81 => {
                 ref_mode = REF_ModePrintOnce;
-                nofork = 1 as libc::c_int;
                 client_only = 1 as libc::c_int;
                 clock_control = 0 as libc::c_int;
                 system_log = 0 as libc::c_int
@@ -1230,13 +1122,6 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             }
         }
     }
-    if getuid() != 0 && client_only == 0 {
-        LOG_Message(LOGS_FATAL,
-                    b"Not superuser\x00" as *const u8 as *const libc::c_char);
-        exit(1 as libc::c_int);
-    }
-    /* Turn into a daemon */
-    if nofork == 0 { go_daemon(); }
     // TODO: logging rework here too
     if !log_file.is_null() {
         LOG_OpenFileLog(log_file);
@@ -1246,7 +1131,9 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         log::LevelFilter::Debug
     } else {
         match log_severity {
-            LOGS_FATAL => panic!("TODO"),
+            // No fatal level in rust's log create, and it seems easier to just log fatal at error
+            // too.
+            LOGS_FATAL => log::LevelFilter::Error,
             LOGS_ERR => log::LevelFilter::Error,
             LOGS_WARN => log::LevelFilter::Warn,
             LOGS_INFO=> log::LevelFilter::Info,
@@ -1255,9 +1142,13 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         }
     };
     env_logger::builder()
-        .format(|buf, record| writeln!(buf, "{}", record.args()))
         .filter_level(log_level)
         .init();
+
+    if getuid() != 0 && client_only == 0 {
+        error!("Fatal error: Not superuser");
+        exit(1 as libc::c_int);
+    }
 
     if debug >= 2 {
         LOG_SetMinSeverity(debug);
