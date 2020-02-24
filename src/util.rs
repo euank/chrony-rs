@@ -1847,14 +1847,6 @@ pub unsafe extern "C" fn UTI_RemoveFile(mut basedir: *const libc::c_char,
     }
     return 1 as libc::c_int;
 }
-/* ================================================== */
-#[no_mangle]
-pub unsafe extern "C" fn UTI_DropRoot(mut uid: uid_t, mut gid: gid_t) {
-    if let Err(e) = drop_root(uid as u32, gid as u32) {
-        LOG_Message(LOGS_FATAL, format!("{}", e).as_ptr() as *const i8);
-        exit(1 as libc::c_int);
-    }
-}
 
 pub fn drop_root(uid: u32, gid: u32) -> Result<(), anyhow::Error> {
     nix::unistd::setgroups(&[nix::unistd::Gid::from_raw(0)])
