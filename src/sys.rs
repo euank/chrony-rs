@@ -2,6 +2,9 @@
          non_upper_case_globals, unused_assignments, unused_mut)]
 #![register_tool(c2rust)]
 #![feature(register_tool)]
+
+use super::sys_linux;
+
 extern "C" {
     #[no_mangle]
     fn exit(_: libc::c_int) -> !;
@@ -183,10 +186,7 @@ pub unsafe extern "C" fn SYS_Finalise() {
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn SYS_DropRoot(mut uid: uid_t, mut gid: gid_t) {
-    LOG_Message(LOGS_FATAL,
-                b"dropping root privileges not supported\x00" as *const u8 as
-                    *const libc::c_char);
-    exit(1 as libc::c_int);
+    sys_linux::drop_root(uid as u32, gid as u32, null_driver == 0);
 }
 /* Enable a system call filter to allow only system calls
    which chronyd normally needs after initialization */

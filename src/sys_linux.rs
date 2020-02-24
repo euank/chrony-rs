@@ -3,7 +3,12 @@
 #![register_tool(c2rust)]
 #![feature(label_break_value, register_tool)]
 
+use libc;
+use log::debug;
 use c2rust_bitfields::BitfieldStruct;
+use caps;
+
+use super::util;
 
 extern "C" {
     #[no_mangle]
@@ -104,6 +109,7 @@ extern "C" {
      -> libc::c_double;
     #[no_mangle]
     fn UTI_FdSetCloexec(fd: libc::c_int) -> libc::c_int;
+    fn CNF_GetNTPPort() -> libc::c_int;
 }
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
@@ -1537,3 +1543,26 @@ pub unsafe extern "C" fn SYS_Linux_ReadPHCExtTimestamp(mut fd: libc::c_int,
     *channel = extts_event.index as libc::c_int;
     return 1 as libc::c_int;
 }
+
+pub fn drop_root(uid: u32, gid: u32, clock_control: bool) {
+    let ret = unsafe { libc::prctl(libc::PR_SET_KEEPCAPS, 1, 0, 0, 0) };
+    if ret != 0 {
+        panic!("prctl failed: {}", ret);
+    }
+
+    util::drop_root(uid, gid).unwrap();
+
+    let mut caps = caps::CapsHashSet::new();
+    if unsafe { CNF_GetNTPPort() != 0 } {
+        caps.insert(caps::Capability::CAP_NET_BIND_SERVICE);
+    }
+    if clock_control {
+        caps.insert(caps::Capability::CAP_SYS_TIME);
+    }
+    if caps.len() > 0 {
+        debug!("Setting capabilities to: {:?}", caps);
+        caps::set(None, caps::CapSet::Permitted, caps.clone()).unwrap();
+        caps::set(None, caps::CapSet::Effective, caps).unwrap();
+    }
+}
+

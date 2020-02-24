@@ -1098,6 +1098,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     env_logger::builder()
         .filter_level(log_level)
         .init();
+     println!("logging at {}", log_level);
 
     if getuid() != 0 && client_only == 0 {
         error!("Fatal error: Not superuser");
