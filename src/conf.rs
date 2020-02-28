@@ -2592,3 +2592,38 @@ pub unsafe extern "C" fn CNF_GetHwTsInterface(mut index: libc::c_uint,
     *iface = ARR_GetElement(hwts_interfaces, index) as *mut CNF_HwTsInterface;
     return 1 as libc::c_int;
 }
+
+
+
+mod test {
+    use super::*;
+    use std::io::Write;
+    // Config file tests
+    const FILE_01: &str = include_str!("./testconfs/01.conf");
+
+    unsafe fn assert_cstr(expected: &str, cstr: *mut i8) {
+        assert_eq!(expected, std::ffi::CStr::from_ptr(cstr).to_str().unwrap());
+    }
+
+    #[test]
+    fn test_01() {
+        let mut tmp = tempfile::NamedTempFile::new().unwrap();
+        tmp.write_all(FILE_01.as_bytes()).unwrap();
+
+        unsafe { 
+            CNF_Initialise(0, 0);
+            CNF_ReadFile(tmp.path().to_str().unwrap().as_bytes().as_ptr() as *const i8);
+
+            // I guess do some assertions on globals now. TODO: move the globals into a struct we
+            // return up to callers, do the right thing, etc.
+            assert_cstr("/etc/chrony/chrony.keys", keys_file);
+            assert_cstr("/var/lib/chrony/chrony.drift", drift_file);
+            assert_cstr("/var/log/chrony", logdir);
+            assert_eq!(100.0, max_update_skew);
+            assert_eq!(1, rtc_sync);
+            assert_eq!(1.0, make_step_threshold);
+            assert_eq!(3, make_step_limit);
+            assert_cstr("_chrony", user);
+        }
+    }
+}
