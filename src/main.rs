@@ -14,6 +14,8 @@ mod clientlog;
 mod cmdmon;
 mod cmdparse;
 mod conf;
+mod confparser;
+mod confrs;
 mod getdate;
 mod hash_intmd5;
 mod hwclock;
