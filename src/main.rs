@@ -1,7 +1,7 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
 #![register_tool(c2rust)]
-#![feature(asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
+#![feature(llvm_asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
            register_tool, ptr_wrapping_offset_from, c_variadic)]
 
 use anyhow::{Result, Error};

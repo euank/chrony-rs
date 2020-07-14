@@ -244,20 +244,20 @@ pub type uid_t = __uid_t;
 
  **********************************************************************
  * Copyright (C) Miroslav Lichvar  2014
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -653,20 +653,20 @@ unsafe extern "C" fn check_number_of_args(mut line: *mut libc::c_char,
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
  * Copyright (C) Miroslav Lichvar  2013-2014
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -1074,20 +1074,20 @@ pub unsafe extern "C" fn CNF_ParseLine(mut filename: *const libc::c_char,
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
  * Copyright (C) Miroslav Lichvar  2009-2017
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -2610,7 +2610,7 @@ mod test {
         let mut tmp = tempfile::NamedTempFile::new().unwrap();
         tmp.write_all(FILE_01.as_bytes()).unwrap();
 
-        unsafe { 
+        unsafe {
             CNF_Initialise(0, 0);
             CNF_ReadFile(tmp.path().to_str().unwrap().as_bytes().as_ptr() as *const i8);
 

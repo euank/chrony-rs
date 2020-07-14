@@ -1,6 +1,6 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case, non_upper_case_globals, unused_assignments, unused_mut)]
 #![register_tool(c2rust)]
-#![feature(asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
+#![feature(llvm_asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
 use c2rust_asm_casts::AsmCastTrait;
 extern "C" {
@@ -47,20 +47,20 @@ extern "C" {
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -114,20 +114,20 @@ extern "C" {
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2002
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -191,20 +191,20 @@ pub struct fd_set {
 
  **********************************************************************
  * Copyright (C) Miroslav Lichvar  2014
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -217,20 +217,20 @@ pub type ARR_Instance = *mut ARR_Instance_Record;
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2002
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -312,20 +312,20 @@ pub const LOGS_DEBUG: LOG_Severity = -1;
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
  * Copyright (C) Miroslav Lichvar  2011, 2013-2016
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  **********************************************************************
 
   =======================================================================
@@ -1066,7 +1066,7 @@ unsafe extern "C" fn fill_fd_sets(mut read_fds: *mut *mut fd_set,
                                                                      libc::c_int
                                                                      as isize)
                             as *mut __fd_mask;
-                    asm!("cld; rep; stosq" : "={cx}" (fresh3), "={di}"
+                    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh3), "={di}"
                          (fresh5) : "{ax}" (0 as libc::c_int), "0"
                          (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh6)),
                          "1"
@@ -1108,7 +1108,7 @@ unsafe extern "C" fn fill_fd_sets(mut read_fds: *mut *mut fd_set,
                                                                      libc::c_int
                                                                      as isize)
                             as *mut __fd_mask;
-                    asm!("cld; rep; stosq" : "={cx}" (fresh9), "={di}"
+                    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh9), "={di}"
                          (fresh11) : "{ax}" (0 as libc::c_int), "0"
                          (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh12)),
                          "1"
@@ -1150,7 +1150,7 @@ unsafe extern "C" fn fill_fd_sets(mut read_fds: *mut *mut fd_set,
                                                                      libc::c_int
                                                                      as isize)
                             as *mut __fd_mask;
-                    asm!("cld; rep; stosq" : "={cx}" (fresh15), "={di}"
+                    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh15), "={di}"
                          (fresh17) : "{ax}" (0 as libc::c_int), "0"
                          (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh18)),
                          "1"
