@@ -1,16 +1,20 @@
 use nom::IResult;
-use ipnet::IpNet;
+use std::default::Default;
+use ipnet::{IpNet, Ipv4Net};
 use nom::bytes::complete::tag;
 use nom::character::complete::{digit1, space1};
+use nom::character::is_space;
+use nom::bytes::complete::take_while1;
 use nom::error::{context, ParseError, VerboseError};
+use nom::multi::many1;
 use nom::branch::alt;
-use nom::combinator::{map, map_res};
+use nom::combinator::{map, map_res, not};
 use nom::sequence::preceded;
 
 // IpSet is the argument that allow and deny take.
-struct IpSet {
-    all: bool,
-    cidr: IpNet,
+enum IpSet {
+    All,
+    Cidr(IpNet),
 }
 
 enum Line {
@@ -99,9 +103,23 @@ fn parse_acquisition_port<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a
     )(i)
 }
 
+fn parse_ipset<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, IpSet, E> {
+    alt((
+        map(tag("all"), |_| IpSet::All),
+        map_res(take_while1(|c: char| c.is_whitespace()), |p: &str| p.parse::<IpNet>().map(|c| IpSet::Cidr(c))),
+    ))(i)
+}
+
+fn parse_allow<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    preceded(
+        tag("allow"),
+        preceded(space1, map(parse_ipset, |p| Line::Allow(p))),
+    )(i)
+}
+
 fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
     alt((
       parse_acquisition_port,
-      parse_acquisition_port,
+      parse_allow,
     ))(i)
 }
