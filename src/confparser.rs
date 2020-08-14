@@ -50,8 +50,28 @@ struct OptRateLimit {
 
 #[derive(Debug, PartialEq)]
 struct MinMax {
-    Min: i64,
-    Max: i64,
+    min: i64,
+    max: i64,
+}
+
+#[derive(Debug, PartialEq)]
+enum RxFilter {
+    All,
+    Ntp,
+    None,
+}
+
+#[derive(Debug, PartialEq)]
+struct HwTimestamp {
+    interface: String,
+    maxsamples: Option<i64>,
+    minpoll: Option<i64>,
+    minsamples: Option<i64>,
+    precision: Option<f64>,
+    rxcomp: Option<f64>,
+    txcomp: Option<f64>,
+    rxfilter: Option<RxFilter>,
+    nocrossts: Option<()>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -75,7 +95,7 @@ enum Line {
     Dumpdir(PathBuf),
     FallbackDrift(MinMax),
     HwClockFile(PathBuf),
-    HwTimestamp,
+    HwTimestamp(HwTimestamp),
     Include(String), // Not a path due to glob support
     InitStepSlew,
     Keyfile(PathBuf),
@@ -129,8 +149,11 @@ fn parse_num<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E>
     ))(i)
 }
 
-fn parse_min_max<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E> {
-    preceded(space1, parse_num)(i)
+fn parse_fallbackdrift<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    preceded(
+        tag("fallbackdrift"),
+        map(tuple((preceded(space1, parse_num), preceded(space1, parse_num))), |(min, max)| Line::FallbackDrift(MinMax{min, max})),
+    )(i)
 }
 
 // Mimic scanf %lf, which is what the old code used
@@ -149,27 +172,6 @@ fn parse_ipset<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, IpSet
             p.parse::<IpNet>().map(|c| IpSet::Cidr(c))
         }),
     ))(i)
-}
-
-fn parse_allow<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    preceded(
-        tag("allow"),
-        preceded(space1, map(parse_ipset, |p| Line::Allow(p))),
-    )(i)
-}
-
-fn parse_cmdallow<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    preceded(
-        tag("cmdallow"),
-        preceded(space1, map(parse_ipset, |p| Line::CmdAllow(p))),
-    )(i)
-}
-
-fn parse_cmddeny<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    preceded(
-        tag("cmddeny"),
-        preceded(space1, map(parse_ipset, |p| Line::CmdDeny(p))),
-    )(i)
 }
 
 fn parse_address<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, IpAddr, E> {
@@ -289,6 +291,7 @@ fn parse_ratelimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, L
     )(i)
 }
 
+
 fn parse_tagged_line<'a, T, P, L, H, O2, E: ParseError<&'a str>>(
     t: T,
     p: P,
@@ -381,6 +384,7 @@ fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, 
             parse_float_line(tag("maxjitter"), Line::MaxJitter),
             parse_num_line(tag("maxsamples"), Line::MaxSamples),
             parse_float_line(tag("maxslewrate"), Line::MaxSlewRate),
+            // Hit 21, 'alt's limit, onto another block
         )),
         alt((
             parse_float_line(tag("maxupdateskew"), Line::MaxUpdateSkew),
@@ -400,6 +404,7 @@ fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, 
             parse_path_line(tag("ntpsigndsocket") /* sic */, Line::NtpSigndSocket),
             parse_path_line(tag("rtcfile"), Line::RtcFile),
             parse_string_line(tag("user"), Line::User),
+            parse_fallbackdrift,
         )),
     ))(i)
 }
