@@ -143,10 +143,9 @@ pub const NSR_AlreadyInUse: NSR_Status = 2;
 pub const NSR_NoSuchSource: NSR_Status = 1;
 pub const NSR_Success: NSR_Status = 0;
 
-
 impl Default for Conf {
     fn default() -> Self {
-        Conf{
+        Conf {
             acquisition_port: -1,
             ntp_port: 123,
             max_update_skew: 1000.0,
@@ -182,7 +181,6 @@ impl Default for Conf {
     }
 }
 
-
 pub struct Conf {
     restarted: bool,
     rtc_device: String,
@@ -217,13 +215,13 @@ pub struct Conf {
     local_orphan: i64,
     local_distance: f64,
     /* Threshold (in seconds) - if absolute value of initial error is less
-       than this, slew instead of stepping */
+    than this, slew instead of stepping */
     init_slew_threshold: f64,
     /* Array of IPAddr */
     init_sources: Vec<IpAddr>,
     enable_manual: i64,
     /* Flag set if the RTC runs UTC (default is it runs local time
-       incl. daylight saving). */
+    incl. daylight saving). */
     rtc_on_utc: i64,
     /* Filename used to read the hwclock(8) LOCAL/UTC setting */
     hwclock_file: String,
@@ -237,7 +235,7 @@ pub struct Conf {
     /* Minimum number of selectables sources required to update the clock */
     min_sources: i64,
     /* Number of updates before offset checking, number of ignored updates
-       before exiting and the maximum allowed offset */
+    before exiting and the maximum allowed offset */
     max_offset_delay: i64,
     max_offset_ignore: i64,
     max_offset: f64,
@@ -250,7 +248,7 @@ pub struct Conf {
     mail_user_on_change: String,
     mail_change_threshold: f64,
     /* Flag indicating that we don't want to log clients, e.g. to save
-       memory */
+    memory */
     no_client_log: i64,
     /* Limit memory allocated for the clients log */
     client_log_limit: u64,
@@ -258,15 +256,15 @@ pub struct Conf {
     fb_drift_min: i64,
     fb_drift_max: i64,
     /* IP addresses for binding the NTP server sockets to.  UNSPEC family means
-       INADDR_ANY will be used */
+    INADDR_ANY will be used */
     bind_address4: IpAddr,
     bind_address6: IpAddr,
     /* IP addresses for binding the NTP client sockets to.  UNSPEC family means
-       INADDR_ANY will be used */
+    INADDR_ANY will be used */
     bind_acq_address4: IpAddr,
     bind_acq_address6: IpAddr,
     /* IP addresses for binding the command socket to.  UNSPEC family means
-       the loopback address will be used */
+    the loopback address will be used */
     bind_cmd_address4: IpAddr,
     bind_cmd_address6: IpAddr,
     /* Path to the Unix domain command socket. */
@@ -323,36 +321,36 @@ static mut line_number: i64 = 0;
 static mut processed_file: *const libc::c_char = 0 as *const libc::c_char;
 static mut processed_command: *const libc::c_char = 0 as *const libc::c_char;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2013-2014
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2003
+* Copyright (C) Miroslav Lichvar  2013-2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for configuration module
-  */
+ Header file for configuration module
+ */
 /* ================================================== */
 
 impl Conf {
     pub fn new(restarted: bool, client_only: bool) -> Self {
-        let mut conf = Conf{
+        let mut conf = Conf {
             restarted,
 
             ..Default::default()

@@ -65,131 +65,131 @@ pub struct NTP_Packet {
     pub auth_data: [uint8_t; 64],
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2019
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2019
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for CMAC.
+ Header file for CMAC.
 
-  */
+ */
 pub type CMC_Instance = *mut CMC_Instance_Record;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2016
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2016
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header for MS-SNTP authentication via Samba (ntp_signd) */
+ Header for MS-SNTP authentication via Samba (ntp_signd) */
 /* Initialisation function */
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2014-2016
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2014-2016
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Function replacements needed when optional features are disabled.
+ Function replacements needed when optional features are disabled.
 
-  */
+ */
 /* !FEAT_ASYNCDNS */
 /* !FEAT_CMDMON */
 /* !FEAT_NTP */
 /* !FEAT_REFCLOCK */
 #[no_mangle]
-pub unsafe extern "C" fn NSD_Initialise() { }
+pub unsafe extern "C" fn NSD_Initialise() {}
 /* Finalisation function */
 #[no_mangle]
-pub unsafe extern "C" fn NSD_Finalise() { }
+pub unsafe extern "C" fn NSD_Finalise() {}
 /* Function to get an estimate of delay due to signing */
 #[no_mangle]
-pub unsafe extern "C" fn NSD_GetAuthDelay(mut key_id: uint32_t)
- -> libc::c_int {
+pub unsafe extern "C" fn NSD_GetAuthDelay(mut key_id: uint32_t) -> libc::c_int {
     return 0 as libc::c_int;
 }
 /* Function to sign an NTP packet and send it */
 #[no_mangle]
-pub unsafe extern "C" fn NSD_SignAndSendPacket(mut key_id: uint32_t,
-                                               mut packet: *mut NTP_Packet,
-                                               mut remote_addr:
-                                                   *mut NTP_Remote_Address,
-                                               mut local_addr:
-                                                   *mut NTP_Local_Address,
-                                               mut length: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn NSD_SignAndSendPacket(
+    mut key_id: uint32_t,
+    mut packet: *mut NTP_Packet,
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut local_addr: *mut NTP_Local_Address,
+    mut length: libc::c_int,
+) -> libc::c_int {
     return 0 as libc::c_int;
 }
 /* !FEAT_SIGND */
 #[no_mangle]
-pub unsafe extern "C" fn CMC_GetKeyLength(mut cipher: *const libc::c_char)
- -> libc::c_uint {
+pub unsafe extern "C" fn CMC_GetKeyLength(mut cipher: *const libc::c_char) -> libc::c_uint {
     return 0 as libc::c_int as libc::c_uint;
 }
 #[no_mangle]
-pub unsafe extern "C" fn CMC_CreateInstance(mut cipher: *const libc::c_char,
-                                            mut key: *const libc::c_uchar,
-                                            mut length: libc::c_uint)
- -> CMC_Instance {
+pub unsafe extern "C" fn CMC_CreateInstance(
+    mut cipher: *const libc::c_char,
+    mut key: *const libc::c_uchar,
+    mut length: libc::c_uint,
+) -> CMC_Instance {
     return 0 as CMC_Instance;
 }
 #[no_mangle]
-pub unsafe extern "C" fn CMC_Hash(mut inst: CMC_Instance,
-                                  mut in_0: *const libc::c_uchar,
-                                  mut in_len: libc::c_uint,
-                                  mut out: *mut libc::c_uchar,
-                                  mut out_len: libc::c_uint) -> libc::c_uint {
+pub unsafe extern "C" fn CMC_Hash(
+    mut inst: CMC_Instance,
+    mut in_0: *const libc::c_uchar,
+    mut in_len: libc::c_uint,
+    mut out: *mut libc::c_uchar,
+    mut out_len: libc::c_uint,
+) -> libc::c_uint {
     return 0 as libc::c_int as libc::c_uint;
 }
 #[no_mangle]
-pub unsafe extern "C" fn CMC_DestroyInstance(mut inst: CMC_Instance) { }
+pub unsafe extern "C" fn CMC_DestroyInstance(mut inst: CMC_Instance) {}
 /* !HAVE_CMAC */

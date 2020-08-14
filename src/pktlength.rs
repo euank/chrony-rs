@@ -4,9 +4,12 @@
 #![feature(label_break_value, register_tool)]
 extern "C" {
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     fn ntohs(__netshort: uint16_t) -> uint16_t;
 }
@@ -546,34 +549,34 @@ pub union C2RustUnnamed_1 {
     pub ntp_source_name: RPY_NTPSourceName,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * Copyright (C) Miroslav Lichvar  2014-2016
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+* Copyright (C) Miroslav Lichvar  2014-2016
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Routines to compute the expected length of a command or reply packet.
-  These operate on the RAW NETWORK packets, from the point of view of
-  integer endianness within the structures.
+ Routines to compute the expected length of a command or reply packet.
+ These operate on the RAW NETWORK packets, from the point of view of
+ integer endianness within the structures.
 
-  */
+ */
 /* ================================================== */
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -582,955 +585,819 @@ pub struct request_length {
     pub padding: uint16_t,
 }
 // Initialized in run_static_initializers
-static mut request_lengths: [request_length; 66] =
-    [request_length{command: 0, padding: 0,}; 66];
-static mut reply_lengths: [uint16_t; 20] =
-    [0 as libc::c_int as uint16_t, 28 as libc::c_ulong as uint16_t,
-     32 as libc::c_ulong as uint16_t, 76 as libc::c_ulong as uint16_t,
-     0 as libc::c_int as uint16_t, 104 as libc::c_ulong as uint16_t,
-     84 as libc::c_ulong as uint16_t, 56 as libc::c_ulong as uint16_t,
-     0 as libc::c_int as uint16_t, 0 as libc::c_int as uint16_t,
-     0 as libc::c_int as uint16_t, 0 as libc::c_int as uint16_t,
-     48 as libc::c_ulong as uint16_t, 52 as libc::c_ulong as uint16_t,
-     48 as libc::c_ulong as uint16_t, 424 as libc::c_ulong as uint16_t,
-     152 as libc::c_ulong as uint16_t, 40 as libc::c_ulong as uint16_t,
-     416 as libc::c_ulong as uint16_t, 284 as libc::c_ulong as uint16_t];
+static mut request_lengths: [request_length; 66] = [request_length {
+    command: 0,
+    padding: 0,
+}; 66];
+static mut reply_lengths: [uint16_t; 20] = [
+    0 as libc::c_int as uint16_t,
+    28 as libc::c_ulong as uint16_t,
+    32 as libc::c_ulong as uint16_t,
+    76 as libc::c_ulong as uint16_t,
+    0 as libc::c_int as uint16_t,
+    104 as libc::c_ulong as uint16_t,
+    84 as libc::c_ulong as uint16_t,
+    56 as libc::c_ulong as uint16_t,
+    0 as libc::c_int as uint16_t,
+    0 as libc::c_int as uint16_t,
+    0 as libc::c_int as uint16_t,
+    0 as libc::c_int as uint16_t,
+    48 as libc::c_ulong as uint16_t,
+    52 as libc::c_ulong as uint16_t,
+    48 as libc::c_ulong as uint16_t,
+    424 as libc::c_ulong as uint16_t,
+    152 as libc::c_ulong as uint16_t,
+    40 as libc::c_ulong as uint16_t,
+    416 as libc::c_ulong as uint16_t,
+    284 as libc::c_ulong as uint16_t,
+];
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header for pktlength.c, routines for working out the expected length
-  of a network command/reply packet.
+ Header for pktlength.c, routines for working out the expected length
+ of a network command/reply packet.
 
-  */
+ */
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn PKL_CommandLength(mut r: *mut CMD_Request)
- -> libc::c_int {
+pub unsafe extern "C" fn PKL_CommandLength(mut r: *mut CMD_Request) -> libc::c_int {
     let mut type_0: uint32_t = 0;
     let mut command_length: libc::c_int = 0;
-    if (::std::mem::size_of::<[request_length; 66]>() as
-            libc::c_ulong).wrapping_div(::std::mem::size_of::<request_length>()
-                                            as libc::c_ulong) ==
-           66 as libc::c_int as libc::c_ulong {
+    if (::std::mem::size_of::<[request_length; 66]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<request_length>() as libc::c_ulong)
+        == 66 as libc::c_int as libc::c_ulong
+    {
     } else {
-        __assert_fail(b"sizeof (request_lengths) / sizeof (request_lengths[0]) == N_REQUEST_TYPES\x00"
-                          as *const u8 as *const libc::c_char,
-                      b"pktlength.c\x00" as *const u8 as *const libc::c_char,
-                      159 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 37],
-                                                &[libc::c_char; 37]>(b"int PKL_CommandLength(CMD_Request *)\x00")).as_ptr());
+        __assert_fail(
+            b"sizeof (request_lengths) / sizeof (request_lengths[0]) == N_REQUEST_TYPES\x00"
+                as *const u8 as *const libc::c_char,
+            b"pktlength.c\x00" as *const u8 as *const libc::c_char,
+            159 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 37], &[libc::c_char; 37]>(
+                b"int PKL_CommandLength(CMD_Request *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     type_0 = ntohs((*r).command) as uint32_t;
-    if type_0 >= 66 as libc::c_int as libc::c_uint { return 0 as libc::c_int }
+    if type_0 >= 66 as libc::c_int as libc::c_uint {
+        return 0 as libc::c_int;
+    }
     command_length = request_lengths[type_0 as usize].command as libc::c_int;
-    if command_length == 0 { return 0 as libc::c_int }
+    if command_length == 0 {
+        return 0 as libc::c_int;
+    }
     return command_length + PKL_CommandPaddingLength(r);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn PKL_CommandPaddingLength(mut r: *mut CMD_Request)
- -> libc::c_int {
+pub unsafe extern "C" fn PKL_CommandPaddingLength(mut r: *mut CMD_Request) -> libc::c_int {
     let mut type_0: uint32_t = 0;
     if ((*r).version as libc::c_int) < 6 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     type_0 = ntohs((*r).command) as uint32_t;
-    if type_0 >= 66 as libc::c_int as libc::c_uint { return 0 as libc::c_int }
-    return request_lengths[ntohs((*r).command) as usize].padding as
-               libc::c_int;
+    if type_0 >= 66 as libc::c_int as libc::c_uint {
+        return 0 as libc::c_int;
+    }
+    return request_lengths[ntohs((*r).command) as usize].padding as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn PKL_ReplyLength(mut r: *mut CMD_Reply)
- -> libc::c_int {
+pub unsafe extern "C" fn PKL_ReplyLength(mut r: *mut CMD_Reply) -> libc::c_int {
     let mut type_0: uint32_t = 0;
-    if (::std::mem::size_of::<[uint16_t; 20]>() as
-            libc::c_ulong).wrapping_div(::std::mem::size_of::<uint16_t>() as
-                                            libc::c_ulong) ==
-           20 as libc::c_int as libc::c_ulong {
+    if (::std::mem::size_of::<[uint16_t; 20]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong)
+        == 20 as libc::c_int as libc::c_ulong
+    {
     } else {
-        __assert_fail(b"sizeof (reply_lengths) / sizeof (reply_lengths[0]) == N_REPLY_TYPES\x00"
-                          as *const u8 as *const libc::c_char,
-                      b"pktlength.c\x00" as *const u8 as *const libc::c_char,
-                      197 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 33],
-                                                &[libc::c_char; 33]>(b"int PKL_ReplyLength(CMD_Reply *)\x00")).as_ptr());
+        __assert_fail(
+            b"sizeof (reply_lengths) / sizeof (reply_lengths[0]) == N_REPLY_TYPES\x00" as *const u8
+                as *const libc::c_char,
+            b"pktlength.c\x00" as *const u8 as *const libc::c_char,
+            197 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 33], &[libc::c_char; 33]>(
+                b"int PKL_ReplyLength(CMD_Reply *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     type_0 = ntohs((*r).reply) as uint32_t;
     /* Note that reply type codes start from 1, not 0 */
-    if type_0 < 1 as libc::c_int as libc::c_uint ||
-           type_0 >= 20 as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int
+    if type_0 < 1 as libc::c_int as libc::c_uint || type_0 >= 20 as libc::c_int as libc::c_uint {
+        return 0 as libc::c_int;
     }
     return reply_lengths[type_0 as usize] as libc::c_int;
 }
 unsafe extern "C" fn run_static_initializers() {
-    request_lengths =
-        [{
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 60 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (60 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(60 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 60 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (60 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(60 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 68 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (68 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(68 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 32 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (32 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(32 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 32 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (32 as libc::c_ulong) <
-                                           40 as libc::c_ulong {
-                                        (40 as
-                                             libc::c_ulong).wrapping_sub(32 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           32 as libc::c_ulong {
-                                        (32 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           76 as libc::c_ulong {
-                                        (76 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 40 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (40 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(40 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 40 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (40 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(40 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 40 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (40 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(40 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 28 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (28 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(28 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           104 as libc::c_ulong {
-                                        (104 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           84 as libc::c_ulong {
-                                        (84 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           56 as libc::c_ulong {
-                                        (56 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           416 as libc::c_ulong {
-                                        (416 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           48 as libc::c_ulong {
-                                        (48 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 44 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (44 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(44 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 28 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (28 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(28 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           52 as libc::c_ulong {
-                                        (52 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 24 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (24 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(24 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           48 as libc::c_ulong {
-                                        (48 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 28 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (28 as libc::c_ulong) <
-                                           424 as libc::c_ulong {
-                                        (424 as
-                                             libc::c_ulong).wrapping_sub(28 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 36 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (36 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(36 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 40 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (40 as libc::c_ulong) <
-                                           152 as libc::c_ulong {
-                                        (152 as
-                                             libc::c_ulong).wrapping_sub(40 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 0 as libc::c_int as uint16_t,
-                                padding: 0 as libc::c_int as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 20 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (20 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(20 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 368 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (368 as libc::c_ulong) <
-                                           28 as libc::c_ulong {
-                                        (28 as
-                                             libc::c_ulong).wrapping_sub(368
-                                                                             as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         },
-         {
-             let mut init =
-                 request_length{command: 40 as libc::c_ulong as uint16_t,
-                                padding:
-                                    if (40 as libc::c_ulong) <
-                                           284 as libc::c_ulong {
-                                        (284 as
-                                             libc::c_ulong).wrapping_sub(40 as
-                                                                             libc::c_ulong)
-                                    } else {
-                                        0 as libc::c_int as libc::c_ulong
-                                    } as uint16_t,};
-             init
-         }]
+    request_lengths = [
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 60 as libc::c_ulong as uint16_t,
+                padding: if (60 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(60 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 60 as libc::c_ulong as uint16_t,
+                padding: if (60 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(60 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 68 as libc::c_ulong as uint16_t,
+                padding: if (68 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(68 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 32 as libc::c_ulong as uint16_t,
+                padding: if (32 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(32 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 32 as libc::c_ulong as uint16_t,
+                padding: if (32 as libc::c_ulong) < 40 as libc::c_ulong {
+                    (40 as libc::c_ulong).wrapping_sub(32 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 32 as libc::c_ulong {
+                    (32 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 76 as libc::c_ulong {
+                    (76 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 40 as libc::c_ulong as uint16_t,
+                padding: if (40 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(40 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 40 as libc::c_ulong as uint16_t,
+                padding: if (40 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(40 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 40 as libc::c_ulong as uint16_t,
+                padding: if (40 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(40 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 28 as libc::c_ulong as uint16_t,
+                padding: if (28 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(28 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 104 as libc::c_ulong {
+                    (104 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 84 as libc::c_ulong {
+                    (84 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 56 as libc::c_ulong {
+                    (56 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 416 as libc::c_ulong {
+                    (416 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 48 as libc::c_ulong {
+                    (48 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 44 as libc::c_ulong as uint16_t,
+                padding: if (44 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(44 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 28 as libc::c_ulong as uint16_t,
+                padding: if (28 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(28 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 52 as libc::c_ulong {
+                    (52 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 24 as libc::c_ulong as uint16_t,
+                padding: if (24 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(24 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 48 as libc::c_ulong {
+                    (48 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 28 as libc::c_ulong as uint16_t,
+                padding: if (28 as libc::c_ulong) < 424 as libc::c_ulong {
+                    (424 as libc::c_ulong).wrapping_sub(28 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 36 as libc::c_ulong as uint16_t,
+                padding: if (36 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(36 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 40 as libc::c_ulong as uint16_t,
+                padding: if (40 as libc::c_ulong) < 152 as libc::c_ulong {
+                    (152 as libc::c_ulong).wrapping_sub(40 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 0 as libc::c_int as uint16_t,
+                padding: 0 as libc::c_int as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 20 as libc::c_ulong as uint16_t,
+                padding: if (20 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(20 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 368 as libc::c_ulong as uint16_t,
+                padding: if (368 as libc::c_ulong) < 28 as libc::c_ulong {
+                    (28 as libc::c_ulong).wrapping_sub(368 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+        {
+            let mut init = request_length {
+                command: 40 as libc::c_ulong as uint16_t,
+                padding: if (40 as libc::c_ulong) < 284 as libc::c_ulong {
+                    (284 as libc::c_ulong).wrapping_sub(40 as libc::c_ulong)
+                } else {
+                    0 as libc::c_int as libc::c_ulong
+                } as uint16_t,
+            };
+            init
+        },
+    ]
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

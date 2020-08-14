@@ -10,32 +10,40 @@ extern "C" {
     pub type _IO_marker;
     pub type SST_Stats_Record;
     #[no_mangle]
-    fn glob(__pattern: *const libc::c_char, __flags: libc::c_int,
-            __errfunc:
-                Option<unsafe extern "C" fn(_: *const libc::c_char,
-                                            _: libc::c_int) -> libc::c_int>,
-            __pglob: *mut glob_t) -> libc::c_int;
+    fn glob(
+        __pattern: *const libc::c_char,
+        __flags: libc::c_int,
+        __errfunc: Option<
+            unsafe extern "C" fn(_: *const libc::c_char, _: libc::c_int) -> libc::c_int,
+        >,
+        __pglob: *mut glob_t,
+    ) -> libc::c_int;
     #[no_mangle]
     fn globfree(__pglob: *mut glob_t);
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     #[no_mangle]
     fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
     #[no_mangle]
-    fn strncmp(_: *const libc::c_char, _: *const libc::c_char,
-               _: libc::c_ulong) -> libc::c_int;
+    fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
     #[no_mangle]
-    fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t,
-             __compar: __compar_fn_t);
+    fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
     #[no_mangle]
     fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
-    fn snprintf(_: *mut libc::c_char, _: libc::c_ulong,
-                _: *const libc::c_char, _: ...) -> libc::c_int;
+    fn snprintf(
+        _: *mut libc::c_char,
+        _: libc::c_ulong,
+        _: *const libc::c_char,
+        _: ...
+    ) -> libc::c_int;
     #[no_mangle]
     fn fclose(__stream: *mut FILE) -> libc::c_int;
     #[no_mangle]
@@ -44,10 +52,14 @@ extern "C" {
     fn fabs(_: libc::c_double) -> libc::c_double;
     /* This function creates a new instance of the statistics handler */
     #[no_mangle]
-    fn SST_CreateInstance(refid: uint32_t, addr: *mut IPAddr,
-                          min_samples: libc::c_int, max_samples: libc::c_int,
-                          min_delay: libc::c_double,
-                          asymmetry: libc::c_double) -> SST_Stats;
+    fn SST_CreateInstance(
+        refid: uint32_t,
+        addr: *mut IPAddr,
+        min_samples: libc::c_int,
+        max_samples: libc::c_int,
+        min_delay: libc::c_double,
+        asymmetry: libc::c_double,
+    ) -> SST_Stats;
     /* This function deletes an instance of the statistics handler. */
     #[no_mangle]
     fn SST_DeleteInstance(inst: SST_Stats);
@@ -61,52 +73,63 @@ extern "C" {
     #[no_mangle]
     fn SST_AccumulateSample(inst: SST_Stats, sample: *mut NTP_Sample);
     /* This function runs the linear regression operation on the data.  It
-   finds the set of most recent samples that give the tightest
-   confidence interval for the frequency, and truncates the register
-   down to that number of samples. */
+    finds the set of most recent samples that give the tightest
+    confidence interval for the frequency, and truncates the register
+    down to that number of samples. */
     #[no_mangle]
     fn SST_DoNewRegression(inst: SST_Stats);
     /* Get data needed for selection */
     #[no_mangle]
-    fn SST_GetSelectionData(inst: SST_Stats, now: *mut timespec,
-                            stratum: *mut libc::c_int, leap: *mut NTP_Leap,
-                            offset_lo_limit: *mut libc::c_double,
-                            offset_hi_limit: *mut libc::c_double,
-                            root_distance: *mut libc::c_double,
-                            variance: *mut libc::c_double,
-                            first_sample_ago: *mut libc::c_double,
-                            last_sample_ago: *mut libc::c_double,
-                            select_ok: *mut libc::c_int);
+    fn SST_GetSelectionData(
+        inst: SST_Stats,
+        now: *mut timespec,
+        stratum: *mut libc::c_int,
+        leap: *mut NTP_Leap,
+        offset_lo_limit: *mut libc::c_double,
+        offset_hi_limit: *mut libc::c_double,
+        root_distance: *mut libc::c_double,
+        variance: *mut libc::c_double,
+        first_sample_ago: *mut libc::c_double,
+        last_sample_ago: *mut libc::c_double,
+        select_ok: *mut libc::c_int,
+    );
     /* Get data needed when setting up tracking on this source */
     #[no_mangle]
-    fn SST_GetTrackingData(inst: SST_Stats, ref_time: *mut timespec,
-                           average_offset: *mut libc::c_double,
-                           offset_sd: *mut libc::c_double,
-                           frequency: *mut libc::c_double,
-                           frequency_sd: *mut libc::c_double,
-                           skew: *mut libc::c_double,
-                           root_delay: *mut libc::c_double,
-                           root_dispersion: *mut libc::c_double);
+    fn SST_GetTrackingData(
+        inst: SST_Stats,
+        ref_time: *mut timespec,
+        average_offset: *mut libc::c_double,
+        offset_sd: *mut libc::c_double,
+        frequency: *mut libc::c_double,
+        frequency_sd: *mut libc::c_double,
+        skew: *mut libc::c_double,
+        root_delay: *mut libc::c_double,
+        root_dispersion: *mut libc::c_double,
+    );
     /* This routine is called when the local machine clock parameters are
-   changed.  It adjusts all existing samples that we are holding for
-   each peer so that it looks like they were made under the new clock
-   regime rather than the old one.
+       changed.  It adjusts all existing samples that we are holding for
+       each peer so that it looks like they were made under the new clock
+       regime rather than the old one.
 
-   when = cooked local time when the change occurs
+       when = cooked local time when the change occurs
 
-   dfreq = delta frequency. positive means the clock has been adjusted
-   because it was previously gaining time relative to the external
-   reference(s).
+       dfreq = delta frequency. positive means the clock has been adjusted
+       because it was previously gaining time relative to the external
+       reference(s).
 
-   doffset = offset slewed onto local clock.  positive => local clock
-   has been made fast by that amount.
+       doffset = offset slewed onto local clock.  positive => local clock
+       has been made fast by that amount.
 
-*/
+    */
     #[no_mangle]
-    fn SST_SlewSamples(inst: SST_Stats, when: *mut timespec,
-                       dfreq: libc::c_double, doffset: libc::c_double);
+    fn SST_SlewSamples(
+        inst: SST_Stats,
+        when: *mut timespec,
+        dfreq: libc::c_double,
+        doffset: libc::c_double,
+    );
     /* This routine is called when an indeterminate offset is introduced
-   into the local time. */
+    into the local time. */
     #[no_mangle]
     fn SST_AddDispersion(inst: SST_Stats, dispersion: libc::c_double);
     #[no_mangle]
@@ -114,107 +137,119 @@ extern "C" {
     #[no_mangle]
     fn SST_LoadFromFile(inst: SST_Stats, in_0: *mut FILE) -> libc::c_int;
     #[no_mangle]
-    fn SST_DoSourceReport(inst: SST_Stats, report: *mut RPT_SourceReport,
-                          now: *mut timespec);
+    fn SST_DoSourceReport(inst: SST_Stats, report: *mut RPT_SourceReport, now: *mut timespec);
     #[no_mangle]
-    fn SST_DoSourcestatsReport(inst: SST_Stats,
-                               report: *mut RPT_SourcestatsReport,
-                               now: *mut timespec);
+    fn SST_DoSourcestatsReport(
+        inst: SST_Stats,
+        report: *mut RPT_SourcestatsReport,
+        now: *mut timespec,
+    );
     #[no_mangle]
     fn SST_Samples(inst: SST_Stats) -> libc::c_int;
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for memory functions
-  */
+     Header file for memory functions
+     */
     /* Wrappers checking for errors */
     #[no_mangle]
     fn Malloc(size: size_t) -> *mut libc::c_void;
     #[no_mangle]
     fn Malloc2(nmemb: size_t, size: size_t) -> *mut libc::c_void;
     #[no_mangle]
-    fn Realloc2(ptr: *mut libc::c_void, nmemb: size_t, size: size_t)
-     -> *mut libc::c_void;
+    fn Realloc2(ptr: *mut libc::c_void, nmemb: size_t, size: size_t) -> *mut libc::c_void;
     #[no_mangle]
     fn NSR_HandleBadSource(address: *mut IPAddr);
     #[no_mangle]
     fn NSR_GetLocalRefid(address: *mut IPAddr) -> uint32_t;
     /* Add a handler.  Then handler MUST NOT deregister itself!!! */
     #[no_mangle]
-    fn LCL_AddParameterChangeHandler(handler: LCL_ParameterChangeHandler,
-                                     anything: *mut libc::c_void);
+    fn LCL_AddParameterChangeHandler(
+        handler: LCL_ParameterChangeHandler,
+        anything: *mut libc::c_void,
+    );
     /* Remove a handler */
     #[no_mangle]
-    fn LCL_RemoveParameterChangeHandler(_: LCL_ParameterChangeHandler,
-                                        anything: *mut libc::c_void);
+    fn LCL_RemoveParameterChangeHandler(_: LCL_ParameterChangeHandler, anything: *mut libc::c_void);
     /* Register a handler for being notified of dispersion being added to
-   the local clock.  The handler MUST NOT unregister itself!!! */
+    the local clock.  The handler MUST NOT unregister itself!!! */
     #[no_mangle]
-    fn LCL_AddDispersionNotifyHandler(handler: LCL_DispersionNotifyHandler,
-                                      anything: *mut libc::c_void);
+    fn LCL_AddDispersionNotifyHandler(
+        handler: LCL_DispersionNotifyHandler,
+        anything: *mut libc::c_void,
+    );
     /* Delete a handler */
     #[no_mangle]
-    fn LCL_RemoveDispersionNotifyHandler(handler: LCL_DispersionNotifyHandler,
-                                         anything: *mut libc::c_void);
+    fn LCL_RemoveDispersionNotifyHandler(
+        handler: LCL_DispersionNotifyHandler,
+        anything: *mut libc::c_void,
+    );
     /* Routine to read the maximum frequency error of the local clock.  This
-   is a frequency stability, not an absolute error. */
+    is a frequency stability, not an absolute error. */
     #[no_mangle]
     fn LCL_GetMaxClockError() -> libc::c_double;
     /* Get reference update mode */
     #[no_mangle]
     fn REF_GetMode() -> REF_Mode;
     /* Function called by the clock selection process to register a new
-   reference source and its parameters
+    reference source and its parameters
 
-   stratum is the stratum of the reference
+    stratum is the stratum of the reference
 
-   leap is the leap status read from the source
+    leap is the leap status read from the source
 
-   ref_id is the reference id of the reference
+    ref_id is the reference id of the reference
 
-   ref_time is the time at which the parameters are assumed to be
-   correct, in terms of local time
+    ref_time is the time at which the parameters are assumed to be
+    correct, in terms of local time
 
-   frequency is the amount of local clock gain relative to the
-   reference per unit time interval of the local clock
+    frequency is the amount of local clock gain relative to the
+    reference per unit time interval of the local clock
 
-   skew is the maximum estimated frequency error (so we are within
-   [frequency+-skew])
+    skew is the maximum estimated frequency error (so we are within
+    [frequency+-skew])
 
-   root_delay is the root delay of the sample we are using
+    root_delay is the root delay of the sample we are using
 
-   root_dispersion is the root dispersion of the sample we are using
+    root_dispersion is the root dispersion of the sample we are using
 
-   */
+    */
     #[no_mangle]
-    fn REF_SetReference(stratum: libc::c_int, leap: NTP_Leap,
-                        combined_sources: libc::c_int, ref_id: uint32_t,
-                        ref_ip: *mut IPAddr, ref_time: *mut timespec,
-                        offset: libc::c_double, offset_sd: libc::c_double,
-                        frequency: libc::c_double,
-                        frequency_sd: libc::c_double, skew: libc::c_double,
-                        root_delay: libc::c_double,
-                        root_dispersion: libc::c_double);
+    fn REF_SetReference(
+        stratum: libc::c_int,
+        leap: NTP_Leap,
+        combined_sources: libc::c_int,
+        ref_id: uint32_t,
+        ref_ip: *mut IPAddr,
+        ref_time: *mut timespec,
+        offset: libc::c_double,
+        offset_sd: libc::c_double,
+        frequency: libc::c_double,
+        frequency_sd: libc::c_double,
+        skew: libc::c_double,
+        root_delay: libc::c_double,
+        root_dispersion: libc::c_double,
+    );
     /* Mark the local clock as unsynchronised */
     #[no_mangle]
     fn REF_SetUnsynchronised();
@@ -222,15 +257,14 @@ extern "C" {
     #[no_mangle]
     fn REF_GetOrphanStratum() -> libc::c_int;
     /* Check if current raw or cooked time is close to a leap second
-   and is better to discard any measurements */
+    and is better to discard any measurements */
     #[no_mangle]
     fn REF_IsLeapSecondClose() -> libc::c_int;
     /* Calculate result = a - b and return as a double */
     #[no_mangle]
-    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec)
-     -> libc::c_double;
+    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec) -> libc::c_double;
     /* Convert a timespec into a temporary string, largely for diagnostic
-   display */
+    display */
     #[no_mangle]
     fn UTI_TimespecToString(ts: *mut timespec) -> *mut libc::c_char;
     /* Convert ref_id into a temporary string, for diagnostics */
@@ -240,15 +274,21 @@ extern "C" {
     #[no_mangle]
     fn UTI_IPToString(ip: *mut IPAddr) -> *mut libc::c_char;
     #[no_mangle]
-    fn UTI_StringToIP(addr: *const libc::c_char, ip: *mut IPAddr)
-     -> libc::c_int;
+    fn UTI_StringToIP(addr: *const libc::c_char, ip: *mut IPAddr) -> libc::c_int;
     #[no_mangle]
-    fn UTI_OpenFile(basedir: *const libc::c_char, name: *const libc::c_char,
-                    suffix: *const libc::c_char, mode: libc::c_char,
-                    perm: mode_t) -> *mut FILE;
+    fn UTI_OpenFile(
+        basedir: *const libc::c_char,
+        name: *const libc::c_char,
+        suffix: *const libc::c_char,
+        mode: libc::c_char,
+        perm: mode_t,
+    ) -> *mut FILE;
     #[no_mangle]
-    fn UTI_RemoveFile(basedir: *const libc::c_char, name: *const libc::c_char,
-                      suffix: *const libc::c_char) -> libc::c_int;
+    fn UTI_RemoveFile(
+        basedir: *const libc::c_char,
+        name: *const libc::c_char,
+        suffix: *const libc::c_char,
+    ) -> libc::c_int;
     #[no_mangle]
     fn CNF_GetDumpDir() -> *mut libc::c_char;
     #[no_mangle]
@@ -272,12 +312,10 @@ extern "C" {
     static mut log_min_severity: LOG_Severity;
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
     /* Get the time stamp taken after a file descriptor became ready or a timeout expired */
     #[no_mangle]
-    fn SCH_GetLastEventTime(cooked: *mut timespec, err: *mut libc::c_double,
-                            raw: *mut timespec);
+    fn SCH_GetLastEventTime(cooked: *mut timespec, err: *mut libc::c_double, raw: *mut timespec);
 }
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
@@ -330,14 +368,10 @@ pub struct glob_t {
     pub gl_offs: __size_t,
     pub gl_flags: libc::c_int,
     pub gl_closedir: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-    pub gl_readdir: Option<unsafe extern "C" fn(_: *mut libc::c_void)
-                               -> *mut dirent>,
-    pub gl_opendir: Option<unsafe extern "C" fn(_: *const libc::c_char)
-                               -> *mut libc::c_void>,
-    pub gl_lstat: Option<unsafe extern "C" fn(_: *const libc::c_char,
-                                              _: *mut stat) -> libc::c_int>,
-    pub gl_stat: Option<unsafe extern "C" fn(_: *const libc::c_char,
-                                             _: *mut stat) -> libc::c_int>,
+    pub gl_readdir: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> *mut dirent>,
+    pub gl_opendir: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut libc::c_void>,
+    pub gl_lstat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
+    pub gl_stat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -377,10 +411,8 @@ pub type FILE = _IO_FILE;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-pub type __compar_fn_t
-    =
-    Option<unsafe extern "C" fn(_: *const libc::c_void,
-                                _: *const libc::c_void) -> libc::c_int>;
+pub type __compar_fn_t =
+    Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 pub type NTP_Leap = libc::c_uint;
 pub const LEAP_Unsynchronised: NTP_Leap = 3;
 pub const LEAP_DeleteSecond: NTP_Leap = 2;
@@ -412,30 +444,30 @@ pub union C2RustUnnamed {
     pub in6: [uint8_t; 16],
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Data structure definitions within the daemon for various reports that
-  can be generated */
+ Data structure definitions within the daemon for various reports that
+ can be generated */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct RPT_SourceReport {
@@ -477,34 +509,34 @@ pub struct RPT_SourcestatsReport {
     pub est_offset_err: libc::c_double,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for module that deals with the measurements and statistics of
-  each of the sources. */
+ Header file for module that deals with the measurements and statistics of
+ each of the sources. */
 pub type SST_Stats = *mut SST_Stats_Record;
 /* ================================================== */
 /* Define the instance structure used to hold information about each
-   source */
+source */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct SRC_Instance_Record {
@@ -572,23 +604,21 @@ pub type C2RustUnnamed_2 = libc::c_int;
 pub const HIGH: C2RustUnnamed_2 = 1;
 pub const LOW: C2RustUnnamed_2 = -1;
 /* Function type for handlers to be called back when an indeterminate
-   offset is introduced into the local time.  This situation occurs
-   when the frequency must be adjusted to effect a clock slew and
-   there is doubt about one of the endpoints of the interval over
-   which the frequency change was applied.It is expected that such
-   handlers will add extra dispersion to any existing samples stored
-   in their registers. 
+offset is introduced into the local time.  This situation occurs
+when the frequency must be adjusted to effect a clock slew and
+there is doubt about one of the endpoints of the interval over
+which the frequency change was applied.It is expected that such
+handlers will add extra dispersion to any existing samples stored
+in their registers.
 
-   dispersion : The bound on how much error has been introduced in the
-   local clock, in seconds.
+dispersion : The bound on how much error has been introduced in the
+local clock, in seconds.
 
-   anything : passthrough from the registration routine
+anything : passthrough from the registration routine
 
-   */
-pub type LCL_DispersionNotifyHandler
-    =
-    Option<unsafe extern "C" fn(_: libc::c_double, _: *mut libc::c_void)
-               -> ()>;
+*/
+pub type LCL_DispersionNotifyHandler =
+    Option<unsafe extern "C" fn(_: libc::c_double, _: *mut libc::c_void) -> ()>;
 pub type LCL_ChangeType = libc::c_uint;
 pub const LCL_ChangeUnknownStep: LCL_ChangeType = 2;
 pub const LCL_ChangeStep: LCL_ChangeType = 1;
@@ -605,41 +635,45 @@ pub const REF_ModeIgnore: REF_Mode = 4;
 pub const REF_ModePrintOnce: REF_Mode = 3;
 pub const REF_ModeUpdateOnce: REF_Mode = 2;
 pub const REF_ModeInitStepSlew: REF_Mode = 1;
-pub type LCL_ParameterChangeHandler
-    =
-    Option<unsafe extern "C" fn(_: *mut timespec, _: *mut timespec,
-                                _: libc::c_double, _: libc::c_double,
-                                _: LCL_ChangeType, _: *mut libc::c_void)
-               -> ()>;
+pub type LCL_ParameterChangeHandler = Option<
+    unsafe extern "C" fn(
+        _: *mut timespec,
+        _: *mut timespec,
+        _: libc::c_double,
+        _: libc::c_double,
+        _: LCL_ChangeType,
+        _: *mut libc::c_void,
+    ) -> (),
+>;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2011-2016, 2018
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2003
+* Copyright (C) Miroslav Lichvar  2011-2016, 2018
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  The routines in this file manage the complete pool of sources that
-  we might be synchronizing to.  This includes NTP sources and others
-  (e.g. local reference clocks, eyeball + wristwatch etc).
+ The routines in this file manage the complete pool of sources that
+ we might be synchronizing to.  This includes NTP sources and others
+ (e.g. local reference clocks, eyeball + wristwatch etc).
 
-  */
+ */
 /* For NTP_Leap */
 /* ================================================== */
 /* Flag indicating that we are initialised */
@@ -648,10 +682,8 @@ static mut initialised: libc::c_int = 0 as libc::c_int;
 /* Table of sources */
 static mut sources: *mut *mut SRC_Instance_Record =
     0 as *const *mut SRC_Instance_Record as *mut *mut SRC_Instance_Record;
-static mut sort_list: *mut Sort_Element =
-    0 as *const Sort_Element as *mut Sort_Element;
-static mut sel_sources: *mut libc::c_int =
-    0 as *const libc::c_int as *mut libc::c_int;
+static mut sort_list: *mut Sort_Element = 0 as *const Sort_Element as *mut Sort_Element;
+static mut sel_sources: *mut libc::c_int = 0 as *const libc::c_int as *mut libc::c_int;
 static mut n_sources: libc::c_int = 0;
 /* Number of sources currently in the table */
 static mut max_n_sources: libc::c_int = 0;
@@ -677,55 +709,47 @@ pub unsafe extern "C" fn SRC_Initialise() {
     stratum_weight = CNF_GetStratumWeight();
     combine_limit = CNF_GetCombineLimit();
     initialised = 1 as libc::c_int;
-    LCL_AddParameterChangeHandler(Some(slew_sources as
-                                           unsafe extern "C" fn(_:
-                                                                    *mut timespec,
-                                                                _:
-                                                                    *mut timespec,
-                                                                _:
-                                                                    libc::c_double,
-                                                                _:
-                                                                    libc::c_double,
-                                                                _:
-                                                                    LCL_ChangeType,
-                                                                _:
-                                                                    *mut libc::c_void)
-                                               -> ()),
-                                  0 as *mut libc::c_void);
-    LCL_AddDispersionNotifyHandler(Some(add_dispersion as
-                                            unsafe extern "C" fn(_:
-                                                                     libc::c_double,
-                                                                 _:
-                                                                     *mut libc::c_void)
-                                                -> ()),
-                                   0 as *mut libc::c_void);
+    LCL_AddParameterChangeHandler(
+        Some(
+            slew_sources
+                as unsafe extern "C" fn(
+                    _: *mut timespec,
+                    _: *mut timespec,
+                    _: libc::c_double,
+                    _: libc::c_double,
+                    _: LCL_ChangeType,
+                    _: *mut libc::c_void,
+                ) -> (),
+        ),
+        0 as *mut libc::c_void,
+    );
+    LCL_AddDispersionNotifyHandler(
+        Some(add_dispersion as unsafe extern "C" fn(_: libc::c_double, _: *mut libc::c_void) -> ()),
+        0 as *mut libc::c_void,
+    );
 }
 /* ================================================== */
 /* Finalisation function */
 #[no_mangle]
 pub unsafe extern "C" fn SRC_Finalise() {
-    LCL_RemoveParameterChangeHandler(Some(slew_sources as
-                                              unsafe extern "C" fn(_:
-                                                                       *mut timespec,
-                                                                   _:
-                                                                       *mut timespec,
-                                                                   _:
-                                                                       libc::c_double,
-                                                                   _:
-                                                                       libc::c_double,
-                                                                   _:
-                                                                       LCL_ChangeType,
-                                                                   _:
-                                                                       *mut libc::c_void)
-                                                  -> ()),
-                                     0 as *mut libc::c_void);
-    LCL_RemoveDispersionNotifyHandler(Some(add_dispersion as
-                                               unsafe extern "C" fn(_:
-                                                                        libc::c_double,
-                                                                    _:
-                                                                        *mut libc::c_void)
-                                                   -> ()),
-                                      0 as *mut libc::c_void);
+    LCL_RemoveParameterChangeHandler(
+        Some(
+            slew_sources
+                as unsafe extern "C" fn(
+                    _: *mut timespec,
+                    _: *mut timespec,
+                    _: libc::c_double,
+                    _: libc::c_double,
+                    _: LCL_ChangeType,
+                    _: *mut libc::c_void,
+                ) -> (),
+        ),
+        0 as *mut libc::c_void,
+    );
+    LCL_RemoveDispersionNotifyHandler(
+        Some(add_dispersion as unsafe extern "C" fn(_: libc::c_double, _: *mut libc::c_void) -> ()),
+        0 as *mut libc::c_void,
+    );
     free(sources as *mut libc::c_void);
     free(sort_list as *mut libc::c_void);
     free(sel_sources as *mut libc::c_void);
@@ -733,17 +757,18 @@ pub unsafe extern "C" fn SRC_Finalise() {
 }
 /* ================================================== */
 /* Function to create a new instance.  This would be called by one of
-   the individual source-type instance creation routines. */
+the individual source-type instance creation routines. */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_CreateNewInstance(mut ref_id: uint32_t,
-                                               mut type_0: SRC_Type,
-                                               mut sel_options: libc::c_int,
-                                               mut addr: *mut IPAddr,
-                                               mut min_samples: libc::c_int,
-                                               mut max_samples: libc::c_int,
-                                               mut min_delay: libc::c_double,
-                                               mut asymmetry: libc::c_double)
- -> SRC_Instance {
+pub unsafe extern "C" fn SRC_CreateNewInstance(
+    mut ref_id: uint32_t,
+    mut type_0: SRC_Type,
+    mut sel_options: libc::c_int,
+    mut addr: *mut IPAddr,
+    mut min_samples: libc::c_int,
+    mut max_samples: libc::c_int,
+    mut min_delay: libc::c_double,
+    mut asymmetry: libc::c_double,
+) -> SRC_Instance {
     let mut result: SRC_Instance = 0 as *mut SRC_Instance_Record;
     if initialised != 0 {
     } else {
@@ -759,47 +784,46 @@ pub unsafe extern "C" fn SRC_CreateNewInstance(mut ref_id: uint32_t,
     if max_samples == -(1 as libc::c_int) {
         max_samples = CNF_GetMaxSamples()
     }
-    result =
-        Malloc(::std::mem::size_of::<SRC_Instance_Record>() as libc::c_ulong)
-            as *mut SRC_Instance_Record;
+    result = Malloc(::std::mem::size_of::<SRC_Instance_Record>() as libc::c_ulong)
+        as *mut SRC_Instance_Record;
     (*result).stats =
-        SST_CreateInstance(ref_id, addr, min_samples, max_samples, min_delay,
-                           asymmetry);
+        SST_CreateInstance(ref_id, addr, min_samples, max_samples, min_delay, asymmetry);
     if n_sources == max_n_sources {
         /* Reallocate memory */
-        max_n_sources =
-            if max_n_sources > 0 as libc::c_int {
-                (2 as libc::c_int) * max_n_sources
-            } else { 4 as libc::c_int };
-        if !sources.is_null() {
-            sources =
-                Realloc2(sources as *mut libc::c_void,
-                         max_n_sources as size_t,
-                         ::std::mem::size_of::<*mut SRC_Instance_Record>() as
-                             libc::c_ulong) as *mut *mut SRC_Instance_Record;
-            sort_list =
-                Realloc2(sort_list as *mut libc::c_void,
-                         (3 as libc::c_int * max_n_sources) as size_t,
-                         ::std::mem::size_of::<Sort_Element>() as
-                             libc::c_ulong) as *mut Sort_Element;
-            sel_sources =
-                Realloc2(sel_sources as *mut libc::c_void,
-                         max_n_sources as size_t,
-                         ::std::mem::size_of::<libc::c_int>() as
-                             libc::c_ulong) as *mut libc::c_int
+        max_n_sources = if max_n_sources > 0 as libc::c_int {
+            (2 as libc::c_int) * max_n_sources
         } else {
-            sources =
-                Malloc2(max_n_sources as size_t,
-                        ::std::mem::size_of::<*mut SRC_Instance_Record>() as
-                            libc::c_ulong) as *mut *mut SRC_Instance_Record;
-            sort_list =
-                Malloc2((3 as libc::c_int * max_n_sources) as size_t,
-                        ::std::mem::size_of::<Sort_Element>() as
-                            libc::c_ulong) as *mut Sort_Element;
-            sel_sources =
-                Malloc2(max_n_sources as size_t,
-                        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-                    as *mut libc::c_int
+            4 as libc::c_int
+        };
+        if !sources.is_null() {
+            sources = Realloc2(
+                sources as *mut libc::c_void,
+                max_n_sources as size_t,
+                ::std::mem::size_of::<*mut SRC_Instance_Record>() as libc::c_ulong,
+            ) as *mut *mut SRC_Instance_Record;
+            sort_list = Realloc2(
+                sort_list as *mut libc::c_void,
+                (3 as libc::c_int * max_n_sources) as size_t,
+                ::std::mem::size_of::<Sort_Element>() as libc::c_ulong,
+            ) as *mut Sort_Element;
+            sel_sources = Realloc2(
+                sel_sources as *mut libc::c_void,
+                max_n_sources as size_t,
+                ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
+            ) as *mut libc::c_int
+        } else {
+            sources = Malloc2(
+                max_n_sources as size_t,
+                ::std::mem::size_of::<*mut SRC_Instance_Record>() as libc::c_ulong,
+            ) as *mut *mut SRC_Instance_Record;
+            sort_list = Malloc2(
+                (3 as libc::c_int * max_n_sources) as size_t,
+                ::std::mem::size_of::<Sort_Element>() as libc::c_ulong,
+            ) as *mut Sort_Element;
+            sel_sources = Malloc2(
+                max_n_sources as size_t,
+                ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
+            ) as *mut libc::c_int
         }
     }
     let ref mut fresh0 = *sources.offset(n_sources as isize);
@@ -814,20 +838,24 @@ pub unsafe extern "C" fn SRC_CreateNewInstance(mut ref_id: uint32_t,
 }
 /* ================================================== */
 /* Function to get rid of a source when it is being unconfigured.
-   This may cause the current reference source to be reselected, if this
-   was the reference source or contributed significantly to a
-   falseticker decision. */
+This may cause the current reference source to be reselected, if this
+was the reference source or contributed significantly to a
+falseticker decision. */
 #[no_mangle]
 pub unsafe extern "C" fn SRC_DestroyInstance(mut instance: SRC_Instance) {
     let mut dead_index: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     if initialised != 0 {
     } else {
-        __assert_fail(b"initialised\x00" as *const u8 as *const libc::c_char,
-                      b"sources.c\x00" as *const u8 as *const libc::c_char,
-                      271 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 39],
-                                                &[libc::c_char; 39]>(b"void SRC_DestroyInstance(SRC_Instance)\x00")).as_ptr());
+        __assert_fail(
+            b"initialised\x00" as *const u8 as *const libc::c_char,
+            b"sources.c\x00" as *const u8 as *const libc::c_char,
+            271 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 39], &[libc::c_char; 39]>(
+                b"void SRC_DestroyInstance(SRC_Instance)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     SST_DeleteInstance((*instance).stats);
     dead_index = (*instance).index;
@@ -861,61 +889,72 @@ pub unsafe extern "C" fn SRC_ResetInstance(mut instance: SRC_Instance) {
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_SetRefid(mut instance: SRC_Instance,
-                                      mut ref_id: uint32_t,
-                                      mut addr: *mut IPAddr) {
+pub unsafe extern "C" fn SRC_SetRefid(
+    mut instance: SRC_Instance,
+    mut ref_id: uint32_t,
+    mut addr: *mut IPAddr,
+) {
     (*instance).ref_id = ref_id;
     (*instance).ip_addr = addr;
     SST_SetRefid((*instance).stats, ref_id, addr);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_GetSourcestats(mut instance: SRC_Instance)
- -> SST_Stats {
+pub unsafe extern "C" fn SRC_GetSourcestats(mut instance: SRC_Instance) -> SST_Stats {
     if initialised != 0 {
     } else {
-        __assert_fail(b"initialised\x00" as *const u8 as *const libc::c_char,
-                      b"sources.c\x00" as *const u8 as *const libc::c_char,
-                      320 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 43],
-                                                &[libc::c_char; 43]>(b"SST_Stats SRC_GetSourcestats(SRC_Instance)\x00")).as_ptr());
+        __assert_fail(
+            b"initialised\x00" as *const u8 as *const libc::c_char,
+            b"sources.c\x00" as *const u8 as *const libc::c_char,
+            320 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 43], &[libc::c_char; 43]>(
+                b"SST_Stats SRC_GetSourcestats(SRC_Instance)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     return (*instance).stats;
 }
 /* ================================================== */
 /* This function is called by one of the source drivers when it has
-   a new sample that is to be accumulated.
+a new sample that is to be accumulated.
 
-   This function causes the frequency estimation to be re-run for the
-   designated source, and the clock selection procedure to be re-run
-   afterwards.
-   */
+This function causes the frequency estimation to be re-run for the
+designated source, and the clock selection procedure to be re-run
+afterwards.
+*/
 #[no_mangle]
-pub unsafe extern "C" fn SRC_AccumulateSample(mut inst: SRC_Instance,
-                                              mut sample: *mut NTP_Sample) {
+pub unsafe extern "C" fn SRC_AccumulateSample(mut inst: SRC_Instance, mut sample: *mut NTP_Sample) {
     if initialised != 0 {
     } else {
-        __assert_fail(b"initialised\x00" as *const u8 as *const libc::c_char,
-                      b"sources.c\x00" as *const u8 as *const libc::c_char,
-                      338 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 54],
-                                                &[libc::c_char; 54]>(b"void SRC_AccumulateSample(SRC_Instance, NTP_Sample *)\x00")).as_ptr());
+        __assert_fail(
+            b"initialised\x00" as *const u8 as *const libc::c_char,
+            b"sources.c\x00" as *const u8 as *const libc::c_char,
+            338 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 54], &[libc::c_char; 54]>(
+                b"void SRC_AccumulateSample(SRC_Instance, NTP_Sample *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"ip=[%s] t=%s ofs=%f del=%f disp=%f str=%d\x00" as
-                        *const u8 as *const libc::c_char,
-                    source_to_string(inst),
-                    UTI_TimespecToString(&mut (*sample).time),
-                    -(*sample).offset, (*sample).root_delay,
-                    (*sample).root_dispersion, (*sample).stratum);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"ip=[%s] t=%s ofs=%f del=%f disp=%f str=%d\x00" as *const u8 as *const libc::c_char,
+            source_to_string(inst),
+            UTI_TimespecToString(&mut (*sample).time),
+            -(*sample).offset,
+            (*sample).root_delay,
+            (*sample).root_dispersion,
+            (*sample).stratum,
+        );
     }
     if REF_IsLeapSecondClose() != 0 {
-        LOG_Message(LOGS_INFO,
-                    b"Dropping sample around leap second\x00" as *const u8 as
-                        *const libc::c_char);
-        return
+        LOG_Message(
+            LOGS_INFO,
+            b"Dropping sample around leap second\x00" as *const u8 as *const libc::c_char,
+        );
+        return;
     }
     SST_AccumulateSample((*inst).stats, sample);
     SST_DoNewRegression((*inst).stats);
@@ -938,14 +977,17 @@ unsafe extern "C" fn special_mode_end() -> libc::c_int {
         /* No updates from inactive sources */
         if !((**sources.offset(i as isize)).active == 0) {
             /* Don't expect more updates than from an offline iburst NTP source */
-            if !((**sources.offset(i as isize)).reachability_size >=
-                     8 as libc::c_int - 1 as libc::c_int) {
+            if !((**sources.offset(i as isize)).reachability_size
+                >= 8 as libc::c_int - 1 as libc::c_int)
+            {
                 /* Check if the source could still have enough samples to be selectable */
-                if 8 as libc::c_int - 1 as libc::c_int -
-                       (**sources.offset(i as isize)).reachability_size +
-                       SST_Samples((**sources.offset(i as isize)).stats) >=
-                       3 as libc::c_int {
-                    return 0 as libc::c_int
+                if 8 as libc::c_int
+                    - 1 as libc::c_int
+                    - (**sources.offset(i as isize)).reachability_size
+                    + SST_Samples((**sources.offset(i as isize)).stats)
+                    >= 3 as libc::c_int
+                {
+                    return 0 as libc::c_int;
                 }
             }
         }
@@ -954,15 +996,15 @@ unsafe extern "C" fn special_mode_end() -> libc::c_int {
     return 1 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn SRC_UpdateReachability(mut inst: SRC_Instance,
-                                                mut reachable: libc::c_int) {
+pub unsafe extern "C" fn SRC_UpdateReachability(
+    mut inst: SRC_Instance,
+    mut reachable: libc::c_int,
+) {
     (*inst).reachability <<= 1 as libc::c_int;
     (*inst).reachability |= (reachable != 0) as libc::c_int;
-    (*inst).reachability =
-        ((*inst).reachability as
-             libc::c_uint).wrapping_rem((1 as libc::c_uint) <<
-                                            8 as libc::c_int) as libc::c_int
-            as libc::c_int;
+    (*inst).reachability = ((*inst).reachability as libc::c_uint)
+        .wrapping_rem((1 as libc::c_uint) << 8 as libc::c_int)
+        as libc::c_int as libc::c_int;
     if (*inst).reachability_size < 8 as libc::c_int {
         (*inst).reachability_size += 1
     }
@@ -971,23 +1013,19 @@ pub unsafe extern "C" fn SRC_UpdateReachability(mut inst: SRC_Instance,
         SRC_SelectSource(0 as SRC_Instance);
     }
     /* Check if special reference update mode failed */
-    if REF_GetMode() as libc::c_uint !=
-           REF_ModeNormal as libc::c_int as libc::c_uint &&
-           special_mode_end() != 0 {
+    if REF_GetMode() as libc::c_uint != REF_ModeNormal as libc::c_int as libc::c_uint
+        && special_mode_end() != 0
+    {
         REF_SetUnsynchronised();
     }
     /* Try to replace NTP sources that are unreachable, falsetickers, or
-     have root distance or jitter larger than the allowed maximums */
-    if (*inst).type_0 as libc::c_uint ==
-           SRC_NTP as libc::c_int as libc::c_uint &&
-           ((*inst).reachability == 0 &&
-                (*inst).reachability_size == 8 as libc::c_int ||
-                (*inst).status as libc::c_uint ==
-                    SRC_BAD_DISTANCE as libc::c_int as libc::c_uint ||
-                (*inst).status as libc::c_uint ==
-                    SRC_JITTERY as libc::c_int as libc::c_uint ||
-                (*inst).status as libc::c_uint ==
-                    SRC_FALSETICKER as libc::c_int as libc::c_uint) {
+    have root distance or jitter larger than the allowed maximums */
+    if (*inst).type_0 as libc::c_uint == SRC_NTP as libc::c_int as libc::c_uint
+        && ((*inst).reachability == 0 && (*inst).reachability_size == 8 as libc::c_int
+            || (*inst).status as libc::c_uint == SRC_BAD_DISTANCE as libc::c_int as libc::c_uint
+            || (*inst).status as libc::c_uint == SRC_JITTERY as libc::c_int as libc::c_uint
+            || (*inst).status as libc::c_uint == SRC_FALSETICKER as libc::c_int as libc::c_uint)
+    {
         NSR_HandleBadSource((*inst).ip_addr);
     };
 }
@@ -999,43 +1037,49 @@ pub unsafe extern "C" fn SRC_ResetReachability(mut inst: SRC_Instance) {
     SRC_UpdateReachability(inst, 0 as libc::c_int);
 }
 /* ================================================== */
-unsafe extern "C" fn log_selection_message(mut format: *mut libc::c_char,
-                                           mut arg: *mut libc::c_char) {
-    if REF_GetMode() as libc::c_uint !=
-           REF_ModeNormal as libc::c_int as libc::c_uint {
-        return
+unsafe extern "C" fn log_selection_message(
+    mut format: *mut libc::c_char,
+    mut arg: *mut libc::c_char,
+) {
+    if REF_GetMode() as libc::c_uint != REF_ModeNormal as libc::c_int as libc::c_uint {
+        return;
     }
     LOG_Message(LOGS_INFO, format, arg);
 }
 /* ================================================== */
-unsafe extern "C" fn compare_sort_elements(mut a: *const libc::c_void,
-                                           mut b: *const libc::c_void)
- -> libc::c_int {
+unsafe extern "C" fn compare_sort_elements(
+    mut a: *const libc::c_void,
+    mut b: *const libc::c_void,
+) -> libc::c_int {
     let mut u: *const Sort_Element = a as *const Sort_Element;
     let mut v: *const Sort_Element = b as *const Sort_Element;
     if (*u).offset < (*v).offset {
-        return -(1 as libc::c_int)
+        return -(1 as libc::c_int);
     } else if (*u).offset > (*v).offset {
-        return 1 as libc::c_int
+        return 1 as libc::c_int;
     } else if ((*u).tag as libc::c_int) < (*v).tag as libc::c_int {
-        return -(1 as libc::c_int)
+        return -(1 as libc::c_int);
     } else if (*u).tag as libc::c_int > (*v).tag as libc::c_int {
-        return 1 as libc::c_int
-    } else { return 0 as libc::c_int };
+        return 1 as libc::c_int;
+    } else {
+        return 0 as libc::c_int;
+    };
 }
 /* ================================================== */
-unsafe extern "C" fn source_to_string(mut inst: SRC_Instance)
- -> *mut libc::c_char {
+unsafe extern "C" fn source_to_string(mut inst: SRC_Instance) -> *mut libc::c_char {
     match (*inst).type_0 as libc::c_uint {
-        0 => { return UTI_IPToString((*inst).ip_addr) }
-        1 => { return UTI_RefidToString((*inst).ref_id) }
+        0 => return UTI_IPToString((*inst).ip_addr),
+        1 => return UTI_RefidToString((*inst).ref_id),
         _ => {
-            __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                          b"sources.c\x00" as *const u8 as
-                              *const libc::c_char,
-                          476 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 37],
-                                                    &[libc::c_char; 37]>(b"char *source_to_string(SRC_Instance)\x00")).as_ptr());
+            __assert_fail(
+                b"0\x00" as *const u8 as *const libc::c_char,
+                b"sources.c\x00" as *const u8 as *const libc::c_char,
+                476 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 37], &[libc::c_char; 37]>(
+                    b"char *source_to_string(SRC_Instance)\x00",
+                ))
+                .as_ptr(),
+            );
         }
     }
     return 0 as *mut libc::c_char;
@@ -1045,23 +1089,28 @@ unsafe extern "C" fn mark_ok_sources(mut status: SRC_Status) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < n_sources {
-        if !((**sources.offset(i as isize)).status as libc::c_uint !=
-                 SRC_OK as libc::c_int as libc::c_uint) {
+        if !((**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint)
+        {
             (**sources.offset(i as isize)).status = status
         }
         i += 1
-    };
+    }
 }
 /* ================================================== */
-unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
-                                     mut ref_time: *mut timespec,
-                                     mut offset: *mut libc::c_double,
-                                     mut offset_sd: *mut libc::c_double,
-                                     mut frequency: *mut libc::c_double,
-                                     mut frequency_sd: *mut libc::c_double,
-                                     mut skew: *mut libc::c_double)
- -> libc::c_int {
-    let mut src_ref_time: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
+unsafe extern "C" fn combine_sources(
+    mut n_sel_sources: libc::c_int,
+    mut ref_time: *mut timespec,
+    mut offset: *mut libc::c_double,
+    mut offset_sd: *mut libc::c_double,
+    mut frequency: *mut libc::c_double,
+    mut frequency_sd: *mut libc::c_double,
+    mut skew: *mut libc::c_double,
+) -> libc::c_int {
+    let mut src_ref_time: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
     let mut src_offset: libc::c_double = 0.;
     let mut src_offset_sd: libc::c_double = 0.;
     let mut src_frequency: libc::c_double = 0.;
@@ -1083,7 +1132,9 @@ unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
     let mut i: libc::c_int = 0;
     let mut index: libc::c_int = 0;
     let mut combined: libc::c_int = 0;
-    if n_sel_sources == 1 as libc::c_int { return 1 as libc::c_int }
+    if n_sel_sources == 1 as libc::c_int {
+        return 1 as libc::c_int;
+    }
     sum2_offset_sd = 0.0f64;
     sum_offset = sum2_offset_sd;
     sum_offset_weight = sum_offset;
@@ -1091,37 +1142,45 @@ unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
     inv_sum2_frequency_sd = inv_sum2_skew;
     sum_frequency = inv_sum2_frequency_sd;
     sum_frequency_weight = sum_frequency;
-    sel_src_distance =
-        (**sources.offset(selected_source_index as
-                              isize)).sel_info.root_distance;
-    if (**sources.offset(selected_source_index as isize)).type_0 as
-           libc::c_uint == SRC_NTP as libc::c_int as libc::c_uint {
+    sel_src_distance = (**sources.offset(selected_source_index as isize))
+        .sel_info
+        .root_distance;
+    if (**sources.offset(selected_source_index as isize)).type_0 as libc::c_uint
+        == SRC_NTP as libc::c_int as libc::c_uint
+    {
         sel_src_distance += reselect_distance
     }
     combined = 0 as libc::c_int;
     i = combined;
     while i < n_sel_sources {
         index = *sel_sources.offset(i as isize);
-        SST_GetTrackingData((**sources.offset(index as isize)).stats,
-                            &mut src_ref_time, &mut src_offset,
-                            &mut src_offset_sd, &mut src_frequency,
-                            &mut src_frequency_sd, &mut src_skew,
-                            &mut src_root_delay, &mut src_root_dispersion);
+        SST_GetTrackingData(
+            (**sources.offset(index as isize)).stats,
+            &mut src_ref_time,
+            &mut src_offset,
+            &mut src_offset_sd,
+            &mut src_frequency,
+            &mut src_frequency_sd,
+            &mut src_skew,
+            &mut src_root_delay,
+            &mut src_root_dispersion,
+        );
         /* Don't include this source if its distance is longer than the distance of
-       the selected source multiplied by the limit, their estimated frequencies
-       are not close, or it was recently marked as distant */
-        if index != selected_source_index &&
-               ((**sources.offset(index as isize)).sel_info.root_distance >
-                    combine_limit * sel_src_distance ||
-                    fabs(*frequency - src_frequency) >
-                        combine_limit *
-                            (*skew + src_skew + LCL_GetMaxClockError())) {
+        the selected source multiplied by the limit, their estimated frequencies
+        are not close, or it was recently marked as distant */
+        if index != selected_source_index
+            && ((**sources.offset(index as isize)).sel_info.root_distance
+                > combine_limit * sel_src_distance
+                || fabs(*frequency - src_frequency)
+                    > combine_limit * (*skew + src_skew + LCL_GetMaxClockError()))
+        {
             /* Use a smaller penalty in first few updates */
             (**sources.offset(index as isize)).distant =
-                if (**sources.offset(index as isize)).reachability_size >=
-                       8 as libc::c_int {
+                if (**sources.offset(index as isize)).reachability_size >= 8 as libc::c_int {
                     32 as libc::c_int
-                } else { 1 as libc::c_int }
+                } else {
+                    1 as libc::c_int
+                }
         } else if (**sources.offset(index as isize)).distant != 0 {
             let ref mut fresh2 = (**sources.offset(index as isize)).distant;
             *fresh2 -= 1
@@ -1129,20 +1188,18 @@ unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
         if (**sources.offset(index as isize)).distant != 0 {
             (**sources.offset(index as isize)).status = SRC_DISTANT
         } else {
-            if (**sources.offset(index as isize)).status as libc::c_uint ==
-                   SRC_OK as libc::c_int as libc::c_uint {
+            if (**sources.offset(index as isize)).status as libc::c_uint
+                == SRC_OK as libc::c_int as libc::c_uint
+            {
                 (**sources.offset(index as isize)).status = SRC_UNSELECTED
             }
             elapsed = UTI_DiffTimespecsToDouble(ref_time, &mut src_ref_time);
             src_offset += elapsed * src_frequency;
             src_offset_sd += elapsed * src_frequency_sd;
-            offset_weight =
-                1.0f64 /
-                    (**sources.offset(index as isize)).sel_info.root_distance;
+            offset_weight = 1.0f64 / (**sources.offset(index as isize)).sel_info.root_distance;
             frequency_weight = 1.0f64 / (src_frequency_sd * src_frequency_sd);
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
                 LOG_Message(LOGS_DEBUG,
                             b"combining index=%d oweight=%e offset=%e osd=%e fweight=%e freq=%e fsd=%e skew=%e\x00"
                                 as *const u8 as *const libc::c_char, index,
@@ -1152,14 +1209,11 @@ unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
             }
             sum_offset_weight += offset_weight;
             sum_offset += offset_weight * src_offset;
-            sum2_offset_sd +=
-                offset_weight *
-                    (src_offset_sd * src_offset_sd +
-                         (src_offset - *offset) * (src_offset - *offset));
+            sum2_offset_sd += offset_weight
+                * (src_offset_sd * src_offset_sd + (src_offset - *offset) * (src_offset - *offset));
             sum_frequency_weight += frequency_weight;
             sum_frequency += frequency_weight * src_frequency;
-            inv_sum2_frequency_sd +=
-                1.0f64 / (src_frequency_sd * src_frequency_sd);
+            inv_sum2_frequency_sd += 1.0f64 / (src_frequency_sd * src_frequency_sd);
             inv_sum2_skew += 1.0f64 / (src_skew * src_skew);
             combined += 1
         }
@@ -1178,23 +1232,34 @@ unsafe extern "C" fn combine_sources(mut n_sel_sources: libc::c_int,
     *frequency = sum_frequency / sum_frequency_weight;
     *frequency_sd = 1.0f64 / sqrt(inv_sum2_frequency_sd);
     *skew = 1.0f64 / sqrt(inv_sum2_skew);
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"combined result offset=%e osd=%e freq=%e fsd=%e skew=%e\x00"
-                        as *const u8 as *const libc::c_char, *offset,
-                    *offset_sd, *frequency, *frequency_sd, *skew);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"combined result offset=%e osd=%e freq=%e fsd=%e skew=%e\x00" as *const u8
+                as *const libc::c_char,
+            *offset,
+            *offset_sd,
+            *frequency,
+            *frequency_sd,
+            *skew,
+        );
     }
     return combined;
 }
 /* ================================================== */
 /* This function selects the current reference from amongst the pool
-   of sources we are holding and updates the local reference */
+of sources we are holding and updates the local reference */
 #[no_mangle]
 pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     let mut si: *mut SelectInfo = 0 as *mut SelectInfo;
-    let mut now: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut ref_time: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
+    let mut now: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut ref_time: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut j1: libc::c_int = 0;
@@ -1236,21 +1301,23 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     let mut first_sample_ago: libc::c_double = 0.;
     let mut max_reach_sample_ago: libc::c_double = 0.;
     let mut leap_status: NTP_Leap = LEAP_Normal;
-    if !updated_inst.is_null() { (*updated_inst).updates += 1 }
+    if !updated_inst.is_null() {
+        (*updated_inst).updates += 1
+    }
     if n_sources == 0 as libc::c_int {
         /* In this case, we clearly cannot synchronise to anything */
         if selected_source_index != -(1 as libc::c_int) {
-            log_selection_message(b"Can\'t synchronise: no sources\x00" as
-                                      *const u8 as *const libc::c_char as
-                                      *mut libc::c_char,
-                                  0 as *mut libc::c_char);
+            log_selection_message(
+                b"Can\'t synchronise: no sources\x00" as *const u8 as *const libc::c_char
+                    as *mut libc::c_char,
+                0 as *mut libc::c_char,
+            );
             selected_source_index = -(1 as libc::c_int)
         }
-        return
+        return;
     }
     /* This is accurate enough and cheaper than calling LCL_ReadCookedTime */
-    SCH_GetLastEventTime(&mut now, 0 as *mut libc::c_double,
-                         0 as *mut timespec);
+    SCH_GetLastEventTime(&mut now, 0 as *mut libc::c_double, 0 as *mut timespec);
     /* Step 1 - build intervals about each source */
     n_endpoints = 0 as libc::c_int;
     n_sel_sources = 0 as libc::c_int;
@@ -1262,53 +1329,55 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     max_reach_sample_ago = 0.0f64;
     i = 0 as libc::c_int;
     while i < n_sources {
-        if (**sources.offset(i as isize)).status as libc::c_uint !=
-               SRC_OK as libc::c_int as libc::c_uint {
+        if (**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint
+        {
         } else {
-            __assert_fail(b"sources[i]->status != SRC_OK\x00" as *const u8 as
-                              *const libc::c_char,
-                          b"sources.c\x00" as *const u8 as
-                              *const libc::c_char,
-                          631 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 36],
-                                                    &[libc::c_char; 36]>(b"void SRC_SelectSource(SRC_Instance)\x00")).as_ptr());
+            __assert_fail(
+                b"sources[i]->status != SRC_OK\x00" as *const u8 as *const libc::c_char,
+                b"sources.c\x00" as *const u8 as *const libc::c_char,
+                631 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 36], &[libc::c_char; 36]>(
+                    b"void SRC_SelectSource(SRC_Instance)\x00",
+                ))
+                .as_ptr(),
+            );
         }
         /* If some sources are specified with the require option, at least one
-       of them will have to be selectable in order to update the clock */
-        if (**sources.offset(i as isize)).sel_options & 0x8 as libc::c_int !=
-               0 {
+        of them will have to be selectable in order to update the clock */
+        if (**sources.offset(i as isize)).sel_options & 0x8 as libc::c_int != 0 {
             sel_req_source = 1 as libc::c_int
         }
         /* Ignore sources which were added with the noselect option */
-        if (**sources.offset(i as isize)).sel_options & 0x1 as libc::c_int !=
-               0 {
+        if (**sources.offset(i as isize)).sel_options & 0x1 as libc::c_int != 0 {
             (**sources.offset(i as isize)).status = SRC_UNSELECTABLE
         } else {
             si = &mut (**sources.offset(i as isize)).sel_info;
-            SST_GetSelectionData((**sources.offset(i as isize)).stats,
-                                 &mut now, &mut (*si).stratum,
-                                 &mut (*si).leap, &mut (*si).lo_limit,
-                                 &mut (*si).hi_limit,
-                                 &mut (*si).root_distance, &mut (*si).std_dev,
-                                 &mut first_sample_ago,
-                                 &mut (*si).last_sample_ago,
-                                 &mut (*si).select_ok);
+            SST_GetSelectionData(
+                (**sources.offset(i as isize)).stats,
+                &mut now,
+                &mut (*si).stratum,
+                &mut (*si).leap,
+                &mut (*si).lo_limit,
+                &mut (*si).hi_limit,
+                &mut (*si).root_distance,
+                &mut (*si).std_dev,
+                &mut first_sample_ago,
+                &mut (*si).last_sample_ago,
+                &mut (*si).select_ok,
+            );
             if (*si).select_ok == 0 {
                 n_badstats_sources += 1;
                 (**sources.offset(i as isize)).status = SRC_BAD_STATS;
-                if max_badstat_reach <
-                       (**sources.offset(i as isize)).reachability {
-                    max_badstat_reach =
-                        (**sources.offset(i as isize)).reachability
+                if max_badstat_reach < (**sources.offset(i as isize)).reachability {
+                    max_badstat_reach = (**sources.offset(i as isize)).reachability
                 }
             } else {
                 /* Include extra dispersion in the root distance of sources that don't
-       have new samples (the last sample is older than span of all samples) */
+                have new samples (the last sample is older than span of all samples) */
                 if first_sample_ago < 2.0f64 * (*si).last_sample_ago {
-                    let mut extra_disp: libc::c_double =
-                        LCL_GetMaxClockError() *
-                            (2.0f64 * (*si).last_sample_ago -
-                                 first_sample_ago);
+                    let mut extra_disp: libc::c_double = LCL_GetMaxClockError()
+                        * (2.0f64 * (*si).last_sample_ago - first_sample_ago);
                     (*si).root_distance += extra_disp;
                     (*si).lo_limit -= extra_disp;
                     (*si).hi_limit += extra_disp
@@ -1320,21 +1389,17 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
                     (**sources.offset(i as isize)).status = SRC_JITTERY
                 } else {
                     /* And the same applies for the estimated standard deviation */
-                    (**sources.offset(i as isize)).status =
-                        SRC_OK; /* For now */
-                    if (**sources.offset(i as isize)).reachability != 0 &&
-                           max_reach_sample_ago < first_sample_ago {
+                    (**sources.offset(i as isize)).status = SRC_OK; /* For now */
+                    if (**sources.offset(i as isize)).reachability != 0
+                        && max_reach_sample_ago < first_sample_ago
+                    {
                         max_reach_sample_ago = first_sample_ago
                     }
-                    if max_sel_reach <
-                           (**sources.offset(i as isize)).reachability {
-                        max_sel_reach =
-                            (**sources.offset(i as isize)).reachability
+                    if max_sel_reach < (**sources.offset(i as isize)).reachability {
+                        max_sel_reach = (**sources.offset(i as isize)).reachability
                     }
-                    if max_sel_reach_size <
-                           (**sources.offset(i as isize)).reachability_size {
-                        max_sel_reach_size =
-                            (**sources.offset(i as isize)).reachability_size
+                    if max_sel_reach_size < (**sources.offset(i as isize)).reachability_size {
+                        max_sel_reach_size = (**sources.offset(i as isize)).reachability_size
                     }
                 }
             }
@@ -1345,76 +1410,79 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     orphan_source = -(1 as libc::c_int);
     i = 0 as libc::c_int;
     while i < n_sources {
-        if !((**sources.offset(i as isize)).status as libc::c_uint !=
-                 SRC_OK as libc::c_int as libc::c_uint) {
+        if !((**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint)
+        {
             si = &mut (**sources.offset(i as isize)).sel_info;
             /* Reachability is not a requirement for selection.  An unreachable source
-       can still be selected if its newest sample is not older than the oldest
-       sample from reachable sources. */
-            if (**sources.offset(i as isize)).reachability == 0 &&
-                   max_reach_sample_ago < (*si).last_sample_ago {
+            can still be selected if its newest sample is not older than the oldest
+            sample from reachable sources. */
+            if (**sources.offset(i as isize)).reachability == 0
+                && max_reach_sample_ago < (*si).last_sample_ago
+            {
                 (**sources.offset(i as isize)).status = SRC_STALE
-            } else if (*si).stratum >= orphan_stratum &&
-                          (**sources.offset(i as isize)).type_0 as
-                              libc::c_uint ==
-                              SRC_NTP as libc::c_int as libc::c_uint {
+            } else if (*si).stratum >= orphan_stratum
+                && (**sources.offset(i as isize)).type_0 as libc::c_uint
+                    == SRC_NTP as libc::c_int as libc::c_uint
+            {
                 (**sources.offset(i as isize)).status = SRC_ORPHAN;
-                if (*si).stratum == orphan_stratum &&
-                       (**sources.offset(i as isize)).reachability != 0 &&
-                       (orphan_source == -(1 as libc::c_int) ||
-                            (**sources.offset(i as isize)).ref_id <
-                                (**sources.offset(orphan_source as
-                                                      isize)).ref_id) {
+                if (*si).stratum == orphan_stratum
+                    && (**sources.offset(i as isize)).reachability != 0
+                    && (orphan_source == -(1 as libc::c_int)
+                        || (**sources.offset(i as isize)).ref_id
+                            < (**sources.offset(orphan_source as isize)).ref_id)
+                {
                     orphan_source = i
                 }
-            } else { n_sel_sources += 1 }
+            } else {
+                n_sel_sources += 1
+            }
         }
         i += 1
     }
     /* When the local reference is configured with the orphan option, NTP
-       sources that have stratum equal to the configured local stratum are
-       considered to be orphans (i.e. serving local time while not being
-       synchronised with real time) and are excluded from the normal source
-       selection.  Sources with stratum larger than the local stratum are
-       considered to be directly on indirectly synchronised to an orphan and
-       are always ignored.
+    sources that have stratum equal to the configured local stratum are
+    considered to be orphans (i.e. serving local time while not being
+    synchronised with real time) and are excluded from the normal source
+    selection.  Sources with stratum larger than the local stratum are
+    considered to be directly on indirectly synchronised to an orphan and
+    are always ignored.
 
-       If no selectable source is available and all orphan sources have
-       reference IDs larger than the local ID, no source will be selected and
-       the local reference mode will be activated at some point, i.e. this host
-       will become an orphan.  Otherwise, the orphan source with the smallest
-       reference ID will be selected.  This ensures a group of servers polling
-       each other (with the same orphan configuration) which have no external
-       source can settle down to a state where only one server is serving its
-       local unsychronised time and others are synchronised to it. */
+    If no selectable source is available and all orphan sources have
+    reference IDs larger than the local ID, no source will be selected and
+    the local reference mode will be activated at some point, i.e. this host
+    will become an orphan.  Otherwise, the orphan source with the smallest
+    reference ID will be selected.  This ensures a group of servers polling
+    each other (with the same orphan configuration) which have no external
+    source can settle down to a state where only one server is serving its
+    local unsychronised time and others are synchronised to it. */
     /* If no selectable source is available, consider the orphan source */
     if n_sel_sources == 0 && orphan_source != -(1 as libc::c_int) {
         let mut local_ref_id: uint32_t =
-            NSR_GetLocalRefid((**sources.offset(orphan_source as
-                                                    isize)).ip_addr);
+            NSR_GetLocalRefid((**sources.offset(orphan_source as isize)).ip_addr);
         if local_ref_id == 0 {
-            LOG_Message(LOGS_ERR,
-                        b"Unknown local refid in orphan mode\x00" as *const u8
-                            as *const libc::c_char);
-        } else if (**sources.offset(orphan_source as isize)).ref_id <
-                      local_ref_id {
+            LOG_Message(
+                LOGS_ERR,
+                b"Unknown local refid in orphan mode\x00" as *const u8 as *const libc::c_char,
+            );
+        } else if (**sources.offset(orphan_source as isize)).ref_id < local_ref_id {
             (**sources.offset(orphan_source as isize)).status = SRC_OK;
             n_sel_sources = 1 as libc::c_int;
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
-                LOG_Message(LOGS_DEBUG,
-                            b"selecting orphan refid=%x\x00" as *const u8 as
-                                *const libc::c_char,
-                            (**sources.offset(orphan_source as
-                                                  isize)).ref_id);
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
+                LOG_Message(
+                    LOGS_DEBUG,
+                    b"selecting orphan refid=%x\x00" as *const u8 as *const libc::c_char,
+                    (**sources.offset(orphan_source as isize)).ref_id,
+                );
             }
         }
     }
     i = 0 as libc::c_int;
     while i < n_sources {
-        if !((**sources.offset(i as isize)).status as libc::c_uint !=
-                 SRC_OK as libc::c_int as libc::c_uint) {
+        if !((**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint)
+        {
             si = &mut (**sources.offset(i as isize)).sel_info;
             j1 = n_endpoints;
             j2 = j1 + 1 as libc::c_int;
@@ -1428,72 +1496,84 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
         }
         i += 1
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"badstat=%d sel=%d badstat_reach=%x sel_reach=%x size=%d max_reach_ago=%f\x00"
-                        as *const u8 as *const libc::c_char,
-                    n_badstats_sources, n_sel_sources,
-                    max_badstat_reach as libc::c_uint,
-                    max_sel_reach as libc::c_uint, max_sel_reach_size,
-                    max_reach_sample_ago);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"badstat=%d sel=%d badstat_reach=%x sel_reach=%x size=%d max_reach_ago=%f\x00"
+                as *const u8 as *const libc::c_char,
+            n_badstats_sources,
+            n_sel_sources,
+            max_badstat_reach as libc::c_uint,
+            max_sel_reach as libc::c_uint,
+            max_sel_reach_size,
+            max_reach_sample_ago,
+        );
     }
     /* Wait for the next call if we have no source selected and there is
-     a source with bad stats (has less than 3 samples) with reachability
-     equal to shifted maximum reachability of sources with valid stats.
-     This delays selecting source on start with servers using the same
-     polling interval until they all have valid stats. */
-    if n_badstats_sources != 0 && n_sel_sources != 0 &&
-           selected_source_index == -(1 as libc::c_int) &&
-           max_sel_reach_size < 8 as libc::c_int &&
-           max_sel_reach >> 1 as libc::c_int == max_badstat_reach {
+    a source with bad stats (has less than 3 samples) with reachability
+    equal to shifted maximum reachability of sources with valid stats.
+    This delays selecting source on start with servers using the same
+    polling interval until they all have valid stats. */
+    if n_badstats_sources != 0
+        && n_sel_sources != 0
+        && selected_source_index == -(1 as libc::c_int)
+        && max_sel_reach_size < 8 as libc::c_int
+        && max_sel_reach >> 1 as libc::c_int == max_badstat_reach
+    {
         mark_ok_sources(SRC_WAITS_STATS);
-        return
+        return;
     }
     if n_endpoints == 0 as libc::c_int {
         /* No sources provided valid endpoints */
         if selected_source_index != -(1 as libc::c_int) {
-            log_selection_message(b"Can\'t synchronise: no selectable sources\x00"
-                                      as *const u8 as *const libc::c_char as
-                                      *mut libc::c_char,
-                                  0 as *mut libc::c_char);
+            log_selection_message(
+                b"Can\'t synchronise: no selectable sources\x00" as *const u8 as *const libc::c_char
+                    as *mut libc::c_char,
+                0 as *mut libc::c_char,
+            );
             selected_source_index = -(1 as libc::c_int)
         }
-        return
+        return;
     }
     /* Now sort the endpoint list */
-    qsort(sort_list as *mut libc::c_void, n_endpoints as size_t,
-          ::std::mem::size_of::<Sort_Element>() as libc::c_ulong,
-          Some(compare_sort_elements as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
-                       -> libc::c_int));
+    qsort(
+        sort_list as *mut libc::c_void,
+        n_endpoints as size_t,
+        ::std::mem::size_of::<Sort_Element>() as libc::c_ulong,
+        Some(
+            compare_sort_elements
+                as unsafe extern "C" fn(
+                    _: *const libc::c_void,
+                    _: *const libc::c_void,
+                ) -> libc::c_int,
+        ),
+    );
     /* Now search for the interval which is contained in the most
-     individual source intervals.  Any source which overlaps this
-     will be a candidate.
+    individual source intervals.  Any source which overlaps this
+    will be a candidate.
 
-     If we get a case like
+    If we get a case like
 
-     <----------------------->
-         <-->
-                  <-->
-         <===========>
+    <----------------------->
+        <-->
+                 <-->
+        <===========>
 
-     we will build the interval as shown with '=', whereas with an extra source we get
+    we will build the interval as shown with '=', whereas with an extra source we get
 
-     <----------------------->
-        <------->
-         <-->
-                  <-->
-         <==>
+    <----------------------->
+       <------->
+        <-->
+                 <-->
+        <==>
 
-     The first case is just bad luck - we need extra sources to
-     detect the falseticker, so just make an arbitrary choice based
-     on stratum & stability etc.
+    The first case is just bad luck - we need extra sources to
+    detect the falseticker, so just make an arbitrary choice based
+    on stratum & stability etc.
 
-     Intervals from sources specified with the trust option have higher
-     priority in the search.
-     */
+    Intervals from sources specified with the trust option have higher
+    priority in the search.
+    */
     best_trust_depth = 0 as libc::c_int;
     trust_depth = best_trust_depth;
     best_depth = 0 as libc::c_int;
@@ -1505,13 +1585,15 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
         match (*sort_list.offset(i as isize)).tag as libc::c_int {
             -1 => {
                 depth += 1;
-                if (**sources.offset((*sort_list.offset(i as isize)).index as
-                                         isize)).sel_options &
-                       0x4 as libc::c_int != 0 {
+                if (**sources.offset((*sort_list.offset(i as isize)).index as isize)).sel_options
+                    & 0x4 as libc::c_int
+                    != 0
+                {
                     trust_depth += 1
                 }
-                if trust_depth > best_trust_depth ||
-                       trust_depth == best_trust_depth && depth > best_depth {
+                if trust_depth > best_trust_depth
+                    || trust_depth == best_trust_depth && depth > best_depth
+                {
                     best_trust_depth = trust_depth;
                     best_depth = depth;
                     best_lo = (*sort_list.offset(i as isize)).offset
@@ -1521,121 +1603,119 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
                 if trust_depth == best_trust_depth && depth == best_depth {
                     best_hi = (*sort_list.offset(i as isize)).offset
                 }
-                if (**sources.offset((*sort_list.offset(i as isize)).index as
-                                         isize)).sel_options &
-                       0x4 as libc::c_int != 0 {
+                if (**sources.offset((*sort_list.offset(i as isize)).index as isize)).sel_options
+                    & 0x4 as libc::c_int
+                    != 0
+                {
                     trust_depth -= 1
                 }
                 depth -= 1
             }
             _ => {
-                __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                              b"sources.c\x00" as *const u8 as
-                                  *const libc::c_char,
-                              852 as libc::c_int as libc::c_uint,
-                              (*::std::mem::transmute::<&[u8; 36],
-                                                        &[libc::c_char; 36]>(b"void SRC_SelectSource(SRC_Instance)\x00")).as_ptr());
+                __assert_fail(
+                    b"0\x00" as *const u8 as *const libc::c_char,
+                    b"sources.c\x00" as *const u8 as *const libc::c_char,
+                    852 as libc::c_int as libc::c_uint,
+                    (*::std::mem::transmute::<&[u8; 36], &[libc::c_char; 36]>(
+                        b"void SRC_SelectSource(SRC_Instance)\x00",
+                    ))
+                    .as_ptr(),
+                );
             }
         }
         i += 1
     }
-    if best_depth <= n_sel_sources / 2 as libc::c_int && best_trust_depth == 0
-       {
+    if best_depth <= n_sel_sources / 2 as libc::c_int && best_trust_depth == 0 {
         /* Could not even get half the reachable sources to agree and there
-       are no trusted sources - clearly we can't synchronise */
+        are no trusted sources - clearly we can't synchronise */
         if selected_source_index != -(1 as libc::c_int) {
-            log_selection_message(b"Can\'t synchronise: no majority\x00" as
-                                      *const u8 as *const libc::c_char as
-                                      *mut libc::c_char,
-                                  0 as *mut libc::c_char);
+            log_selection_message(
+                b"Can\'t synchronise: no majority\x00" as *const u8 as *const libc::c_char
+                    as *mut libc::c_char,
+                0 as *mut libc::c_char,
+            );
             REF_SetUnsynchronised();
             selected_source_index = -(1 as libc::c_int)
         }
         /* .. and mark all sources as falsetickers (so they appear thus
-       on the outputs from the command client) */
+        on the outputs from the command client) */
         mark_ok_sources(SRC_FALSETICKER);
-        return
+        return;
     }
     /* We have our interval, now work out which source are in it,
-     i.e. build list of admissible sources. */
+    i.e. build list of admissible sources. */
     n_sel_sources = 0 as libc::c_int;
     i = 0 as libc::c_int;
     while i < n_sources {
         /* This should be the same condition to get into the endpoint
-       list */
-        if !((**sources.offset(i as isize)).status as libc::c_uint !=
-                 SRC_OK as libc::c_int as libc::c_uint) {
+        list */
+        if !((**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint)
+        {
             /* Check if source's interval contains the best interval, or is wholly
-       contained within it.  If there are any trusted sources the first
-       condition is applied only to them to not allow non-trusted sources to
-       move the final offset outside the interval. */
-            if (best_trust_depth == 0 ||
-                    (**sources.offset(i as isize)).sel_options &
-                        0x4 as libc::c_int != 0) &&
-                   (**sources.offset(i as isize)).sel_info.lo_limit <= best_lo
-                   &&
-                   (**sources.offset(i as isize)).sel_info.hi_limit >= best_hi
-                   ||
-                   (**sources.offset(i as isize)).sel_info.lo_limit >= best_lo
-                       &&
-                       (**sources.offset(i as isize)).sel_info.hi_limit <=
-                           best_hi {
+            contained within it.  If there are any trusted sources the first
+            condition is applied only to them to not allow non-trusted sources to
+            move the final offset outside the interval. */
+            if (best_trust_depth == 0
+                || (**sources.offset(i as isize)).sel_options & 0x4 as libc::c_int != 0)
+                && (**sources.offset(i as isize)).sel_info.lo_limit <= best_lo
+                && (**sources.offset(i as isize)).sel_info.hi_limit >= best_hi
+                || (**sources.offset(i as isize)).sel_info.lo_limit >= best_lo
+                    && (**sources.offset(i as isize)).sel_info.hi_limit <= best_hi
+            {
                 let fresh3 = n_sel_sources;
                 n_sel_sources = n_sel_sources + 1;
                 *sel_sources.offset(fresh3 as isize) = i;
-                if (**sources.offset(i as isize)).sel_options &
-                       0x8 as libc::c_int != 0 {
+                if (**sources.offset(i as isize)).sel_options & 0x8 as libc::c_int != 0 {
                     sel_req_source = 0 as libc::c_int
                 }
-            } else if (**sources.offset(i as isize)).sel_info.lo_limit <=
-                          best_lo &&
-                          (**sources.offset(i as isize)).sel_info.hi_limit >=
-                              best_hi {
+            } else if (**sources.offset(i as isize)).sel_info.lo_limit <= best_lo
+                && (**sources.offset(i as isize)).sel_info.hi_limit >= best_hi
+            {
                 (**sources.offset(i as isize)).status = SRC_UNTRUSTED
-            } else { (**sources.offset(i as isize)).status = SRC_FALSETICKER }
+            } else {
+                (**sources.offset(i as isize)).status = SRC_FALSETICKER
+            }
         }
         i += 1
     }
-    if n_sel_sources == 0 || sel_req_source != 0 ||
-           n_sel_sources < CNF_GetMinSources() {
+    if n_sel_sources == 0 || sel_req_source != 0 || n_sel_sources < CNF_GetMinSources() {
         if selected_source_index != -(1 as libc::c_int) {
-            log_selection_message(b"Can\'t synchronise: %s selectable sources\x00"
-                                      as *const u8 as *const libc::c_char as
-                                      *mut libc::c_char,
-                                  if n_sel_sources == 0 {
-                                      b"no\x00" as *const u8 as
-                                          *const libc::c_char
-                                  } else if sel_req_source != 0 {
-                                      b"no required source in\x00" as
-                                          *const u8 as *const libc::c_char
-                                  } else {
-                                      b"not enough\x00" as *const u8 as
-                                          *const libc::c_char
-                                  } as *mut libc::c_char);
+            log_selection_message(
+                b"Can\'t synchronise: %s selectable sources\x00" as *const u8 as *const libc::c_char
+                    as *mut libc::c_char,
+                if n_sel_sources == 0 {
+                    b"no\x00" as *const u8 as *const libc::c_char
+                } else if sel_req_source != 0 {
+                    b"no required source in\x00" as *const u8 as *const libc::c_char
+                } else {
+                    b"not enough\x00" as *const u8 as *const libc::c_char
+                } as *mut libc::c_char,
+            );
             selected_source_index = -(1 as libc::c_int)
         }
         mark_ok_sources(SRC_WAITS_SOURCES);
-        return
+        return;
     }
     /* Accept leap second status if more than half of selectable (and trusted
-     if there are any) sources agree */
+    if there are any) sources agree */
     leap_votes = 0 as libc::c_int;
     leap_del = leap_votes;
     leap_ins = leap_del;
     i = leap_ins;
     while i < n_sel_sources {
         index = *sel_sources.offset(i as isize);
-        if !(best_trust_depth != 0 &&
-                 (**sources.offset(index as isize)).sel_options &
-                     0x4 as libc::c_int == 0) {
+        if !(best_trust_depth != 0
+            && (**sources.offset(index as isize)).sel_options & 0x4 as libc::c_int == 0)
+        {
             leap_votes += 1;
-            if (**sources.offset(index as isize)).sel_info.leap as
-                   libc::c_uint ==
-                   LEAP_InsertSecond as libc::c_int as libc::c_uint {
+            if (**sources.offset(index as isize)).sel_info.leap as libc::c_uint
+                == LEAP_InsertSecond as libc::c_int as libc::c_uint
+            {
                 leap_ins += 1
-            } else if (**sources.offset(index as isize)).sel_info.leap as
-                          libc::c_uint ==
-                          LEAP_DeleteSecond as libc::c_int as libc::c_uint {
+            } else if (**sources.offset(index as isize)).sel_info.leap as libc::c_uint
+                == LEAP_DeleteSecond as libc::c_int as libc::c_uint
+            {
                 leap_del += 1
             }
         }
@@ -1645,15 +1725,18 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
         leap_status = LEAP_InsertSecond
     } else if leap_del > leap_votes / 2 as libc::c_int {
         leap_status = LEAP_DeleteSecond
-    } else { leap_status = LEAP_Normal }
+    } else {
+        leap_status = LEAP_Normal
+    }
     /* If there are any sources with prefer option, reduce the list again
-     only to the preferred sources */
+    only to the preferred sources */
     i = 0 as libc::c_int;
     while i < n_sel_sources {
-        if (**sources.offset(*sel_sources.offset(i as isize) as
-                                 isize)).sel_options & 0x2 as libc::c_int != 0
-           {
-            break ;
+        if (**sources.offset(*sel_sources.offset(i as isize) as isize)).sel_options
+            & 0x2 as libc::c_int
+            != 0
+        {
+            break;
         }
         i += 1
     }
@@ -1661,31 +1744,36 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
         j = 0 as libc::c_int;
         i = j;
         while i < n_sel_sources {
-            if (**sources.offset(*sel_sources.offset(i as isize) as
-                                     isize)).sel_options & 0x2 as libc::c_int
-                   == 0 {
-                (**sources.offset(*sel_sources.offset(i as isize) as
-                                      isize)).status = SRC_NONPREFERRED
+            if (**sources.offset(*sel_sources.offset(i as isize) as isize)).sel_options
+                & 0x2 as libc::c_int
+                == 0
+            {
+                (**sources.offset(*sel_sources.offset(i as isize) as isize)).status =
+                    SRC_NONPREFERRED
             } else {
                 let fresh4 = j;
                 j = j + 1;
-                *sel_sources.offset(fresh4 as isize) =
-                    *sel_sources.offset(i as isize)
+                *sel_sources.offset(fresh4 as isize) = *sel_sources.offset(i as isize)
             }
             i += 1
         }
         if j > 0 as libc::c_int {
         } else {
-            __assert_fail(b"j > 0\x00" as *const u8 as *const libc::c_char,
-                          b"sources.c\x00" as *const u8 as
-                              *const libc::c_char,
-                          950 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 36],
-                                                    &[libc::c_char; 36]>(b"void SRC_SelectSource(SRC_Instance)\x00")).as_ptr());
+            __assert_fail(
+                b"j > 0\x00" as *const u8 as *const libc::c_char,
+                b"sources.c\x00" as *const u8 as *const libc::c_char,
+                950 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 36], &[libc::c_char; 36]>(
+                    b"void SRC_SelectSource(SRC_Instance)\x00",
+                ))
+                .as_ptr(),
+            );
         }
         n_sel_sources = j;
         sel_prefer = 1 as libc::c_int
-    } else { sel_prefer = 0 as libc::c_int }
+    } else {
+        sel_prefer = 0 as libc::c_int
+    }
     /* Find minimum stratum */
     index = *sel_sources.offset(0 as libc::c_int as isize);
     min_stratum = (**sources.offset(index as isize)).sel_info.stratum;
@@ -1693,7 +1781,9 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     while i < n_sel_sources {
         index = *sel_sources.offset(i as isize);
         stratum = (**sources.offset(index as isize)).sel_info.stratum;
-        if stratum < min_stratum { min_stratum = stratum }
+        if stratum < min_stratum {
+            min_stratum = stratum
+        }
         i += 1
     }
     /* Update scores and find the source with maximum score */
@@ -1701,63 +1791,67 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     max_score = 0.0f64;
     sel_src_distance = 0.0f64;
     if selected_source_index != -(1 as libc::c_int) {
-        sel_src_distance =
-            (**sources.offset(selected_source_index as
-                                  isize)).sel_info.root_distance +
-                ((**sources.offset(selected_source_index as
-                                       isize)).sel_info.stratum - min_stratum)
-                    as libc::c_double * stratum_weight
+        sel_src_distance = (**sources.offset(selected_source_index as isize))
+            .sel_info
+            .root_distance
+            + ((**sources.offset(selected_source_index as isize))
+                .sel_info
+                .stratum
+                - min_stratum) as libc::c_double
+                * stratum_weight
     }
     i = 0 as libc::c_int;
     while i < n_sources {
         /* Reset score for non-selectable sources */
-        if (**sources.offset(i as isize)).status as libc::c_uint !=
-               SRC_OK as libc::c_int as libc::c_uint ||
-               sel_prefer != 0 &&
-                   (**sources.offset(i as isize)).sel_options &
-                       0x2 as libc::c_int == 0 {
+        if (**sources.offset(i as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint
+            || sel_prefer != 0
+                && (**sources.offset(i as isize)).sel_options & 0x2 as libc::c_int == 0
+        {
             (**sources.offset(i as isize)).sel_score = 1.0f64;
             (**sources.offset(i as isize)).distant = 32 as libc::c_int
         } else {
-            distance =
-                (**sources.offset(i as isize)).sel_info.root_distance +
-                    ((**sources.offset(i as isize)).sel_info.stratum -
-                         min_stratum) as libc::c_double * stratum_weight;
-            if (**sources.offset(i as isize)).type_0 as libc::c_uint ==
-                   SRC_NTP as libc::c_int as libc::c_uint {
+            distance = (**sources.offset(i as isize)).sel_info.root_distance
+                + ((**sources.offset(i as isize)).sel_info.stratum - min_stratum) as libc::c_double
+                    * stratum_weight;
+            if (**sources.offset(i as isize)).type_0 as libc::c_uint
+                == SRC_NTP as libc::c_int as libc::c_uint
+            {
                 distance += reselect_distance
             }
             if selected_source_index != -(1 as libc::c_int) {
                 /* Update score, but only for source pairs where one source
-         has a new sample */
-                if *sources.offset(i as isize) == updated_inst ||
-                       *sources.offset(selected_source_index as isize) ==
-                           updated_inst {
-                    (**sources.offset(i as isize)).sel_score *=
-                        sel_src_distance / distance;
+                has a new sample */
+                if *sources.offset(i as isize) == updated_inst
+                    || *sources.offset(selected_source_index as isize) == updated_inst
+                {
+                    (**sources.offset(i as isize)).sel_score *= sel_src_distance / distance;
                     if (**sources.offset(i as isize)).sel_score < 1.0f64 {
                         (**sources.offset(i as isize)).sel_score = 1.0f64
                     }
                 }
             } else {
                 /* When there is no selected source yet, assign scores so that the
-         source with minimum distance will have maximum score.  The scores
-         will be reset when the source is selected later in this function. */
+                source with minimum distance will have maximum score.  The scores
+                will be reset when the source is selected later in this function. */
                 (**sources.offset(i as isize)).sel_score = 1.0f64 / distance
             }
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
-                LOG_Message(LOGS_DEBUG,
-                            b"select score=%f refid=%x match_refid=%x status=%u dist=%f\x00"
-                                as *const u8 as *const libc::c_char,
-                            (**sources.offset(i as isize)).sel_score,
-                            (**sources.offset(i as isize)).ref_id,
-                            if !updated_inst.is_null() {
-                                (*updated_inst).ref_id
-                            } else { 0 as libc::c_int as libc::c_uint },
-                            (**sources.offset(i as isize)).status as
-                                libc::c_uint, distance);
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
+                LOG_Message(
+                    LOGS_DEBUG,
+                    b"select score=%f refid=%x match_refid=%x status=%u dist=%f\x00" as *const u8
+                        as *const libc::c_char,
+                    (**sources.offset(i as isize)).sel_score,
+                    (**sources.offset(i as isize)).ref_id,
+                    if !updated_inst.is_null() {
+                        (*updated_inst).ref_id
+                    } else {
+                        0 as libc::c_int as libc::c_uint
+                    },
+                    (**sources.offset(i as isize)).status as libc::c_uint,
+                    distance,
+                );
             }
             if max_score < (**sources.offset(i as isize)).sel_score {
                 max_score = (**sources.offset(i as isize)).sel_score;
@@ -1768,40 +1862,42 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     }
     if max_score_index != -(1 as libc::c_int) {
     } else {
-        __assert_fail(b"max_score_index != INVALID_SOURCE\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"sources.c\x00" as *const u8 as *const libc::c_char,
-                      1021 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 36],
-                                                &[libc::c_char; 36]>(b"void SRC_SelectSource(SRC_Instance)\x00")).as_ptr());
+        __assert_fail(
+            b"max_score_index != INVALID_SOURCE\x00" as *const u8 as *const libc::c_char,
+            b"sources.c\x00" as *const u8 as *const libc::c_char,
+            1021 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 36], &[libc::c_char; 36]>(
+                b"void SRC_SelectSource(SRC_Instance)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     /* Is the current source still a survivor and no other source has reached
-     the score limit? */
-    if selected_source_index == -(1 as libc::c_int) ||
-           (**sources.offset(selected_source_index as isize)).status as
-               libc::c_uint != SRC_OK as libc::c_int as libc::c_uint ||
-           max_score_index != selected_source_index && max_score > 10.0f64 {
+    the score limit? */
+    if selected_source_index == -(1 as libc::c_int)
+        || (**sources.offset(selected_source_index as isize)).status as libc::c_uint
+            != SRC_OK as libc::c_int as libc::c_uint
+        || max_score_index != selected_source_index && max_score > 10.0f64
+    {
         /* Before selecting the new synchronisation source wait until the reference
-       can be updated */
-        if (**sources.offset(max_score_index as isize)).updates ==
-               0 as libc::c_int {
+        can be updated */
+        if (**sources.offset(max_score_index as isize)).updates == 0 as libc::c_int {
             selected_source_index = -(1 as libc::c_int);
             mark_ok_sources(SRC_WAITS_UPDATE);
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
-                LOG_Message(LOGS_DEBUG,
-                            b"best source has no updates\x00" as *const u8 as
-                                *const libc::c_char);
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
+                LOG_Message(
+                    LOGS_DEBUG,
+                    b"best source has no updates\x00" as *const u8 as *const libc::c_char,
+                );
             }
-            return
+            return;
         }
         selected_source_index = max_score_index;
-        log_selection_message(b"Selected source %s\x00" as *const u8 as
-                                  *const libc::c_char as *mut libc::c_char,
-                              source_to_string(*sources.offset(selected_source_index
-                                                                   as
-                                                                   isize)));
+        log_selection_message(
+            b"Selected source %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            source_to_string(*sources.offset(selected_source_index as isize)),
+        );
         /* New source has been selected, reset all scores */
         i = 0 as libc::c_int;
         while i < n_sources {
@@ -1812,22 +1908,24 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
     }
     (**sources.offset(selected_source_index as isize)).status = SRC_SELECTED;
     /* Don't update reference when the selected source has no new samples */
-    if (**sources.offset(selected_source_index as isize)).updates ==
-           0 as libc::c_int {
+    if (**sources.offset(selected_source_index as isize)).updates == 0 as libc::c_int {
         /* Mark the remaining sources as last combine_sources() call */
         i = 0 as libc::c_int;
         while i < n_sel_sources {
             index = *sel_sources.offset(i as isize);
-            if (**sources.offset(index as isize)).status as libc::c_uint ==
-                   SRC_OK as libc::c_int as libc::c_uint {
+            if (**sources.offset(index as isize)).status as libc::c_uint
+                == SRC_OK as libc::c_int as libc::c_uint
+            {
                 (**sources.offset(index as isize)).status =
                     if (**sources.offset(index as isize)).distant != 0 {
                         SRC_DISTANT as libc::c_int
-                    } else { SRC_UNSELECTED as libc::c_int } as SRC_Status
+                    } else {
+                        SRC_UNSELECTED as libc::c_int
+                    } as SRC_Status
             }
             i += 1
         }
-        return
+        return;
     }
     i = 0 as libc::c_int;
     while i < n_sources {
@@ -1835,27 +1933,44 @@ pub unsafe extern "C" fn SRC_SelectSource(mut updated_inst: SRC_Instance) {
         i += 1
     }
     /* Now just use the statistics of the selected source combined with
-     the other selectable sources for trimming the local clock */
-    SST_GetTrackingData((**sources.offset(selected_source_index as
-                                              isize)).stats, &mut ref_time,
-                        &mut src_offset, &mut src_offset_sd,
-                        &mut src_frequency, &mut src_frequency_sd,
-                        &mut src_skew, &mut src_root_delay,
-                        &mut src_root_dispersion);
-    combined =
-        combine_sources(n_sel_sources, &mut ref_time, &mut src_offset,
-                        &mut src_offset_sd, &mut src_frequency,
-                        &mut src_frequency_sd, &mut src_skew);
-    REF_SetReference((**sources.offset(selected_source_index as
-                                           isize)).sel_info.stratum,
-                     leap_status, combined,
-                     (**sources.offset(selected_source_index as
-                                           isize)).ref_id,
-                     (**sources.offset(selected_source_index as
-                                           isize)).ip_addr, &mut ref_time,
-                     src_offset, src_offset_sd, src_frequency,
-                     src_frequency_sd, src_skew, src_root_delay,
-                     src_root_dispersion);
+    the other selectable sources for trimming the local clock */
+    SST_GetTrackingData(
+        (**sources.offset(selected_source_index as isize)).stats,
+        &mut ref_time,
+        &mut src_offset,
+        &mut src_offset_sd,
+        &mut src_frequency,
+        &mut src_frequency_sd,
+        &mut src_skew,
+        &mut src_root_delay,
+        &mut src_root_dispersion,
+    );
+    combined = combine_sources(
+        n_sel_sources,
+        &mut ref_time,
+        &mut src_offset,
+        &mut src_offset_sd,
+        &mut src_frequency,
+        &mut src_frequency_sd,
+        &mut src_skew,
+    );
+    REF_SetReference(
+        (**sources.offset(selected_source_index as isize))
+            .sel_info
+            .stratum,
+        leap_status,
+        combined,
+        (**sources.offset(selected_source_index as isize)).ref_id,
+        (**sources.offset(selected_source_index as isize)).ip_addr,
+        &mut ref_time,
+        src_offset,
+        src_offset_sd,
+        src_frequency,
+        src_frequency_sd,
+        src_skew,
+        src_root_delay,
+        src_root_dispersion,
+    );
 }
 /* ================================================== */
 /* Force reselecting the best source */
@@ -1866,88 +1981,96 @@ pub unsafe extern "C" fn SRC_ReselectSource() {
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_SetReselectDistance(mut distance:
-                                                     libc::c_double) {
+pub unsafe extern "C" fn SRC_SetReselectDistance(mut distance: libc::c_double) {
     if reselect_distance != distance {
         reselect_distance = distance;
-        LOG_Message(LOGS_INFO,
-                    b"New reselect distance %f\x00" as *const u8 as
-                        *const libc::c_char, distance);
+        LOG_Message(
+            LOGS_INFO,
+            b"New reselect distance %f\x00" as *const u8 as *const libc::c_char,
+            distance,
+        );
     };
 }
 /* ================================================== */
 /* Forward prototype */
 /* ================================================== */
 /* This routine is registered as a callback with the local clock
-   module, to be called whenever the local clock changes frequency or
-   is slewed.  It runs through all the existing source statistics, and
-   adjusts them to make them look as though they were sampled under
-   the new regime. */
-unsafe extern "C" fn slew_sources(mut raw: *mut timespec,
-                                  mut cooked: *mut timespec,
-                                  mut dfreq: libc::c_double,
-                                  mut doffset: libc::c_double,
-                                  mut change_type: LCL_ChangeType,
-                                  mut anything: *mut libc::c_void) {
+module, to be called whenever the local clock changes frequency or
+is slewed.  It runs through all the existing source statistics, and
+adjusts them to make them look as though they were sampled under
+the new regime. */
+unsafe extern "C" fn slew_sources(
+    mut raw: *mut timespec,
+    mut cooked: *mut timespec,
+    mut dfreq: libc::c_double,
+    mut doffset: libc::c_double,
+    mut change_type: LCL_ChangeType,
+    mut anything: *mut libc::c_void,
+) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < n_sources {
-        if change_type as libc::c_uint ==
-               LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
+        if change_type as libc::c_uint == LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
             SST_ResetInstance((**sources.offset(i as isize)).stats);
         } else {
-            SST_SlewSamples((**sources.offset(i as isize)).stats, cooked,
-                            dfreq, doffset);
+            SST_SlewSamples((**sources.offset(i as isize)).stats, cooked, dfreq, doffset);
         }
         i += 1
     }
-    if change_type as libc::c_uint ==
-           LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
+    if change_type as libc::c_uint == LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
         /* After resetting no source is selectable, set reference unsynchronised */
         SRC_SelectSource(0 as SRC_Instance);
     };
 }
 /* ================================================== */
 /* This routine is called when an indeterminate offset is introduced
-   into the local time. */
-unsafe extern "C" fn add_dispersion(mut dispersion: libc::c_double,
-                                    mut anything: *mut libc::c_void) {
+into the local time. */
+unsafe extern "C" fn add_dispersion(
+    mut dispersion: libc::c_double,
+    mut anything: *mut libc::c_void,
+) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < n_sources {
         SST_AddDispersion((**sources.offset(i as isize)).stats, dispersion);
         i += 1
-    };
+    }
 }
 /* ================================================== */
-unsafe extern "C" fn open_dumpfile(mut inst: SRC_Instance,
-                                   mut mode: libc::c_char) -> *mut FILE {
+unsafe extern "C" fn open_dumpfile(mut inst: SRC_Instance, mut mode: libc::c_char) -> *mut FILE {
     let mut filename: [libc::c_char; 64] = [0; 64];
     let mut dumpdir: *mut libc::c_char = 0 as *mut libc::c_char;
     dumpdir = CNF_GetDumpDir();
-    if *dumpdir.offset(0 as libc::c_int as isize) as libc::c_int ==
-           '\u{0}' as i32 {
-        LOG_Message(LOGS_WARN,
-                    b"dumpdir not specified\x00" as *const u8 as
-                        *const libc::c_char);
-        return 0 as *mut FILE
+    if *dumpdir.offset(0 as libc::c_int as isize) as libc::c_int == '\u{0}' as i32 {
+        LOG_Message(
+            LOGS_WARN,
+            b"dumpdir not specified\x00" as *const u8 as *const libc::c_char,
+        );
+        return 0 as *mut FILE;
     }
     /* Include IP address in the name for NTP sources, or reference ID in hex */
-    if (*inst).type_0 as libc::c_uint ==
-           SRC_NTP as libc::c_int as libc::c_uint {
-        snprintf(filename.as_mut_ptr(),
-                 ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
-                 b"%s\x00" as *const u8 as *const libc::c_char,
-                 source_to_string(inst));
+    if (*inst).type_0 as libc::c_uint == SRC_NTP as libc::c_int as libc::c_uint {
+        snprintf(
+            filename.as_mut_ptr(),
+            ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
+            b"%s\x00" as *const u8 as *const libc::c_char,
+            source_to_string(inst),
+        );
     } else {
-        snprintf(filename.as_mut_ptr(),
-                 ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
-                 b"refid:%08x\x00" as *const u8 as *const libc::c_char,
-                 (*inst).ref_id);
+        snprintf(
+            filename.as_mut_ptr(),
+            ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
+            b"refid:%08x\x00" as *const u8 as *const libc::c_char,
+            (*inst).ref_id,
+        );
     }
-    return UTI_OpenFile(dumpdir, filename.as_mut_ptr(),
-                        b".dat\x00" as *const u8 as *const libc::c_char, mode,
-                        0o644 as libc::c_int as mode_t);
+    return UTI_OpenFile(
+        dumpdir,
+        filename.as_mut_ptr(),
+        b".dat\x00" as *const u8 as *const libc::c_char,
+        mode,
+        0o644 as libc::c_int as mode_t,
+    );
 }
 /* ================================================== */
 /* This is called to dump out the source measurement registers */
@@ -1957,15 +2080,13 @@ pub unsafe extern "C" fn SRC_DumpSources() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < n_sources {
-        out =
-            open_dumpfile(*sources.offset(i as isize),
-                          'w' as i32 as libc::c_char);
+        out = open_dumpfile(*sources.offset(i as isize), 'w' as i32 as libc::c_char);
         if !out.is_null() {
             SST_SaveToFile((**sources.offset(i as isize)).stats, out);
             fclose(out);
         }
         i += 1
-    };
+    }
 }
 /* ================================================== */
 #[no_mangle]
@@ -1974,85 +2095,84 @@ pub unsafe extern "C" fn SRC_ReloadSources() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < n_sources {
-        in_0 =
-            open_dumpfile(*sources.offset(i as isize),
-                          'r' as i32 as libc::c_char);
+        in_0 = open_dumpfile(*sources.offset(i as isize), 'r' as i32 as libc::c_char);
         if !in_0.is_null() {
-            if SST_LoadFromFile((**sources.offset(i as isize)).stats, in_0) ==
-                   0 {
-                LOG_Message(LOGS_WARN,
-                            b"Could not load dump file for %s\x00" as
-                                *const u8 as *const libc::c_char,
-                            source_to_string(*sources.offset(i as isize)));
+            if SST_LoadFromFile((**sources.offset(i as isize)).stats, in_0) == 0 {
+                LOG_Message(
+                    LOGS_WARN,
+                    b"Could not load dump file for %s\x00" as *const u8 as *const libc::c_char,
+                    source_to_string(*sources.offset(i as isize)),
+                );
             } else {
-                LOG_Message(LOGS_INFO,
-                            b"Loaded dump file for %s\x00" as *const u8 as
-                                *const libc::c_char,
-                            source_to_string(*sources.offset(i as isize)));
+                LOG_Message(
+                    LOGS_INFO,
+                    b"Loaded dump file for %s\x00" as *const u8 as *const libc::c_char,
+                    source_to_string(*sources.offset(i as isize)),
+                );
             }
             fclose(in_0);
         }
         i += 1
-    };
+    }
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  This is the header for the module that manages the collection of all
-  sources that we are making measurements from.  This include all NTP
-  servers & peers, locally connected reference sources, eye/wristwatch
-  drivers etc */
+ This is the header for the module that manages the collection of all
+ sources that we are making measurements from.  This include all NTP
+ servers & peers, locally connected reference sources, eye/wristwatch
+ drivers etc */
 /* Size of the source reachability register */
 /* This datatype is used to hold information about sources.  The
-   instance must be passed when calling many of the interface
-   functions */
+instance must be passed when calling many of the interface
+functions */
 /* Initialisation function */
 /* Finalisation function */
 /* NTP client/peer */
 /* Rerefence clock */
 /* Function to create a new instance.  This would be called by one of
-   the individual source-type instance creation routines. */
+the individual source-type instance creation routines. */
 /* Function to get rid of a source when it is being unconfigured.
-   This may cause the current reference source to be reselected, if this
-   was the reference source or contributed significantly to a
-   falseticker decision. */
+This may cause the current reference source to be reselected, if this
+was the reference source or contributed significantly to a
+falseticker decision. */
 /* Function to reset a source */
 /* Function to change the sources's reference ID and IP address */
 /* Function to get access to the sourcestats instance */
 /* This function is called by one of the source drivers when it has
-   a new sample that is to be accumulated */
+a new sample that is to be accumulated */
 /* This routine sets the source as receiving reachability updates */
 /* This routine sets the source as not receiving reachability updates */
 /* This routine updates the reachability register */
 /* This routine marks the source unreachable */
 /* This routine is used to select the best source from amongst those
-   we currently have valid data on, and use it as the tracking base
-   for the local time.  Updates are made to the local reference only
-   when the selected source was updated (set as updated_inst) since
-   the last reference update.  This avoids updating the frequency
-   tracking for every sample from other sources - only the ones from
-   the selected reference make a difference. */
+we currently have valid data on, and use it as the tracking base
+for the local time.  Updates are made to the local reference only
+when the selected source was updated (set as updated_inst) since
+the last reference update.  This avoids updating the frequency
+tracking for every sample from other sources - only the ones from
+the selected reference make a difference. */
 /* Force reselecting the best source */
 /* Set reselect distance */
 /* ================================================== */
@@ -2062,63 +2182,67 @@ pub unsafe extern "C" fn SRC_RemoveDumpFiles() {
     let mut name: [libc::c_char; 64] = [0; 64];
     let mut dumpdir: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut ip_addr: IPAddr =
-        IPAddr{addr: C2RustUnnamed{in4: 0,}, family: 0, _pad: 0,};
-    let mut gl: glob_t =
-        glob_t{gl_pathc: 0,
-               gl_pathv: 0 as *mut *mut libc::c_char,
-               gl_offs: 0,
-               gl_flags: 0,
-               gl_closedir: None,
-               gl_readdir: None,
-               gl_opendir: None,
-               gl_lstat: None,
-               gl_stat: None,};
+    let mut ip_addr: IPAddr = IPAddr {
+        addr: C2RustUnnamed { in4: 0 },
+        family: 0,
+        _pad: 0,
+    };
+    let mut gl: glob_t = glob_t {
+        gl_pathc: 0,
+        gl_pathv: 0 as *mut *mut libc::c_char,
+        gl_offs: 0,
+        gl_flags: 0,
+        gl_closedir: None,
+        gl_readdir: None,
+        gl_opendir: None,
+        gl_lstat: None,
+        gl_stat: None,
+    };
     let mut i: size_t = 0;
     dumpdir = CNF_GetDumpDir();
-    if *dumpdir.offset(0 as libc::c_int as isize) as libc::c_int ==
-           '\u{0}' as i32 ||
-           snprintf(pattern.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 4096]>() as
-                        libc::c_ulong,
-                    b"%s/*.dat\x00" as *const u8 as *const libc::c_char,
-                    dumpdir) as libc::c_ulong >=
-               ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong
-       {
-        return
+    if *dumpdir.offset(0 as libc::c_int as isize) as libc::c_int == '\u{0}' as i32
+        || snprintf(
+            pattern.as_mut_ptr(),
+            ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong,
+            b"%s/*.dat\x00" as *const u8 as *const libc::c_char,
+            dumpdir,
+        ) as libc::c_ulong
+            >= ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong
+    {
+        return;
     }
     if glob(pattern.as_mut_ptr(), 0 as libc::c_int, None, &mut gl) != 0 {
-        return
+        return;
     }
     i = 0 as libc::c_int as size_t;
     while i < gl.gl_pathc {
         s = strrchr(*gl.gl_pathv.offset(i as isize), '/' as i32);
-        if !(s.is_null() ||
-                 snprintf(name.as_mut_ptr(),
-                          ::std::mem::size_of::<[libc::c_char; 64]>() as
-                              libc::c_ulong,
-                          b"%s\x00" as *const u8 as *const libc::c_char,
-                          s.offset(1 as libc::c_int as isize)) as
-                     libc::c_ulong >=
-                     ::std::mem::size_of::<[libc::c_char; 64]>() as
-                         libc::c_ulong) {
+        if !(s.is_null()
+            || snprintf(
+                name.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
+                b"%s\x00" as *const u8 as *const libc::c_char,
+                s.offset(1 as libc::c_int as isize),
+            ) as libc::c_ulong
+                >= ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong)
+        {
             /* Remove .dat extension */
-            if !(strlen(name.as_mut_ptr()) <
-                     4 as libc::c_int as libc::c_ulong) {
-                name[strlen(name.as_mut_ptr()).wrapping_sub(4 as libc::c_int
-                                                                as
-                                                                libc::c_ulong)
-                         as usize] = '\u{0}' as i32 as libc::c_char;
+            if !(strlen(name.as_mut_ptr()) < 4 as libc::c_int as libc::c_ulong) {
+                name[strlen(name.as_mut_ptr()).wrapping_sub(4 as libc::c_int as libc::c_ulong)
+                    as usize] = '\u{0}' as i32 as libc::c_char;
                 /* Check if it looks like name of an actual dump file */
-                if !(strncmp(name.as_mut_ptr(),
-                             b"refid:\x00" as *const u8 as
-                                 *const libc::c_char,
-                             6 as libc::c_int as libc::c_ulong) != 0 &&
-                         UTI_StringToIP(name.as_mut_ptr(), &mut ip_addr) == 0)
-                   {
-                    (UTI_RemoveFile(0 as *const libc::c_char,
-                                    *gl.gl_pathv.offset(i as isize),
-                                    0 as *const libc::c_char)) == 0;
+                if !(strncmp(
+                    name.as_mut_ptr(),
+                    b"refid:\x00" as *const u8 as *const libc::c_char,
+                    6 as libc::c_int as libc::c_ulong,
+                ) != 0
+                    && UTI_StringToIP(name.as_mut_ptr(), &mut ip_addr) == 0)
+                {
+                    (UTI_RemoveFile(
+                        0 as *const libc::c_char,
+                        *gl.gl_pathv.offset(i as isize),
+                        0 as *const libc::c_char,
+                    )) == 0;
                 }
             }
         }
@@ -2128,16 +2252,16 @@ pub unsafe extern "C" fn SRC_RemoveDumpFiles() {
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_IsSyncPeer(mut inst: SRC_Instance)
- -> libc::c_int {
+pub unsafe extern "C" fn SRC_IsSyncPeer(mut inst: SRC_Instance) -> libc::c_int {
     if (*inst).index == selected_source_index {
-        return 1 as libc::c_int
-    } else { return 0 as libc::c_int };
+        return 1 as libc::c_int;
+    } else {
+        return 0 as libc::c_int;
+    };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_IsReachable(mut inst: SRC_Instance)
- -> libc::c_int {
+pub unsafe extern "C" fn SRC_IsReachable(mut inst: SRC_Instance) -> libc::c_int {
     return ((*inst).reachability != 0 as libc::c_int) as libc::c_int;
 }
 /* ================================================== */
@@ -2153,20 +2277,23 @@ pub unsafe extern "C" fn SRC_ActiveSources() -> libc::c_int {
     r = 0 as libc::c_int;
     i = r;
     while i < n_sources {
-        if (**sources.offset(i as isize)).active != 0 { r += 1 }
+        if (**sources.offset(i as isize)).active != 0 {
+            r += 1
+        }
         i += 1
     }
     return r;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_ReportSource(mut index: libc::c_int,
-                                          mut report: *mut RPT_SourceReport,
-                                          mut now: *mut timespec)
- -> libc::c_int {
+pub unsafe extern "C" fn SRC_ReportSource(
+    mut index: libc::c_int,
+    mut report: *mut RPT_SourceReport,
+    mut now: *mut timespec,
+) -> libc::c_int {
     let mut src: SRC_Instance = 0 as *mut SRC_Instance_Record;
     if index >= n_sources || index < 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
         src = *sources.offset(index as isize);
         if !(*src).ip_addr.is_null() {
@@ -2177,45 +2304,47 @@ pub unsafe extern "C" fn SRC_ReportSource(mut index: libc::c_int,
             (*report).ip_addr.family = 1 as libc::c_int as uint16_t
         }
         match (*src).status as libc::c_uint {
-            9 => { (*report).state = RPT_FALSETICKER }
-            4 => { (*report).state = RPT_JITTERY }
-            8 | 10 | 11 | 12 | 13 | 14 => { (*report).state = RPT_OUTLIER }
-            15 => { (*report).state = RPT_CANDIDATE }
-            16 => { (*report).state = RPT_SYNC }
-            _ => { (*report).state = RPT_UNREACH }
+            9 => (*report).state = RPT_FALSETICKER,
+            4 => (*report).state = RPT_JITTERY,
+            8 | 10 | 11 | 12 | 13 | 14 => (*report).state = RPT_OUTLIER,
+            15 => (*report).state = RPT_CANDIDATE,
+            16 => (*report).state = RPT_SYNC,
+            _ => (*report).state = RPT_UNREACH,
         }
         (*report).sel_options = (*src).sel_options;
         (*report).reachability = (*src).reachability;
         /* Call stats module to fill out estimates */
         SST_DoSourceReport((*src).stats, report, now);
-        return 1 as libc::c_int
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SRC_ReportSourcestats(mut index: libc::c_int,
-                                               mut report:
-                                                   *mut RPT_SourcestatsReport,
-                                               mut now: *mut timespec)
- -> libc::c_int {
+pub unsafe extern "C" fn SRC_ReportSourcestats(
+    mut index: libc::c_int,
+    mut report: *mut RPT_SourcestatsReport,
+    mut now: *mut timespec,
+) -> libc::c_int {
     let mut src: SRC_Instance = 0 as *mut SRC_Instance_Record;
     if index >= n_sources || index < 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
         src = *sources.offset(index as isize);
         (*report).ref_id = (*src).ref_id;
         if !(*src).ip_addr.is_null() {
             (*report).ip_addr = *(*src).ip_addr
-        } else { (*report).ip_addr.family = 0 as libc::c_int as uint16_t }
+        } else {
+            (*report).ip_addr.family = 0 as libc::c_int as uint16_t
+        }
         SST_DoSourcestatsReport((*src).stats, report, now);
-        return 1 as libc::c_int
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn SRC_GetType(mut index: libc::c_int) -> SRC_Type {
     if index >= n_sources || index < 0 as libc::c_int {
-        return 4294967295 as SRC_Type
+        return 4294967295 as SRC_Type;
     }
     return (**sources.offset(index as isize)).type_0;
 }

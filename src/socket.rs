@@ -19,50 +19,68 @@ extern "C" {
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn __cmsg_nxthdr(__mhdr: *mut msghdr, __cmsg: *mut cmsghdr)
-     -> *mut cmsghdr;
+    fn __cmsg_nxthdr(__mhdr: *mut msghdr, __cmsg: *mut cmsghdr) -> *mut cmsghdr;
     #[no_mangle]
-    fn socket(__domain: libc::c_int, __type: libc::c_int,
-              __protocol: libc::c_int) -> libc::c_int;
+    fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn socketpair(__domain: libc::c_int, __type: libc::c_int,
-                  __protocol: libc::c_int, __fds: *mut libc::c_int)
-     -> libc::c_int;
+    fn socketpair(
+        __domain: libc::c_int,
+        __type: libc::c_int,
+        __protocol: libc::c_int,
+        __fds: *mut libc::c_int,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn bind(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG, __len: socklen_t)
-     -> libc::c_int;
+    fn bind(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG, __len: socklen_t) -> libc::c_int;
     #[no_mangle]
-    fn getsockname(__fd: libc::c_int, __addr: __SOCKADDR_ARG,
-                   __len: *mut socklen_t) -> libc::c_int;
+    fn getsockname(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __len: *mut socklen_t)
+        -> libc::c_int;
     #[no_mangle]
-    fn connect(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG,
-               __len: socklen_t) -> libc::c_int;
+    fn connect(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG, __len: socklen_t) -> libc::c_int;
     #[no_mangle]
-    fn send(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t,
-            __flags: libc::c_int) -> ssize_t;
+    fn send(
+        __fd: libc::c_int,
+        __buf: *const libc::c_void,
+        __n: size_t,
+        __flags: libc::c_int,
+    ) -> ssize_t;
     #[no_mangle]
-    fn recv(__fd: libc::c_int, __buf: *mut libc::c_void, __n: size_t,
-            __flags: libc::c_int) -> ssize_t;
+    fn recv(
+        __fd: libc::c_int,
+        __buf: *mut libc::c_void,
+        __n: size_t,
+        __flags: libc::c_int,
+    ) -> ssize_t;
     #[no_mangle]
-    fn sendmsg(__fd: libc::c_int, __message: *const msghdr,
-               __flags: libc::c_int) -> ssize_t;
+    fn sendmsg(__fd: libc::c_int, __message: *const msghdr, __flags: libc::c_int) -> ssize_t;
     #[no_mangle]
-    fn recvmmsg(__fd: libc::c_int, __vmessages: *mut mmsghdr,
-                __vlen: libc::c_uint, __flags: libc::c_int,
-                __tmo: *mut timespec) -> libc::c_int;
+    fn recvmmsg(
+        __fd: libc::c_int,
+        __vmessages: *mut mmsghdr,
+        __vlen: libc::c_uint,
+        __flags: libc::c_int,
+        __tmo: *mut timespec,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn getsockopt(__fd: libc::c_int, __level: libc::c_int,
-                  __optname: libc::c_int, __optval: *mut libc::c_void,
-                  __optlen: *mut socklen_t) -> libc::c_int;
+    fn getsockopt(
+        __fd: libc::c_int,
+        __level: libc::c_int,
+        __optname: libc::c_int,
+        __optval: *mut libc::c_void,
+        __optlen: *mut socklen_t,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn setsockopt(__fd: libc::c_int, __level: libc::c_int,
-                  __optname: libc::c_int, __optval: *const libc::c_void,
-                  __optlen: socklen_t) -> libc::c_int;
+    fn setsockopt(
+        __fd: libc::c_int,
+        __level: libc::c_int,
+        __optname: libc::c_int,
+        __optval: *const libc::c_void,
+        __optlen: socklen_t,
+    ) -> libc::c_int;
     #[no_mangle]
     fn listen(__fd: libc::c_int, __n: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn accept(__fd: libc::c_int, __addr: __SOCKADDR_ARG,
-              __addr_len: *mut socklen_t) -> libc::c_int;
+    fn accept(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __addr_len: *mut socklen_t)
+        -> libc::c_int;
     #[no_mangle]
     fn shutdown(__fd: libc::c_int, __how: libc::c_int) -> libc::c_int;
     #[no_mangle]
@@ -78,14 +96,16 @@ extern "C" {
     #[no_mangle]
     fn htons(__hostshort: uint16_t) -> uint16_t;
     #[no_mangle]
-    fn snprintf(_: *mut libc::c_char, _: libc::c_ulong,
-                _: *const libc::c_char, _: ...) -> libc::c_int;
+    fn snprintf(
+        _: *mut libc::c_char,
+        _: libc::c_ulong,
+        _: *const libc::c_char,
+        _: ...
+    ) -> libc::c_int;
     #[no_mangle]
-    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
-    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     fn strerror(_: libc::c_int) -> *mut libc::c_char;
     #[no_mangle]
@@ -93,9 +113,12 @@ extern "C" {
     #[no_mangle]
     fn close(__fd: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     /* Create a new array with given element size */
     #[no_mangle]
     fn ARR_CreateInstance(elem_size: libc::c_uint) -> ARR_Instance;
@@ -104,8 +127,7 @@ extern "C" {
     fn ARR_DestroyInstance(array: ARR_Instance);
     /* Return element with given index */
     #[no_mangle]
-    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint)
-     -> *mut libc::c_void;
+    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint) -> *mut libc::c_void;
     /* Return pointer to the internal array of elements */
     #[no_mangle]
     fn ARR_GetElements(array: ARR_Instance) -> *mut libc::c_void;
@@ -120,8 +142,7 @@ extern "C" {
     static mut log_min_severity: LOG_Severity;
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
     #[no_mangle]
     fn UTI_IsZeroTimespec(ts: *mut timespec) -> libc::c_int;
     #[no_mangle]
@@ -131,13 +152,15 @@ extern "C" {
     #[no_mangle]
     fn UTI_IPSockAddrToString(sa: *mut IPSockAddr) -> *mut libc::c_char;
     #[no_mangle]
-    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr)
-     -> libc::c_int;
+    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr) -> libc::c_int;
     #[no_mangle]
     fn UTI_IPToString(ip: *mut IPAddr) -> *mut libc::c_char;
     #[no_mangle]
-    fn UTI_RemoveFile(basedir: *const libc::c_char, name: *const libc::c_char,
-                      suffix: *const libc::c_char) -> libc::c_int;
+    fn UTI_RemoveFile(
+        basedir: *const libc::c_char,
+        name: *const libc::c_char,
+        suffix: *const libc::c_char,
+    ) -> libc::c_int;
     #[no_mangle]
     fn UTI_FdSetCloexec(fd: libc::c_int) -> libc::c_int;
 }
@@ -453,30 +476,30 @@ pub union C2RustUnnamed_8 {
     pub path: *const libc::c_char,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for array functions.
-  */
+ Header file for array functions.
+ */
 pub type ARR_Instance = *mut ARR_Instance_Record;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1053,13 +1076,11 @@ static mut supported_socket_flags: libc::c_int = 0;
 /* Arrays of Message and MessageHeader */
 static mut recv_messages: ARR_Instance =
     0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
-static mut recv_headers: ARR_Instance =
-    0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
+static mut recv_headers: ARR_Instance = 0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
 static mut received_messages: libc::c_uint = 0;
-static mut priv_bind_function:
-       Option<unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr,
-                                   _: socklen_t) -> libc::c_int> =
-    None;
+static mut priv_bind_function: Option<
+    unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr, _: socklen_t) -> libc::c_int,
+> = None;
 /* ================================================== */
 unsafe extern "C" fn prepare_buffers(mut n: libc::c_uint) {
     let mut hdr: *mut mmsghdr = 0 as *mut mmsghdr;
@@ -1069,278 +1090,342 @@ unsafe extern "C" fn prepare_buffers(mut n: libc::c_uint) {
     while i < n {
         msg = ARR_GetElement(recv_messages, i) as *mut Message;
         hdr = ARR_GetElement(recv_headers, i) as *mut mmsghdr;
-        (*msg).iov.iov_base =
-            &mut (*msg).msg_buf as *mut C2RustUnnamed_9 as *mut libc::c_void;
-        (*msg).iov.iov_len =
-            ::std::mem::size_of::<C2RustUnnamed_9>() as libc::c_ulong;
-        (*hdr).msg_hdr.msg_name =
-            &mut (*msg).name as *mut sockaddr_all as *mut libc::c_void;
+        (*msg).iov.iov_base = &mut (*msg).msg_buf as *mut C2RustUnnamed_9 as *mut libc::c_void;
+        (*msg).iov.iov_len = ::std::mem::size_of::<C2RustUnnamed_9>() as libc::c_ulong;
+        (*hdr).msg_hdr.msg_name = &mut (*msg).name as *mut sockaddr_all as *mut libc::c_void;
         (*hdr).msg_hdr.msg_namelen =
-            ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as
-                socklen_t;
+            ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as socklen_t;
         (*hdr).msg_hdr.msg_iov = &mut (*msg).iov;
         (*hdr).msg_hdr.msg_iovlen = 1 as libc::c_int as size_t;
         (*hdr).msg_hdr.msg_control =
             &mut (*msg).cmsg_buf as *mut [cmsghdr; 16] as *mut libc::c_void;
-        (*hdr).msg_hdr.msg_controllen =
-            ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong;
+        (*hdr).msg_hdr.msg_controllen = ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong;
         (*hdr).msg_hdr.msg_flags = 0 as libc::c_int;
         (*hdr).msg_len = 0 as libc::c_int as libc::c_uint;
         i = i.wrapping_add(1)
-    };
+    }
 }
 /* ================================================== */
-unsafe extern "C" fn domain_to_string(mut domain: libc::c_int)
- -> *const libc::c_char {
+unsafe extern "C" fn domain_to_string(mut domain: libc::c_int) -> *const libc::c_char {
     match domain {
-        2 => { return b"IPv4\x00" as *const u8 as *const libc::c_char }
-        10 => { return b"IPv6\x00" as *const u8 as *const libc::c_char }
-        1 => { return b"Unix\x00" as *const u8 as *const libc::c_char }
-        0 => { return b"UNSPEC\x00" as *const u8 as *const libc::c_char }
-        _ => { return b"?\x00" as *const u8 as *const libc::c_char }
+        2 => return b"IPv4\x00" as *const u8 as *const libc::c_char,
+        10 => return b"IPv6\x00" as *const u8 as *const libc::c_char,
+        1 => return b"Unix\x00" as *const u8 as *const libc::c_char,
+        0 => return b"UNSPEC\x00" as *const u8 as *const libc::c_char,
+        _ => return b"?\x00" as *const u8 as *const libc::c_char,
     };
 }
 /* ================================================== */
-unsafe extern "C" fn check_socket_flag(mut sock_flag: libc::c_int,
-                                       mut fd_flag: libc::c_int,
-                                       mut fs_flag: libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn check_socket_flag(
+    mut sock_flag: libc::c_int,
+    mut fd_flag: libc::c_int,
+    mut fs_flag: libc::c_int,
+) -> libc::c_int {
     let mut sock_fd: libc::c_int = 0;
     let mut fd_flags: libc::c_int = 0;
     let mut fs_flags: libc::c_int = 0;
-    sock_fd =
-        socket(2 as libc::c_int, SOCK_DGRAM as libc::c_int | sock_flag,
-               0 as libc::c_int);
-    if sock_fd < 0 as libc::c_int { return 0 as libc::c_int }
+    sock_fd = socket(
+        2 as libc::c_int,
+        SOCK_DGRAM as libc::c_int | sock_flag,
+        0 as libc::c_int,
+    );
+    if sock_fd < 0 as libc::c_int {
+        return 0 as libc::c_int;
+    }
     fd_flags = fcntl(sock_fd, 1 as libc::c_int);
     fs_flags = fcntl(sock_fd, 3 as libc::c_int);
     close(sock_fd);
-    if fd_flags == -(1 as libc::c_int) || fd_flags & fd_flag != fd_flag ||
-           fs_flags == -(1 as libc::c_int) || fs_flags & fs_flag != fs_flag {
-        return 0 as libc::c_int
+    if fd_flags == -(1 as libc::c_int)
+        || fd_flags & fd_flag != fd_flag
+        || fs_flags == -(1 as libc::c_int)
+        || fs_flags & fs_flag != fs_flag
+    {
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn set_socket_nonblock(mut sock_fd: libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn set_socket_nonblock(mut sock_fd: libc::c_int) -> libc::c_int {
     if fcntl(sock_fd, 4 as libc::c_int, 0o4000 as libc::c_int) != 0 {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not set O_NONBLOCK : %s\x00" as *const u8 as
-                            *const libc::c_char,
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not set O_NONBLOCK : %s\x00" as *const u8 as *const libc::c_char,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 unsafe extern "C" fn get_open_flags(mut flags: libc::c_int) -> libc::c_int {
     let mut r: libc::c_int = supported_socket_flags;
-    if flags & 1 as libc::c_int != 0 { r &= !(SOCK_NONBLOCK as libc::c_int) }
+    if flags & 1 as libc::c_int != 0 {
+        r &= !(SOCK_NONBLOCK as libc::c_int)
+    }
     return r;
 }
 /* ================================================== */
-unsafe extern "C" fn set_socket_flags(mut sock_fd: libc::c_int,
-                                      mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn set_socket_flags(
+    mut sock_fd: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     /* Close the socket automatically on exec */
-    if supported_socket_flags & SOCK_CLOEXEC as libc::c_int ==
-           0 as libc::c_int && UTI_FdSetCloexec(sock_fd) == 0 {
-        return 0 as libc::c_int
+    if supported_socket_flags & SOCK_CLOEXEC as libc::c_int == 0 as libc::c_int
+        && UTI_FdSetCloexec(sock_fd) == 0
+    {
+        return 0 as libc::c_int;
     }
     /* Enable non-blocking mode */
-    if flags & 1 as libc::c_int == 0 as libc::c_int &&
-           supported_socket_flags & SOCK_NONBLOCK as libc::c_int ==
-               0 as libc::c_int && set_socket_nonblock(sock_fd) == 0 {
-        return 0 as libc::c_int
+    if flags & 1 as libc::c_int == 0 as libc::c_int
+        && supported_socket_flags & SOCK_NONBLOCK as libc::c_int == 0 as libc::c_int
+        && set_socket_nonblock(sock_fd) == 0
+    {
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn open_socket(mut domain: libc::c_int,
-                                 mut type_0: libc::c_int,
-                                 mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn open_socket(
+    mut domain: libc::c_int,
+    mut type_0: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut sock_fd: libc::c_int = 0;
-    sock_fd =
-        socket(domain, type_0 | get_open_flags(flags), 0 as libc::c_int);
+    sock_fd = socket(domain, type_0 | get_open_flags(flags), 0 as libc::c_int);
     if sock_fd < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not open %s socket : %s\x00" as *const u8 as
-                            *const libc::c_char, domain_to_string(domain),
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not open %s socket : %s\x00" as *const u8 as *const libc::c_char,
+                domain_to_string(domain),
+                strerror(*__errno_location()),
+            );
         }
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
     if set_socket_flags(sock_fd, flags) == 0 {
         close(sock_fd);
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
     return sock_fd;
 }
 /* ================================================== */
-unsafe extern "C" fn open_socket_pair(mut domain: libc::c_int,
-                                      mut type_0: libc::c_int,
-                                      mut flags: libc::c_int,
-                                      mut other_fd: *mut libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn open_socket_pair(
+    mut domain: libc::c_int,
+    mut type_0: libc::c_int,
+    mut flags: libc::c_int,
+    mut other_fd: *mut libc::c_int,
+) -> libc::c_int {
     let mut sock_fds: [libc::c_int; 2] = [0; 2];
-    if socketpair(domain, type_0 | get_open_flags(flags), 0 as libc::c_int,
-                  sock_fds.as_mut_ptr()) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not open %s socket : %s\x00" as *const u8 as
-                            *const libc::c_char, domain_to_string(domain),
-                        strerror(*__errno_location()));
+    if socketpair(
+        domain,
+        type_0 | get_open_flags(flags),
+        0 as libc::c_int,
+        sock_fds.as_mut_ptr(),
+    ) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not open %s socket : %s\x00" as *const u8 as *const libc::c_char,
+                domain_to_string(domain),
+                strerror(*__errno_location()),
+            );
         }
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
-    if set_socket_flags(sock_fds[0 as libc::c_int as usize], flags) == 0 ||
-           set_socket_flags(sock_fds[1 as libc::c_int as usize], flags) == 0 {
+    if set_socket_flags(sock_fds[0 as libc::c_int as usize], flags) == 0
+        || set_socket_flags(sock_fds[1 as libc::c_int as usize], flags) == 0
+    {
         close(sock_fds[0 as libc::c_int as usize]);
         close(sock_fds[1 as libc::c_int as usize]);
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
     *other_fd = sock_fds[1 as libc::c_int as usize];
     return sock_fds[0 as libc::c_int as usize];
 }
 /* ================================================== */
-unsafe extern "C" fn set_socket_options(mut sock_fd: libc::c_int,
-                                        mut flags: libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn set_socket_options(
+    mut sock_fd: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     /* Make the socket capable of sending broadcast packets if requested */
-    (flags & 2 as libc::c_int != 0) &&
-        SCK_SetIntOption(sock_fd, 1 as libc::c_int, 6 as libc::c_int,
-                         1 as libc::c_int) == 0;
+    (flags & 2 as libc::c_int != 0)
+        && SCK_SetIntOption(
+            sock_fd,
+            1 as libc::c_int,
+            6 as libc::c_int,
+            1 as libc::c_int,
+        ) == 0;
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn set_ip_options(mut sock_fd: libc::c_int,
-                                    mut family: libc::c_int,
-                                    mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn set_ip_options(
+    mut sock_fd: libc::c_int,
+    mut family: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     /* Receive only IPv6 packets on an IPv6 socket */
-    if family == 2 as libc::c_int &&
-           SCK_SetIntOption(sock_fd, IPPROTO_IPV6 as libc::c_int,
-                            26 as libc::c_int, 1 as libc::c_int) == 0 {
-        return 0 as libc::c_int
+    if family == 2 as libc::c_int
+        && SCK_SetIntOption(
+            sock_fd,
+            IPPROTO_IPV6 as libc::c_int,
+            26 as libc::c_int,
+            1 as libc::c_int,
+        ) == 0
+    {
+        return 0 as libc::c_int;
     }
     /* Provide destination address of received packets if requested */
     if flags & 4 as libc::c_int != 0 {
         if family == 1 as libc::c_int {
-            (SCK_SetIntOption(sock_fd, IPPROTO_IP as libc::c_int,
-                              8 as libc::c_int, 1 as libc::c_int)) == 0;
+            (SCK_SetIntOption(
+                sock_fd,
+                IPPROTO_IP as libc::c_int,
+                8 as libc::c_int,
+                1 as libc::c_int,
+            )) == 0;
         } else if family == 2 as libc::c_int {
-            (SCK_SetIntOption(sock_fd, IPPROTO_IPV6 as libc::c_int,
-                              49 as libc::c_int, 1 as libc::c_int)) == 0;
+            (SCK_SetIntOption(
+                sock_fd,
+                IPPROTO_IPV6 as libc::c_int,
+                49 as libc::c_int,
+                1 as libc::c_int,
+            )) == 0;
         }
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 unsafe extern "C" fn is_any_address(mut addr: *mut IPAddr) -> libc::c_int {
-    let mut any_addr: IPAddr =
-        IPAddr{addr: C2RustUnnamed_5{in4: 0,}, family: 0, _pad: 0,};
+    let mut any_addr: IPAddr = IPAddr {
+        addr: C2RustUnnamed_5 { in4: 0 },
+        family: 0,
+        _pad: 0,
+    };
     SCK_GetAnyLocalIPAddress((*addr).family as libc::c_int, &mut any_addr);
-    return (UTI_CompareIPs(&mut any_addr, addr, 0 as *mut IPAddr) ==
-                0 as libc::c_int) as libc::c_int;
+    return (UTI_CompareIPs(&mut any_addr, addr, 0 as *mut IPAddr) == 0 as libc::c_int)
+        as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn bind_ip_address(mut sock_fd: libc::c_int,
-                                     mut addr: *mut IPSockAddr,
-                                     mut flags: libc::c_int) -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
+unsafe extern "C" fn bind_ip_address(
+    mut sock_fd: libc::c_int,
+    mut addr: *mut IPSockAddr,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
     let mut saddr_len: socklen_t = 0;
     let mut s: libc::c_int = 0;
     /* Make the socket capable of re-using an old address if binding to a specific port */
-    ((*addr).port as libc::c_int > 0 as libc::c_int) &&
-        SCK_SetIntOption(sock_fd, 1 as libc::c_int, 2 as libc::c_int,
-                         1 as libc::c_int) == 0;
+    ((*addr).port as libc::c_int > 0 as libc::c_int)
+        && SCK_SetIntOption(
+            sock_fd,
+            1 as libc::c_int,
+            2 as libc::c_int,
+            1 as libc::c_int,
+        ) == 0;
     /* Allow binding to an address that doesn't exist yet */
-    (SCK_SetIntOption(sock_fd, IPPROTO_IP as libc::c_int, 15 as libc::c_int,
-                      1 as libc::c_int)) == 0;
-    saddr_len =
-        SCK_IPSockAddrToSockaddr(addr,
-                                 &mut saddr as *mut sockaddr_all as
-                                     *mut sockaddr,
-                                 ::std::mem::size_of::<sockaddr_all>() as
-                                     libc::c_ulong as libc::c_int) as
-            socklen_t;
+    (SCK_SetIntOption(
+        sock_fd,
+        IPPROTO_IP as libc::c_int,
+        15 as libc::c_int,
+        1 as libc::c_int,
+    )) == 0;
+    saddr_len = SCK_IPSockAddrToSockaddr(
+        addr,
+        &mut saddr as *mut sockaddr_all as *mut sockaddr,
+        ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as libc::c_int,
+    ) as socklen_t;
     if saddr_len == 0 as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     if flags & 16 as libc::c_int != 0 && priv_bind_function.is_some() {
-        s =
-            priv_bind_function.expect("non-null function pointer")(sock_fd,
-                                                                   &mut saddr.sa,
-                                                                   saddr_len)
+        s = priv_bind_function.expect("non-null function pointer")(
+            sock_fd,
+            &mut saddr.sa,
+            saddr_len,
+        )
     } else {
-        s =
-            bind(sock_fd, __CONST_SOCKADDR_ARG{__sockaddr__: &mut saddr.sa,},
-                 saddr_len)
+        s = bind(
+            sock_fd,
+            __CONST_SOCKADDR_ARG {
+                __sockaddr__: &mut saddr.sa,
+            },
+            saddr_len,
+        )
     }
     if s < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not bind socket to %s : %s\x00" as *const u8
-                            as *const libc::c_char,
-                        UTI_IPSockAddrToString(addr),
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not bind socket to %s : %s\x00" as *const u8 as *const libc::c_char,
+                UTI_IPSockAddrToString(addr),
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn connect_ip_address(mut sock_fd: libc::c_int,
-                                        mut addr: *mut IPSockAddr)
- -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
+unsafe extern "C" fn connect_ip_address(
+    mut sock_fd: libc::c_int,
+    mut addr: *mut IPSockAddr,
+) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
     let mut saddr_len: socklen_t = 0;
-    saddr_len =
-        SCK_IPSockAddrToSockaddr(addr,
-                                 &mut saddr as *mut sockaddr_all as
-                                     *mut sockaddr,
-                                 ::std::mem::size_of::<sockaddr_all>() as
-                                     libc::c_ulong as libc::c_int) as
-            socklen_t;
+    saddr_len = SCK_IPSockAddrToSockaddr(
+        addr,
+        &mut saddr as *mut sockaddr_all as *mut sockaddr,
+        ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as libc::c_int,
+    ) as socklen_t;
     if saddr_len == 0 as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    if connect(sock_fd, __CONST_SOCKADDR_ARG{__sockaddr__: &mut saddr.sa,},
-               saddr_len) < 0 as libc::c_int &&
-           *__errno_location() != 115 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not connect socket to %s : %s\x00" as
-                            *const u8 as *const libc::c_char,
-                        UTI_IPSockAddrToString(addr),
-                        strerror(*__errno_location()));
+    if connect(
+        sock_fd,
+        __CONST_SOCKADDR_ARG {
+            __sockaddr__: &mut saddr.sa,
+        },
+        saddr_len,
+    ) < 0 as libc::c_int
+        && *__errno_location() != 115 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not connect socket to %s : %s\x00" as *const u8 as *const libc::c_char,
+                UTI_IPSockAddrToString(addr),
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn open_ip_socket(mut remote_addr: *mut IPSockAddr,
-                                    mut local_addr: *mut IPSockAddr,
-                                    mut type_0: libc::c_int,
-                                    mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn open_ip_socket(
+    mut remote_addr: *mut IPSockAddr,
+    mut local_addr: *mut IPSockAddr,
+    mut type_0: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut domain: libc::c_int = 0;
     let mut family: libc::c_int = 0;
     let mut sock_fd: libc::c_int = 0;
@@ -1348,94 +1433,86 @@ unsafe extern "C" fn open_ip_socket(mut remote_addr: *mut IPSockAddr,
         family = (*local_addr).ip_addr.family as libc::c_int
     } else if !remote_addr.is_null() {
         family = (*remote_addr).ip_addr.family as libc::c_int
-    } else { family = 1 as libc::c_int }
+    } else {
+        family = 1 as libc::c_int
+    }
     match family {
-        1 => { domain = 2 as libc::c_int }
-        2 => { domain = 10 as libc::c_int }
+        1 => domain = 2 as libc::c_int,
+        2 => domain = 10 as libc::c_int,
         _ => {
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
-                LOG_Message(LOGS_DEBUG,
-                            b"Unspecified family\x00" as *const u8 as
-                                *const libc::c_char);
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
+                LOG_Message(
+                    LOGS_DEBUG,
+                    b"Unspecified family\x00" as *const u8 as *const libc::c_char,
+                );
             }
-            return -(4 as libc::c_int)
+            return -(4 as libc::c_int);
         }
     }
     sock_fd = open_socket(domain, type_0, flags);
-    if sock_fd < 0 as libc::c_int { return -(4 as libc::c_int) }
+    if sock_fd < 0 as libc::c_int {
+        return -(4 as libc::c_int);
+    }
     if !(set_socket_options(sock_fd, flags) == 0) {
         if !(set_ip_options(sock_fd, family, flags) == 0) {
             /* Bind the socket if a non-any local address/port was specified */
-            if !(!local_addr.is_null() &&
-                     (*local_addr).ip_addr.family as libc::c_int !=
-                         0 as libc::c_int &&
-                     ((*local_addr).port as libc::c_int != 0 as libc::c_int ||
-                          is_any_address(&mut (*local_addr).ip_addr) == 0) &&
-                     bind_ip_address(sock_fd, local_addr, flags) == 0) {
+            if !(!local_addr.is_null()
+                && (*local_addr).ip_addr.family as libc::c_int != 0 as libc::c_int
+                && ((*local_addr).port as libc::c_int != 0 as libc::c_int
+                    || is_any_address(&mut (*local_addr).ip_addr) == 0)
+                && bind_ip_address(sock_fd, local_addr, flags) == 0)
+            {
                 /* Connect the socket if a remote address was specified */
-                if !(!remote_addr.is_null() &&
-                         (*remote_addr).ip_addr.family as libc::c_int !=
-                             0 as libc::c_int &&
-                         connect_ip_address(sock_fd, remote_addr) == 0) {
+                if !(!remote_addr.is_null()
+                    && (*remote_addr).ip_addr.family as libc::c_int != 0 as libc::c_int
+                    && connect_ip_address(sock_fd, remote_addr) == 0)
+                {
                     if !remote_addr.is_null() || !local_addr.is_null() {
-                        if 0 as libc::c_int != 0 &&
-                               log_min_severity as libc::c_int ==
-                                   LOGS_DEBUG as libc::c_int {
-                            LOG_Message(LOGS_DEBUG,
-                                        b"Opened %s%s socket fd=%d%s%s%s%s\x00"
-                                            as *const u8 as
-                                            *const libc::c_char,
-                                        if type_0 == SOCK_DGRAM as libc::c_int
-                                           {
-                                            b"UDP\x00" as *const u8 as
-                                                *const libc::c_char
-                                        } else if type_0 ==
-                                                      SOCK_STREAM as
-                                                          libc::c_int {
-                                            b"TCP\x00" as *const u8 as
-                                                *const libc::c_char
-                                        } else {
-                                            b"?\x00" as *const u8 as
-                                                *const libc::c_char
-                                        },
-                                        if family == 1 as libc::c_int {
-                                            b"v4\x00" as *const u8 as
-                                                *const libc::c_char
-                                        } else {
-                                            b"v6\x00" as *const u8 as
-                                                *const libc::c_char
-                                        }, sock_fd,
-                                        if !remote_addr.is_null() {
-                                            b" remote=\x00" as *const u8 as
-                                                *const libc::c_char
-                                        } else {
-                                            b"\x00" as *const u8 as
-                                                *const libc::c_char
-                                        },
-                                        if !remote_addr.is_null() {
-                                            UTI_IPSockAddrToString(remote_addr)
-                                        } else {
-                                            b"\x00" as *const u8 as
-                                                *const libc::c_char
-                                        },
-                                        if !local_addr.is_null() {
-                                            b" local=\x00" as *const u8 as
-                                                *const libc::c_char
-                                        } else {
-                                            b"\x00" as *const u8 as
-                                                *const libc::c_char
-                                        },
-                                        if !local_addr.is_null() {
-                                            UTI_IPSockAddrToString(local_addr)
-                                        } else {
-                                            b"\x00" as *const u8 as
-                                                *const libc::c_char
-                                        });
+                        if 0 as libc::c_int != 0
+                            && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                        {
+                            LOG_Message(
+                                LOGS_DEBUG,
+                                b"Opened %s%s socket fd=%d%s%s%s%s\x00" as *const u8
+                                    as *const libc::c_char,
+                                if type_0 == SOCK_DGRAM as libc::c_int {
+                                    b"UDP\x00" as *const u8 as *const libc::c_char
+                                } else if type_0 == SOCK_STREAM as libc::c_int {
+                                    b"TCP\x00" as *const u8 as *const libc::c_char
+                                } else {
+                                    b"?\x00" as *const u8 as *const libc::c_char
+                                },
+                                if family == 1 as libc::c_int {
+                                    b"v4\x00" as *const u8 as *const libc::c_char
+                                } else {
+                                    b"v6\x00" as *const u8 as *const libc::c_char
+                                },
+                                sock_fd,
+                                if !remote_addr.is_null() {
+                                    b" remote=\x00" as *const u8 as *const libc::c_char
+                                } else {
+                                    b"\x00" as *const u8 as *const libc::c_char
+                                },
+                                if !remote_addr.is_null() {
+                                    UTI_IPSockAddrToString(remote_addr)
+                                } else {
+                                    b"\x00" as *const u8 as *const libc::c_char
+                                },
+                                if !local_addr.is_null() {
+                                    b" local=\x00" as *const u8 as *const libc::c_char
+                                } else {
+                                    b"\x00" as *const u8 as *const libc::c_char
+                                },
+                                if !local_addr.is_null() {
+                                    UTI_IPSockAddrToString(local_addr)
+                                } else {
+                                    b"\x00" as *const u8 as *const libc::c_char
+                                },
+                            );
                         }
                     }
-                    return sock_fd
+                    return sock_fd;
                 }
             }
         }
@@ -1444,146 +1521,171 @@ unsafe extern "C" fn open_ip_socket(mut remote_addr: *mut IPSockAddr,
     return -(4 as libc::c_int);
 }
 /* ================================================== */
-unsafe extern "C" fn bind_unix_address(mut sock_fd: libc::c_int,
-                                       mut addr: *const libc::c_char,
-                                       mut flags: libc::c_int)
- -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
-    if snprintf(saddr.un.sun_path.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
-                b"%s\x00" as *const u8 as *const libc::c_char, addr) as
-           libc::c_ulong >=
-           ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Unix socket path %s too long\x00" as *const u8 as
-                            *const libc::c_char, addr);
+unsafe extern "C" fn bind_unix_address(
+    mut sock_fd: libc::c_int,
+    mut addr: *const libc::c_char,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
+    if snprintf(
+        saddr.un.sun_path.as_mut_ptr(),
+        ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
+        b"%s\x00" as *const u8 as *const libc::c_char,
+        addr,
+    ) as libc::c_ulong
+        >= ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Unix socket path %s too long\x00" as *const u8 as *const libc::c_char,
+                addr,
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     saddr.un.sun_family = 1 as libc::c_int as sa_family_t;
-    (UTI_RemoveFile(0 as *const libc::c_char, addr, 0 as *const libc::c_char))
-        == 0;
+    (UTI_RemoveFile(0 as *const libc::c_char, addr, 0 as *const libc::c_char)) == 0;
     /* PRV_BindSocket() doesn't support Unix sockets yet */
-    if bind(sock_fd, __CONST_SOCKADDR_ARG{__sockaddr__: &mut saddr.sa,},
-            ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as
-                socklen_t) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not bind Unix socket to %s : %s\x00" as
-                            *const u8 as *const libc::c_char, addr,
-                        strerror(*__errno_location()));
+    if bind(
+        sock_fd,
+        __CONST_SOCKADDR_ARG {
+            __sockaddr__: &mut saddr.sa,
+        },
+        ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as socklen_t,
+    ) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not bind Unix socket to %s : %s\x00" as *const u8 as *const libc::c_char,
+                addr,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     /* Allow access to everyone with access to the directory if requested */
-    if flags & 8 as libc::c_int != 0 &&
-           chmod(addr, 0o666 as libc::c_int as __mode_t) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not change permissions of %s : %s\x00" as
-                            *const u8 as *const libc::c_char, addr,
-                        strerror(*__errno_location()));
+    if flags & 8 as libc::c_int != 0
+        && chmod(addr, 0o666 as libc::c_int as __mode_t) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not change permissions of %s : %s\x00" as *const u8 as *const libc::c_char,
+                addr,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn connect_unix_address(mut sock_fd: libc::c_int,
-                                          mut addr: *const libc::c_char)
- -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
-    if snprintf(saddr.un.sun_path.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
-                b"%s\x00" as *const u8 as *const libc::c_char, addr) as
-           libc::c_ulong >=
-           ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Unix socket path %s too long\x00" as *const u8 as
-                            *const libc::c_char, addr);
+unsafe extern "C" fn connect_unix_address(
+    mut sock_fd: libc::c_int,
+    mut addr: *const libc::c_char,
+) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
+    if snprintf(
+        saddr.un.sun_path.as_mut_ptr(),
+        ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
+        b"%s\x00" as *const u8 as *const libc::c_char,
+        addr,
+    ) as libc::c_ulong
+        >= ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Unix socket path %s too long\x00" as *const u8 as *const libc::c_char,
+                addr,
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     saddr.un.sun_family = 1 as libc::c_int as sa_family_t;
-    if connect(sock_fd, __CONST_SOCKADDR_ARG{__sockaddr__: &mut saddr.sa,},
-               ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as
-                   socklen_t) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not connect Unix socket to %s : %s\x00" as
-                            *const u8 as *const libc::c_char, addr,
-                        strerror(*__errno_location()));
+    if connect(
+        sock_fd,
+        __CONST_SOCKADDR_ARG {
+            __sockaddr__: &mut saddr.sa,
+        },
+        ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as socklen_t,
+    ) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not connect Unix socket to %s : %s\x00" as *const u8 as *const libc::c_char,
+                addr,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn open_unix_socket(mut remote_addr: *const libc::c_char,
-                                      mut local_addr: *const libc::c_char,
-                                      mut type_0: libc::c_int,
-                                      mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn open_unix_socket(
+    mut remote_addr: *const libc::c_char,
+    mut local_addr: *const libc::c_char,
+    mut type_0: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut sock_fd: libc::c_int = 0;
     sock_fd = open_socket(1 as libc::c_int, type_0, flags);
-    if sock_fd < 0 as libc::c_int { return -(4 as libc::c_int) }
+    if sock_fd < 0 as libc::c_int {
+        return -(4 as libc::c_int);
+    }
     if !(set_socket_options(sock_fd, flags) == 0) {
         /* Bind the socket if a local address was specified */
-        if !(!local_addr.is_null() &&
-                 bind_unix_address(sock_fd, local_addr, flags) == 0) {
+        if !(!local_addr.is_null() && bind_unix_address(sock_fd, local_addr, flags) == 0) {
             /* Connect the socket if a remote address was specified */
-            if !(!remote_addr.is_null() &&
-                     connect_unix_address(sock_fd, remote_addr) == 0) {
-                if 0 as libc::c_int != 0 &&
-                       log_min_severity as libc::c_int ==
-                           LOGS_DEBUG as libc::c_int {
-                    LOG_Message(LOGS_DEBUG,
-                                b"Opened Unix socket fd=%d%s%s%s%s\x00" as
-                                    *const u8 as *const libc::c_char, sock_fd,
-                                if !remote_addr.is_null() {
-                                    b" remote=\x00" as *const u8 as
-                                        *const libc::c_char
-                                } else {
-                                    b"\x00" as *const u8 as
-                                        *const libc::c_char
-                                },
-                                if !remote_addr.is_null() {
-                                    remote_addr
-                                } else {
-                                    b"\x00" as *const u8 as
-                                        *const libc::c_char
-                                },
-                                if !local_addr.is_null() {
-                                    b" local=\x00" as *const u8 as
-                                        *const libc::c_char
-                                } else {
-                                    b"\x00" as *const u8 as
-                                        *const libc::c_char
-                                },
-                                if !local_addr.is_null() {
-                                    local_addr
-                                } else {
-                                    b"\x00" as *const u8 as
-                                        *const libc::c_char
-                                });
+            if !(!remote_addr.is_null() && connect_unix_address(sock_fd, remote_addr) == 0) {
+                if 0 as libc::c_int != 0
+                    && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                {
+                    LOG_Message(
+                        LOGS_DEBUG,
+                        b"Opened Unix socket fd=%d%s%s%s%s\x00" as *const u8 as *const libc::c_char,
+                        sock_fd,
+                        if !remote_addr.is_null() {
+                            b" remote=\x00" as *const u8 as *const libc::c_char
+                        } else {
+                            b"\x00" as *const u8 as *const libc::c_char
+                        },
+                        if !remote_addr.is_null() {
+                            remote_addr
+                        } else {
+                            b"\x00" as *const u8 as *const libc::c_char
+                        },
+                        if !local_addr.is_null() {
+                            b" local=\x00" as *const u8 as *const libc::c_char
+                        } else {
+                            b"\x00" as *const u8 as *const libc::c_char
+                        },
+                        if !local_addr.is_null() {
+                            local_addr
+                        } else {
+                            b"\x00" as *const u8 as *const libc::c_char
+                        },
+                    );
                 }
-                return sock_fd
+                return sock_fd;
             }
         }
     }
@@ -1592,18 +1694,23 @@ unsafe extern "C" fn open_unix_socket(mut remote_addr: *const libc::c_char,
     return -(4 as libc::c_int);
 }
 /* ================================================== */
-unsafe extern "C" fn open_unix_socket_pair(mut type_0: libc::c_int,
-                                           mut flags: libc::c_int,
-                                           mut other_fd: *mut libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn open_unix_socket_pair(
+    mut type_0: libc::c_int,
+    mut flags: libc::c_int,
+    mut other_fd: *mut libc::c_int,
+) -> libc::c_int {
     let mut sock_fd: libc::c_int = 0;
     sock_fd = open_socket_pair(1 as libc::c_int, type_0, flags, other_fd);
-    if sock_fd < 0 as libc::c_int { return -(4 as libc::c_int) }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Opened Unix socket pair fd1=%d fd2=%d\x00" as *const u8
-                        as *const libc::c_char, sock_fd, *other_fd);
+    if sock_fd < 0 as libc::c_int {
+        return -(4 as libc::c_int);
+    }
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Opened Unix socket pair fd1=%d fd2=%d\x00" as *const u8 as *const libc::c_char,
+            sock_fd,
+            *other_fd,
+        );
     }
     return sock_fd;
 }
@@ -1616,40 +1723,42 @@ unsafe extern "C" fn get_recv_flags(mut flags: libc::c_int) -> libc::c_int {
     return recv_flags;
 }
 /* ================================================== */
-unsafe extern "C" fn handle_recv_error(mut sock_fd: libc::c_int,
-                                       mut flags: libc::c_int) {
+unsafe extern "C" fn handle_recv_error(mut sock_fd: libc::c_int, mut flags: libc::c_int) {
     /* If reading from the error queue failed, the select() exception should
-     be for a socket error.  Clear the error to avoid a busy loop. */
+    be for a socket error.  Clear the error to avoid a busy loop. */
     if flags & 1 as libc::c_int != 0 {
         let mut error: libc::c_int = 0 as libc::c_int;
-        if SCK_GetIntOption(sock_fd, 1 as libc::c_int, 4 as libc::c_int,
-                            &mut error) != 0 {
+        if SCK_GetIntOption(sock_fd, 1 as libc::c_int, 4 as libc::c_int, &mut error) != 0 {
             *__errno_location() = error
         }
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Could not receive message fd=%d : %s\x00" as *const u8
-                        as *const libc::c_char, sock_fd,
-                    strerror(*__errno_location()));
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Could not receive message fd=%d : %s\x00" as *const u8 as *const libc::c_char,
+            sock_fd,
+            strerror(*__errno_location()),
+        );
     };
 }
 /* ================================================== */
-unsafe extern "C" fn log_message(mut sock_fd: libc::c_int,
-                                 mut direction: libc::c_int,
-                                 mut message: *mut SCK_Message,
-                                 mut prefix: *const libc::c_char,
-                                 mut error: *const libc::c_char) {
+unsafe extern "C" fn log_message(
+    mut sock_fd: libc::c_int,
+    mut direction: libc::c_int,
+    mut message: *mut SCK_Message,
+    mut prefix: *const libc::c_char,
+    mut error: *const libc::c_char,
+) {
     let mut local_addr: *const libc::c_char = 0 as *const libc::c_char;
     let mut remote_addr: *const libc::c_char = 0 as *const libc::c_char;
     let mut if_index: [libc::c_char; 20] = [0; 20];
     let mut tss: [libc::c_char; 10] = [0; 10];
     let mut tsif: [libc::c_char; 20] = [0; 20];
     let mut tslen: [libc::c_char; 20] = [0; 20];
-    if 0 as libc::c_int <= 0 as libc::c_int ||
-           (log_min_severity as libc::c_int) < LOGS_DEBUG as libc::c_int {
-        return
+    if 0 as libc::c_int <= 0 as libc::c_int
+        || (log_min_severity as libc::c_int) < LOGS_DEBUG as libc::c_int
+    {
+        return;
     }
     remote_addr = 0 as *const libc::c_char;
     local_addr = 0 as *const libc::c_char;
@@ -1659,110 +1768,137 @@ unsafe extern "C" fn log_message(mut sock_fd: libc::c_int,
     tslen[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
     match (*message).addr_type as libc::c_uint {
         1 => {
-            if (*message).remote_addr.ip.ip_addr.family as libc::c_int !=
-                   0 as libc::c_int {
-                remote_addr =
-                    UTI_IPSockAddrToString(&mut (*message).remote_addr.ip)
+            if (*message).remote_addr.ip.ip_addr.family as libc::c_int != 0 as libc::c_int {
+                remote_addr = UTI_IPSockAddrToString(&mut (*message).remote_addr.ip)
             }
-            if (*message).local_addr.ip.family as libc::c_int !=
-                   0 as libc::c_int {
+            if (*message).local_addr.ip.family as libc::c_int != 0 as libc::c_int {
                 local_addr = UTI_IPToString(&mut (*message).local_addr.ip)
             }
         }
-        2 => { remote_addr = (*message).remote_addr.path }
-        _ => { }
+        2 => remote_addr = (*message).remote_addr.path,
+        _ => {}
     }
     if (*message).if_index != -(1 as libc::c_int) {
-        snprintf(if_index.as_mut_ptr(),
-                 ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong,
-                 b" if=%d\x00" as *const u8 as *const libc::c_char,
-                 (*message).if_index);
+        snprintf(
+            if_index.as_mut_ptr(),
+            ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong,
+            b" if=%d\x00" as *const u8 as *const libc::c_char,
+            (*message).if_index,
+        );
     }
     if direction > 0 as libc::c_int {
-        if UTI_IsZeroTimespec(&mut (*message).timestamp.kernel) == 0 ||
-               UTI_IsZeroTimespec(&mut (*message).timestamp.hw) == 0 {
-            snprintf(tss.as_mut_ptr(),
-                     ::std::mem::size_of::<[libc::c_char; 10]>() as
-                         libc::c_ulong,
-                     b" tss=%s%s\x00" as *const u8 as *const libc::c_char,
-                     if UTI_IsZeroTimespec(&mut (*message).timestamp.kernel)
-                            == 0 {
-                         b"K\x00" as *const u8 as *const libc::c_char
-                     } else { b"\x00" as *const u8 as *const libc::c_char },
-                     if UTI_IsZeroTimespec(&mut (*message).timestamp.hw) == 0
-                        {
-                         b"H\x00" as *const u8 as *const libc::c_char
-                     } else { b"\x00" as *const u8 as *const libc::c_char });
+        if UTI_IsZeroTimespec(&mut (*message).timestamp.kernel) == 0
+            || UTI_IsZeroTimespec(&mut (*message).timestamp.hw) == 0
+        {
+            snprintf(
+                tss.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 10]>() as libc::c_ulong,
+                b" tss=%s%s\x00" as *const u8 as *const libc::c_char,
+                if UTI_IsZeroTimespec(&mut (*message).timestamp.kernel) == 0 {
+                    b"K\x00" as *const u8 as *const libc::c_char
+                } else {
+                    b"\x00" as *const u8 as *const libc::c_char
+                },
+                if UTI_IsZeroTimespec(&mut (*message).timestamp.hw) == 0 {
+                    b"H\x00" as *const u8 as *const libc::c_char
+                } else {
+                    b"\x00" as *const u8 as *const libc::c_char
+                },
+            );
         }
         if (*message).timestamp.if_index != -(1 as libc::c_int) {
-            snprintf(tsif.as_mut_ptr(),
-                     ::std::mem::size_of::<[libc::c_char; 20]>() as
-                         libc::c_ulong,
-                     b" tsif=%d\x00" as *const u8 as *const libc::c_char,
-                     (*message).timestamp.if_index);
+            snprintf(
+                tsif.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong,
+                b" tsif=%d\x00" as *const u8 as *const libc::c_char,
+                (*message).timestamp.if_index,
+            );
         }
         if (*message).timestamp.l2_length != 0 as libc::c_int {
-            snprintf(tslen.as_mut_ptr(),
-                     ::std::mem::size_of::<[libc::c_char; 20]>() as
-                         libc::c_ulong,
-                     b" tslen=%d\x00" as *const u8 as *const libc::c_char,
-                     (*message).timestamp.l2_length);
+            snprintf(
+                tslen.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong,
+                b" tslen=%d\x00" as *const u8 as *const libc::c_char,
+                (*message).timestamp.l2_length,
+            );
         }
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"%s message%s%s%s%s fd=%d len=%u%s%s%s%s%s%s\x00" as
-                        *const u8 as *const libc::c_char, prefix,
-                    if !remote_addr.is_null() {
-                        if direction > 0 as libc::c_int {
-                            b" from \x00" as *const u8 as *const libc::c_char
-                        } else {
-                            b" to \x00" as *const u8 as *const libc::c_char
-                        }
-                    } else { b"\x00" as *const u8 as *const libc::c_char },
-                    if !remote_addr.is_null() {
-                        remote_addr
-                    } else { b"\x00" as *const u8 as *const libc::c_char },
-                    if !local_addr.is_null() {
-                        if direction > 0 as libc::c_int {
-                            b" to \x00" as *const u8 as *const libc::c_char
-                        } else {
-                            b" from \x00" as *const u8 as *const libc::c_char
-                        }
-                    } else { b"\x00" as *const u8 as *const libc::c_char },
-                    if !local_addr.is_null() {
-                        local_addr
-                    } else { b"\x00" as *const u8 as *const libc::c_char },
-                    sock_fd, (*message).length, if_index.as_mut_ptr(),
-                    tss.as_mut_ptr(), tsif.as_mut_ptr(), tslen.as_mut_ptr(),
-                    if !error.is_null() {
-                        b" : \x00" as *const u8 as *const libc::c_char
-                    } else { b"\x00" as *const u8 as *const libc::c_char },
-                    if !error.is_null() {
-                        error
-                    } else { b"\x00" as *const u8 as *const libc::c_char });
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"%s message%s%s%s%s fd=%d len=%u%s%s%s%s%s%s\x00" as *const u8 as *const libc::c_char,
+            prefix,
+            if !remote_addr.is_null() {
+                if direction > 0 as libc::c_int {
+                    b" from \x00" as *const u8 as *const libc::c_char
+                } else {
+                    b" to \x00" as *const u8 as *const libc::c_char
+                }
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+            if !remote_addr.is_null() {
+                remote_addr
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+            if !local_addr.is_null() {
+                if direction > 0 as libc::c_int {
+                    b" to \x00" as *const u8 as *const libc::c_char
+                } else {
+                    b" from \x00" as *const u8 as *const libc::c_char
+                }
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+            if !local_addr.is_null() {
+                local_addr
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+            sock_fd,
+            (*message).length,
+            if_index.as_mut_ptr(),
+            tss.as_mut_ptr(),
+            tsif.as_mut_ptr(),
+            tslen.as_mut_ptr(),
+            if !error.is_null() {
+                b" : \x00" as *const u8 as *const libc::c_char
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+            if !error.is_null() {
+                error
+            } else {
+                b"\x00" as *const u8 as *const libc::c_char
+            },
+        );
     };
 }
 /* ================================================== */
-unsafe extern "C" fn init_message_addresses(mut message: *mut SCK_Message,
-                                            mut addr_type: SCK_AddressType) {
+unsafe extern "C" fn init_message_addresses(
+    mut message: *mut SCK_Message,
+    mut addr_type: SCK_AddressType,
+) {
     (*message).addr_type = addr_type;
     match addr_type as libc::c_uint {
-        0 => { }
+        0 => {}
         1 => {
-            (*message).remote_addr.ip.ip_addr.family =
-                0 as libc::c_int as uint16_t;
+            (*message).remote_addr.ip.ip_addr.family = 0 as libc::c_int as uint16_t;
             (*message).remote_addr.ip.port = 0 as libc::c_int as uint16_t;
             (*message).local_addr.ip.family = 0 as libc::c_int as uint16_t
         }
-        2 => { (*message).remote_addr.path = 0 as *const libc::c_char }
+        2 => (*message).remote_addr.path = 0 as *const libc::c_char,
         _ => {
-            __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                          b"socket.c\x00" as *const u8 as *const libc::c_char,
-                          679 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 60],
-                                                    &[libc::c_char; 60]>(b"void init_message_addresses(SCK_Message *, SCK_AddressType)\x00")).as_ptr());
+            __assert_fail(
+                b"0\x00" as *const u8 as *const libc::c_char,
+                b"socket.c\x00" as *const u8 as *const libc::c_char,
+                679 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 60], &[libc::c_char; 60]>(
+                    b"void init_message_addresses(SCK_Message *, SCK_AddressType)\x00",
+                ))
+                .as_ptr(),
+            );
         }
     };
 }
@@ -1779,256 +1915,270 @@ unsafe extern "C" fn init_message_nonaddress(mut message: *mut SCK_Message) {
     (*message).descriptor = -(4 as libc::c_int);
 }
 /* ================================================== */
-unsafe extern "C" fn process_header(mut msg: *mut msghdr,
-                                    mut msg_length: libc::c_uint,
-                                    mut sock_fd: libc::c_int,
-                                    mut flags: libc::c_int,
-                                    mut message: *mut SCK_Message)
- -> libc::c_int {
+unsafe extern "C" fn process_header(
+    mut msg: *mut msghdr,
+    mut msg_length: libc::c_uint,
+    mut sock_fd: libc::c_int,
+    mut flags: libc::c_int,
+    mut message: *mut SCK_Message,
+) -> libc::c_int {
     let mut cmsg: *mut cmsghdr = 0 as *mut cmsghdr;
     if (*msg).msg_iovlen != 1 as libc::c_int as libc::c_ulong {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Unexpected iovlen\x00" as *const u8 as
-                            *const libc::c_char);
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Unexpected iovlen\x00" as *const u8 as *const libc::c_char,
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    if (*msg).msg_namelen as libc::c_ulong >
-           ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Truncated source address\x00" as *const u8 as
-                            *const libc::c_char);
+    if (*msg).msg_namelen as libc::c_ulong > ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Truncated source address\x00" as *const u8 as *const libc::c_char,
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    if (*msg).msg_namelen as libc::c_ulong >
-           ::std::mem::size_of::<sa_family_t>() as libc::c_ulong {
+    if (*msg).msg_namelen as libc::c_ulong > ::std::mem::size_of::<sa_family_t>() as libc::c_ulong {
         match (*((*msg).msg_name as *mut sockaddr)).sa_family as libc::c_int {
             2 | 10 => {
                 init_message_addresses(message, SCK_ADDR_IP);
-                SCK_SockaddrToIPSockAddr((*msg).msg_name as *mut sockaddr,
-                                         (*msg).msg_namelen as libc::c_int,
-                                         &mut (*message).remote_addr.ip);
+                SCK_SockaddrToIPSockAddr(
+                    (*msg).msg_name as *mut sockaddr,
+                    (*msg).msg_namelen as libc::c_int,
+                    &mut (*message).remote_addr.ip,
+                );
             }
             1 => {
                 init_message_addresses(message, SCK_ADDR_UNIX);
-                (*message).remote_addr.path =
-                    (*((*msg).msg_name as
-                           *mut sockaddr_un)).sun_path.as_mut_ptr()
+                (*message).remote_addr.path = (*((*msg).msg_name as *mut sockaddr_un))
+                    .sun_path
+                    .as_mut_ptr()
             }
             _ => {
-                if 0 as libc::c_int != 0 &&
-                       log_min_severity as libc::c_int ==
-                           LOGS_DEBUG as libc::c_int {
-                    LOG_Message(LOGS_DEBUG,
-                                b"Unexpected address\x00" as *const u8 as
-                                    *const libc::c_char);
+                if 0 as libc::c_int != 0
+                    && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                {
+                    LOG_Message(
+                        LOGS_DEBUG,
+                        b"Unexpected address\x00" as *const u8 as *const libc::c_char,
+                    );
                 }
-                return 0 as libc::c_int
+                return 0 as libc::c_int;
             }
         }
-    } else { init_message_addresses(message, SCK_ADDR_UNSPEC); }
+    } else {
+        init_message_addresses(message, SCK_ADDR_UNSPEC);
+    }
     init_message_nonaddress(message);
-    (*message).data =
-        (*(*msg).msg_iov.offset(0 as libc::c_int as isize)).iov_base;
+    (*message).data = (*(*msg).msg_iov.offset(0 as libc::c_int as isize)).iov_base;
     (*message).length = msg_length;
     if (*msg).msg_flags & MSG_TRUNC as libc::c_int != 0 {
-        log_message(sock_fd, 1 as libc::c_int, message,
-                    b"Truncated\x00" as *const u8 as *const libc::c_char,
-                    0 as *const libc::c_char);
-        return 0 as libc::c_int
+        log_message(
+            sock_fd,
+            1 as libc::c_int,
+            message,
+            b"Truncated\x00" as *const u8 as *const libc::c_char,
+            0 as *const libc::c_char,
+        );
+        return 0 as libc::c_int;
     }
     if (*msg).msg_flags & MSG_CTRUNC as libc::c_int != 0 {
-        log_message(sock_fd, 1 as libc::c_int, message,
-                    b"Truncated cmsg in\x00" as *const u8 as
-                        *const libc::c_char, 0 as *const libc::c_char);
-        return 0 as libc::c_int
+        log_message(
+            sock_fd,
+            1 as libc::c_int,
+            message,
+            b"Truncated cmsg in\x00" as *const u8 as *const libc::c_char,
+            0 as *const libc::c_char,
+        );
+        return 0 as libc::c_int;
     }
-    cmsg =
-        if (*msg).msg_controllen >=
-               ::std::mem::size_of::<cmsghdr>() as libc::c_ulong {
-            (*msg).msg_control as *mut cmsghdr
-        } else { 0 as *mut cmsghdr };
+    cmsg = if (*msg).msg_controllen >= ::std::mem::size_of::<cmsghdr>() as libc::c_ulong {
+        (*msg).msg_control as *mut cmsghdr
+    } else {
+        0 as *mut cmsghdr
+    };
     while !cmsg.is_null() {
-        if (*cmsg).cmsg_level == IPPROTO_IP as libc::c_int &&
-               (*cmsg).cmsg_type == 8 as libc::c_int {
-            let mut ipi: in_pktinfo =
-                in_pktinfo{ipi_ifindex: 0,
-                           ipi_spec_dst: in_addr{s_addr: 0,},
-                           ipi_addr: in_addr{s_addr: 0,},};
-            if (*message).addr_type as libc::c_uint !=
-                   SCK_ADDR_IP as libc::c_int as libc::c_uint {
+        if (*cmsg).cmsg_level == IPPROTO_IP as libc::c_int && (*cmsg).cmsg_type == 8 as libc::c_int
+        {
+            let mut ipi: in_pktinfo = in_pktinfo {
+                ipi_ifindex: 0,
+                ipi_spec_dst: in_addr { s_addr: 0 },
+                ipi_addr: in_addr { s_addr: 0 },
+            };
+            if (*message).addr_type as libc::c_uint != SCK_ADDR_IP as libc::c_int as libc::c_uint {
                 init_message_addresses(message, SCK_ADDR_IP);
             }
-            memcpy(&mut ipi as *mut in_pktinfo as *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<in_pktinfo>() as libc::c_ulong);
+            memcpy(
+                &mut ipi as *mut in_pktinfo as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<in_pktinfo>() as libc::c_ulong,
+            );
             (*message).local_addr.ip.addr.in4 = ntohl(ipi.ipi_addr.s_addr);
             (*message).local_addr.ip.family = 1 as libc::c_int as uint16_t;
             (*message).if_index = ipi.ipi_ifindex
         }
-        if (*cmsg).cmsg_level == IPPROTO_IPV6 as libc::c_int &&
-               (*cmsg).cmsg_type == 50 as libc::c_int {
-            let mut ipi_0: in6_pktinfo =
-                in6_pktinfo{ipi6_addr:
-                                in6_addr{__in6_u:
-                                             C2RustUnnamed_2{__u6_addr8:
-                                                                 [0; 16],},},
-                            ipi6_ifindex: 0,};
-            if (*message).addr_type as libc::c_uint !=
-                   SCK_ADDR_IP as libc::c_int as libc::c_uint {
+        if (*cmsg).cmsg_level == IPPROTO_IPV6 as libc::c_int
+            && (*cmsg).cmsg_type == 50 as libc::c_int
+        {
+            let mut ipi_0: in6_pktinfo = in6_pktinfo {
+                ipi6_addr: in6_addr {
+                    __in6_u: C2RustUnnamed_2 {
+                        __u6_addr8: [0; 16],
+                    },
+                },
+                ipi6_ifindex: 0,
+            };
+            if (*message).addr_type as libc::c_uint != SCK_ADDR_IP as libc::c_int as libc::c_uint {
                 init_message_addresses(message, SCK_ADDR_IP);
             }
-            memcpy(&mut ipi_0 as *mut in6_pktinfo as *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<in6_pktinfo>() as libc::c_ulong);
-            memcpy(&mut (*message).local_addr.ip.addr.in6 as
-                       *mut [uint8_t; 16] as *mut libc::c_void,
-                   &mut ipi_0.ipi6_addr.__in6_u.__u6_addr8 as
-                       *mut [uint8_t; 16] as *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            memcpy(
+                &mut ipi_0 as *mut in6_pktinfo as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<in6_pktinfo>() as libc::c_ulong,
+            );
+            memcpy(
+                &mut (*message).local_addr.ip.addr.in6 as *mut [uint8_t; 16] as *mut libc::c_void,
+                &mut ipi_0.ipi6_addr.__in6_u.__u6_addr8 as *mut [uint8_t; 16]
+                    as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
             (*message).local_addr.ip.family = 2 as libc::c_int as uint16_t;
             (*message).if_index = ipi_0.ipi6_ifindex as libc::c_int
         }
-        if (*cmsg).cmsg_level == 1 as libc::c_int &&
-               (*cmsg).cmsg_type == 29 as libc::c_int {
-            let mut tv: timeval = timeval{tv_sec: 0, tv_usec: 0,};
-            memcpy(&mut tv as *mut timeval as *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<timeval>() as libc::c_ulong);
+        if (*cmsg).cmsg_level == 1 as libc::c_int && (*cmsg).cmsg_type == 29 as libc::c_int {
+            let mut tv: timeval = timeval {
+                tv_sec: 0,
+                tv_usec: 0,
+            };
+            memcpy(
+                &mut tv as *mut timeval as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<timeval>() as libc::c_ulong,
+            );
             UTI_TimevalToTimespec(&mut tv, &mut (*message).timestamp.kernel);
         }
-        if (*cmsg).cmsg_level == 1 as libc::c_int &&
-               (*cmsg).cmsg_type == 35 as libc::c_int {
-            memcpy(&mut (*message).timestamp.kernel as *mut timespec as
-                       *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<timespec>() as libc::c_ulong);
+        if (*cmsg).cmsg_level == 1 as libc::c_int && (*cmsg).cmsg_type == 35 as libc::c_int {
+            memcpy(
+                &mut (*message).timestamp.kernel as *mut timespec as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<timespec>() as libc::c_ulong,
+            );
         }
-        if (*cmsg).cmsg_level == 1 as libc::c_int &&
-               (*cmsg).cmsg_type == 58 as libc::c_int {
-            let mut ts_pktinfo: scm_ts_pktinfo =
-                scm_ts_pktinfo{if_index: 0, pkt_length: 0, reserved: [0; 2],};
-            memcpy(&mut ts_pktinfo as *mut scm_ts_pktinfo as
-                       *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<scm_ts_pktinfo>() as libc::c_ulong);
-            (*message).timestamp.if_index =
-                ts_pktinfo.if_index as libc::c_int;
-            (*message).timestamp.l2_length =
-                ts_pktinfo.pkt_length as libc::c_int
+        if (*cmsg).cmsg_level == 1 as libc::c_int && (*cmsg).cmsg_type == 58 as libc::c_int {
+            let mut ts_pktinfo: scm_ts_pktinfo = scm_ts_pktinfo {
+                if_index: 0,
+                pkt_length: 0,
+                reserved: [0; 2],
+            };
+            memcpy(
+                &mut ts_pktinfo as *mut scm_ts_pktinfo as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<scm_ts_pktinfo>() as libc::c_ulong,
+            );
+            (*message).timestamp.if_index = ts_pktinfo.if_index as libc::c_int;
+            (*message).timestamp.l2_length = ts_pktinfo.pkt_length as libc::c_int
         }
-        if (*cmsg).cmsg_level == 1 as libc::c_int &&
-               (*cmsg).cmsg_type == 37 as libc::c_int {
-            let mut ts3: scm_timestamping =
-                scm_timestamping{ts: [timespec{tv_sec: 0, tv_nsec: 0,}; 3],};
-            memcpy(&mut ts3 as *mut scm_timestamping as *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<scm_timestamping>() as
-                       libc::c_ulong);
+        if (*cmsg).cmsg_level == 1 as libc::c_int && (*cmsg).cmsg_type == 37 as libc::c_int {
+            let mut ts3: scm_timestamping = scm_timestamping {
+                ts: [timespec {
+                    tv_sec: 0,
+                    tv_nsec: 0,
+                }; 3],
+            };
+            memcpy(
+                &mut ts3 as *mut scm_timestamping as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<scm_timestamping>() as libc::c_ulong,
+            );
             (*message).timestamp.kernel = ts3.ts[0 as libc::c_int as usize];
             (*message).timestamp.hw = ts3.ts[2 as libc::c_int as usize]
         }
-        if (*cmsg).cmsg_level == 0 as libc::c_int &&
-               (*cmsg).cmsg_type == 11 as libc::c_int ||
-               (*cmsg).cmsg_level == 41 as libc::c_int &&
-                   (*cmsg).cmsg_type == 25 as libc::c_int {
-            let mut err: sock_extended_err =
-                sock_extended_err{ee_errno: 0,
-                                  ee_origin: 0,
-                                  ee_type: 0,
-                                  ee_code: 0,
-                                  ee_pad: 0,
-                                  ee_info: 0,
-                                  ee_data: 0,};
-            memcpy(&mut err as *mut sock_extended_err as *mut libc::c_void,
-                   (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
-                   ::std::mem::size_of::<sock_extended_err>() as
-                       libc::c_ulong);
-            if err.ee_errno != 42 as libc::c_int as libc::c_uint ||
-                   err.ee_info !=
-                       SCM_TSTAMP_SND as libc::c_int as libc::c_uint ||
-                   err.ee_origin as libc::c_int != 4 as libc::c_int {
-                log_message(sock_fd, 1 as libc::c_int, message,
-                            b"Unexpected extended error in\x00" as *const u8
-                                as *const libc::c_char,
-                            0 as *const libc::c_char);
-                return 0 as libc::c_int
+        if (*cmsg).cmsg_level == 0 as libc::c_int && (*cmsg).cmsg_type == 11 as libc::c_int
+            || (*cmsg).cmsg_level == 41 as libc::c_int && (*cmsg).cmsg_type == 25 as libc::c_int
+        {
+            let mut err: sock_extended_err = sock_extended_err {
+                ee_errno: 0,
+                ee_origin: 0,
+                ee_type: 0,
+                ee_code: 0,
+                ee_pad: 0,
+                ee_info: 0,
+                ee_data: 0,
+            };
+            memcpy(
+                &mut err as *mut sock_extended_err as *mut libc::c_void,
+                (*cmsg).__cmsg_data.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<sock_extended_err>() as libc::c_ulong,
+            );
+            if err.ee_errno != 42 as libc::c_int as libc::c_uint
+                || err.ee_info != SCM_TSTAMP_SND as libc::c_int as libc::c_uint
+                || err.ee_origin as libc::c_int != 4 as libc::c_int
+            {
+                log_message(
+                    sock_fd,
+                    1 as libc::c_int,
+                    message,
+                    b"Unexpected extended error in\x00" as *const u8 as *const libc::c_char,
+                    0 as *const libc::c_char,
+                );
+                return 0 as libc::c_int;
             }
         }
-        if (*cmsg).cmsg_level == 1 as libc::c_int &&
-               (*cmsg).cmsg_type == SCM_RIGHTS as libc::c_int {
-            if flags & 2 as libc::c_int == 0 ||
-                   (*cmsg).cmsg_len !=
-                       ((::std::mem::size_of::<cmsghdr>() as
-                             libc::c_ulong).wrapping_add(::std::mem::size_of::<size_t>()
-                                                             as
-                                                             libc::c_ulong).wrapping_sub(1
-                                                                                             as
-                                                                                             libc::c_int
-                                                                                             as
-                                                                                             libc::c_ulong)
-                            &
-                            !(::std::mem::size_of::<size_t>() as
-                                  libc::c_ulong).wrapping_sub(1 as libc::c_int
-                                                                  as
-                                                                  libc::c_ulong)).wrapping_add(::std::mem::size_of::<libc::c_int>()
-                                                                                                   as
-                                                                                                   libc::c_ulong)
-               {
+        if (*cmsg).cmsg_level == 1 as libc::c_int && (*cmsg).cmsg_type == SCM_RIGHTS as libc::c_int
+        {
+            if flags & 2 as libc::c_int == 0
+                || (*cmsg).cmsg_len
+                    != ((::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
+                        .wrapping_add(::std::mem::size_of::<size_t>() as libc::c_ulong)
+                        .wrapping_sub(1 as libc::c_int as libc::c_ulong)
+                        & !(::std::mem::size_of::<size_t>() as libc::c_ulong)
+                            .wrapping_sub(1 as libc::c_int as libc::c_ulong))
+                    .wrapping_add(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
+            {
                 let mut i: libc::c_uint = 0;
-                if 0 as libc::c_int != 0 &&
-                       log_min_severity as libc::c_int ==
-                           LOGS_DEBUG as libc::c_int {
-                    LOG_Message(LOGS_DEBUG,
-                                b"Unexpected SCM_RIGHTS\x00" as *const u8 as
-                                    *const libc::c_char);
+                if 0 as libc::c_int != 0
+                    && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                {
+                    LOG_Message(
+                        LOGS_DEBUG,
+                        b"Unexpected SCM_RIGHTS\x00" as *const u8 as *const libc::c_char,
+                    );
                 }
                 i = 0 as libc::c_int as libc::c_uint;
-                while ((::std::mem::size_of::<cmsghdr>() as
-                            libc::c_ulong).wrapping_add(::std::mem::size_of::<size_t>()
-                                                            as
-                                                            libc::c_ulong).wrapping_sub(1
-                                                                                            as
-                                                                                            libc::c_int
-                                                                                            as
-                                                                                            libc::c_ulong)
-                           &
-                           !(::std::mem::size_of::<size_t>() as
-                                 libc::c_ulong).wrapping_sub(1 as libc::c_int
-                                                                 as
-                                                                 libc::c_ulong)).wrapping_add((i.wrapping_add(1
-                                                                                                                  as
-                                                                                                                  libc::c_int
-                                                                                                                  as
-                                                                                                                  libc::c_uint)
-                                                                                                   as
-                                                                                                   libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_int>()
-                                                                                                                                   as
-                                                                                                                                   libc::c_ulong))
-                          <= (*cmsg).cmsg_len {
-                    close(*((*cmsg).__cmsg_data.as_mut_ptr() as
-                                *mut libc::c_int).offset(i as isize));
+                while ((::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
+                    .wrapping_add(::std::mem::size_of::<size_t>() as libc::c_ulong)
+                    .wrapping_sub(1 as libc::c_int as libc::c_ulong)
+                    & !(::std::mem::size_of::<size_t>() as libc::c_ulong)
+                        .wrapping_sub(1 as libc::c_int as libc::c_ulong))
+                .wrapping_add(
+                    (i.wrapping_add(1 as libc::c_int as libc::c_uint) as libc::c_ulong)
+                        .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
+                ) <= (*cmsg).cmsg_len
+                {
+                    close(
+                        *((*cmsg).__cmsg_data.as_mut_ptr() as *mut libc::c_int).offset(i as isize),
+                    );
                     i = i.wrapping_add(1)
                 }
-                return 0 as libc::c_int
+                return 0 as libc::c_int;
             }
-            (*message).descriptor =
-                *((*cmsg).__cmsg_data.as_mut_ptr() as *mut libc::c_int)
+            (*message).descriptor = *((*cmsg).__cmsg_data.as_mut_ptr() as *mut libc::c_int)
         }
         cmsg = __cmsg_nxthdr(msg, cmsg)
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn receive_messages(mut sock_fd: libc::c_int,
-                                      mut messages: *mut SCK_Message,
-                                      mut max_messages: libc::c_int,
-                                      mut flags: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn receive_messages(
+    mut sock_fd: libc::c_int,
+    mut messages: *mut SCK_Message,
+    mut max_messages: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut hdr: *mut mmsghdr = 0 as *mut mmsghdr;
     let mut i: libc::c_uint = 0;
     let mut n: libc::c_uint = 0;
@@ -2036,193 +2186,214 @@ unsafe extern "C" fn receive_messages(mut sock_fd: libc::c_int,
     let mut recv_flags: libc::c_int = 0 as libc::c_int;
     if initialised != 0 {
     } else {
-        __assert_fail(b"initialised\x00" as *const u8 as *const libc::c_char,
-                      b"socket.c\x00" as *const u8 as *const libc::c_char,
-                      869 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 51],
-                                                &[libc::c_char; 51]>(b"int receive_messages(int, SCK_Message *, int, int)\x00")).as_ptr());
+        __assert_fail(
+            b"initialised\x00" as *const u8 as *const libc::c_char,
+            b"socket.c\x00" as *const u8 as *const libc::c_char,
+            869 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 51], &[libc::c_char; 51]>(
+                b"int receive_messages(int, SCK_Message *, int, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    if max_messages < 1 as libc::c_int { return 0 as libc::c_int }
+    if max_messages < 1 as libc::c_int {
+        return 0 as libc::c_int;
+    }
     /* Prepare used buffers for new messages */
     prepare_buffers(received_messages);
     received_messages = 0 as libc::c_int as libc::c_uint;
     hdr = ARR_GetElements(recv_headers) as *mut mmsghdr;
     n = ARR_GetSize(recv_headers);
-    n =
-        if n < max_messages as libc::c_uint {
-            n
-        } else { max_messages as libc::c_uint };
+    n = if n < max_messages as libc::c_uint {
+        n
+    } else {
+        max_messages as libc::c_uint
+    };
     if n >= 1 as libc::c_int as libc::c_uint {
     } else {
-        __assert_fail(b"n >= 1\x00" as *const u8 as *const libc::c_char,
-                      b"socket.c\x00" as *const u8 as *const libc::c_char,
-                      881 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 51],
-                                                &[libc::c_char; 51]>(b"int receive_messages(int, SCK_Message *, int, int)\x00")).as_ptr());
+        __assert_fail(
+            b"n >= 1\x00" as *const u8 as *const libc::c_char,
+            b"socket.c\x00" as *const u8 as *const libc::c_char,
+            881 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 51], &[libc::c_char; 51]>(
+                b"int receive_messages(int, SCK_Message *, int, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     recv_flags = get_recv_flags(flags);
     ret = recvmmsg(sock_fd, hdr, n, recv_flags, 0 as *mut timespec);
-    if ret >= 0 as libc::c_int { n = ret as libc::c_uint }
+    if ret >= 0 as libc::c_int {
+        n = ret as libc::c_uint
+    }
     if ret < 0 as libc::c_int {
         handle_recv_error(sock_fd, flags);
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     received_messages = n;
     i = 0 as libc::c_int as libc::c_uint;
     while i < n {
         hdr = ARR_GetElement(recv_headers, i) as *mut mmsghdr;
-        if process_header(&mut (*hdr).msg_hdr, (*hdr).msg_len, sock_fd, flags,
-                          &mut *messages.offset(i as isize)) == 0 {
-            return 0 as libc::c_int
+        if process_header(
+            &mut (*hdr).msg_hdr,
+            (*hdr).msg_len,
+            sock_fd,
+            flags,
+            &mut *messages.offset(i as isize),
+        ) == 0
+        {
+            return 0 as libc::c_int;
         }
-        log_message(sock_fd, 1 as libc::c_int,
-                    &mut *messages.offset(i as isize),
-                    if flags & 1 as libc::c_int != 0 {
-                        b"Received error\x00" as *const u8 as
-                            *const libc::c_char
-                    } else {
-                        b"Received\x00" as *const u8 as *const libc::c_char
-                    }, 0 as *const libc::c_char);
+        log_message(
+            sock_fd,
+            1 as libc::c_int,
+            &mut *messages.offset(i as isize),
+            if flags & 1 as libc::c_int != 0 {
+                b"Received error\x00" as *const u8 as *const libc::c_char
+            } else {
+                b"Received\x00" as *const u8 as *const libc::c_char
+            },
+            0 as *const libc::c_char,
+        );
         i = i.wrapping_add(1)
     }
     return n as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn add_control_message(mut msg: *mut msghdr,
-                                         mut level: libc::c_int,
-                                         mut type_0: libc::c_int,
-                                         mut length: size_t,
-                                         mut buf_length: size_t)
- -> *mut libc::c_void {
+unsafe extern "C" fn add_control_message(
+    mut msg: *mut msghdr,
+    mut level: libc::c_int,
+    mut type_0: libc::c_int,
+    mut length: size_t,
+    mut buf_length: size_t,
+) -> *mut libc::c_void {
     let mut cmsg: *mut cmsghdr = 0 as *mut cmsghdr;
     let mut cmsg_space: size_t = 0;
     /* Avoid using CMSG_NXTHDR as the one in glibc does not support adding
-     control messages: https://sourceware.org/bugzilla/show_bug.cgi?id=13500 */
+    control messages: https://sourceware.org/bugzilla/show_bug.cgi?id=13500 */
     cmsg = (*msg).msg_control as *mut cmsghdr;
-    cmsg_space =
-        (length.wrapping_add(::std::mem::size_of::<size_t>() as
-                                 libc::c_ulong).wrapping_sub(1 as libc::c_int
-                                                                 as
-                                                                 libc::c_ulong)
-             &
-             !(::std::mem::size_of::<size_t>() as
-                   libc::c_ulong).wrapping_sub(1 as libc::c_int as
-                                                   libc::c_ulong)).wrapping_add((::std::mem::size_of::<cmsghdr>()
-                                                                                     as
-                                                                                     libc::c_ulong).wrapping_add(::std::mem::size_of::<size_t>()
-                                                                                                                     as
-                                                                                                                     libc::c_ulong).wrapping_sub(1
-                                                                                                                                                     as
-                                                                                                                                                     libc::c_int
-                                                                                                                                                     as
-                                                                                                                                                     libc::c_ulong)
-                                                                                    &
-                                                                                    !(::std::mem::size_of::<size_t>()
-                                                                                          as
-                                                                                          libc::c_ulong).wrapping_sub(1
-                                                                                                                          as
-                                                                                                                          libc::c_int
-                                                                                                                          as
-                                                                                                                          libc::c_ulong));
-    if cmsg.is_null() || length > buf_length ||
-           (*msg).msg_controllen.wrapping_add(cmsg_space) > buf_length {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not add control message level=%d type=%d\x00"
-                            as *const u8 as *const libc::c_char, level,
-                        type_0);
+    cmsg_space = (length
+        .wrapping_add(::std::mem::size_of::<size_t>() as libc::c_ulong)
+        .wrapping_sub(1 as libc::c_int as libc::c_ulong)
+        & !(::std::mem::size_of::<size_t>() as libc::c_ulong)
+            .wrapping_sub(1 as libc::c_int as libc::c_ulong))
+    .wrapping_add(
+        (::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
+            .wrapping_add(::std::mem::size_of::<size_t>() as libc::c_ulong)
+            .wrapping_sub(1 as libc::c_int as libc::c_ulong)
+            & !(::std::mem::size_of::<size_t>() as libc::c_ulong)
+                .wrapping_sub(1 as libc::c_int as libc::c_ulong),
+    );
+    if cmsg.is_null()
+        || length > buf_length
+        || (*msg).msg_controllen.wrapping_add(cmsg_space) > buf_length
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not add control message level=%d type=%d\x00" as *const u8
+                    as *const libc::c_char,
+                level,
+                type_0,
+            );
         }
-        return 0 as *mut libc::c_void
+        return 0 as *mut libc::c_void;
     }
-    cmsg =
-        (cmsg as *mut libc::c_char).offset((*msg).msg_controllen as isize) as
-            *mut cmsghdr;
+    cmsg = (cmsg as *mut libc::c_char).offset((*msg).msg_controllen as isize) as *mut cmsghdr;
     memset(cmsg as *mut libc::c_void, 0 as libc::c_int, cmsg_space);
     (*cmsg).cmsg_level = level;
     (*cmsg).cmsg_type = type_0;
-    (*cmsg).cmsg_len =
-        ((::std::mem::size_of::<cmsghdr>() as
-              libc::c_ulong).wrapping_add(::std::mem::size_of::<size_t>() as
-                                              libc::c_ulong).wrapping_sub(1 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              libc::c_ulong)
-             &
-             !(::std::mem::size_of::<size_t>() as
-                   libc::c_ulong).wrapping_sub(1 as libc::c_int as
-                                                   libc::c_ulong)).wrapping_add(length);
+    (*cmsg).cmsg_len = ((::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
+        .wrapping_add(::std::mem::size_of::<size_t>() as libc::c_ulong)
+        .wrapping_sub(1 as libc::c_int as libc::c_ulong)
+        & !(::std::mem::size_of::<size_t>() as libc::c_ulong)
+            .wrapping_sub(1 as libc::c_int as libc::c_ulong))
+    .wrapping_add(length);
     (*msg).msg_controllen =
-        ((*msg).msg_controllen as libc::c_ulong).wrapping_add(cmsg_space) as
-            size_t as size_t;
+        ((*msg).msg_controllen as libc::c_ulong).wrapping_add(cmsg_space) as size_t as size_t;
     return (*cmsg).__cmsg_data.as_mut_ptr() as *mut libc::c_void;
 }
 /* ================================================== */
-unsafe extern "C" fn send_message(mut sock_fd: libc::c_int,
-                                  mut message: *mut SCK_Message,
-                                  mut flags: libc::c_int) -> libc::c_int {
-    let mut cmsg_buf: [cmsghdr; 16] =
-        [cmsghdr{cmsg_len: 0, cmsg_level: 0, cmsg_type: 0, __cmsg_data: [],};
-            16];
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
+unsafe extern "C" fn send_message(
+    mut sock_fd: libc::c_int,
+    mut message: *mut SCK_Message,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    let mut cmsg_buf: [cmsghdr; 16] = [cmsghdr {
+        cmsg_len: 0,
+        cmsg_level: 0,
+        cmsg_type: 0,
+        __cmsg_data: [],
+    }; 16];
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
     let mut saddr_len: socklen_t = 0;
-    let mut msg: msghdr =
-        msghdr{msg_name: 0 as *mut libc::c_void,
-               msg_namelen: 0,
-               msg_iov: 0 as *mut iovec,
-               msg_iovlen: 0,
-               msg_control: 0 as *mut libc::c_void,
-               msg_controllen: 0,
-               msg_flags: 0,};
-    let mut iov: iovec = iovec{iov_base: 0 as *mut libc::c_void, iov_len: 0,};
+    let mut msg: msghdr = msghdr {
+        msg_name: 0 as *mut libc::c_void,
+        msg_namelen: 0,
+        msg_iov: 0 as *mut iovec,
+        msg_iovlen: 0,
+        msg_control: 0 as *mut libc::c_void,
+        msg_controllen: 0,
+        msg_flags: 0,
+    };
+    let mut iov: iovec = iovec {
+        iov_base: 0 as *mut libc::c_void,
+        iov_len: 0,
+    };
     match (*message).addr_type as libc::c_uint {
-        0 => { saddr_len = 0 as libc::c_int as socklen_t }
+        0 => saddr_len = 0 as libc::c_int as socklen_t,
         1 => {
-            saddr_len =
-                SCK_IPSockAddrToSockaddr(&mut (*message).remote_addr.ip,
-                                         &mut saddr as *mut sockaddr_all as
-                                             *mut sockaddr,
-                                         ::std::mem::size_of::<sockaddr_all>()
-                                             as libc::c_ulong as libc::c_int)
-                    as socklen_t
+            saddr_len = SCK_IPSockAddrToSockaddr(
+                &mut (*message).remote_addr.ip,
+                &mut saddr as *mut sockaddr_all as *mut sockaddr,
+                ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as libc::c_int,
+            ) as socklen_t
         }
         2 => {
-            memset(&mut saddr as *mut sockaddr_all as *mut libc::c_void,
-                   0 as libc::c_int,
-                   ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong);
-            if snprintf(saddr.un.sun_path.as_mut_ptr(),
-                        ::std::mem::size_of::<[libc::c_char; 108]>() as
-                            libc::c_ulong,
-                        b"%s\x00" as *const u8 as *const libc::c_char,
-                        (*message).remote_addr.path) as libc::c_ulong >=
-                   ::std::mem::size_of::<[libc::c_char; 108]>() as
-                       libc::c_ulong {
-                if 0 as libc::c_int != 0 &&
-                       log_min_severity as libc::c_int ==
-                           LOGS_DEBUG as libc::c_int {
-                    LOG_Message(LOGS_DEBUG,
-                                b"Unix socket path %s too long\x00" as
-                                    *const u8 as *const libc::c_char,
-                                (*message).remote_addr.path);
+            memset(
+                &mut saddr as *mut sockaddr_all as *mut libc::c_void,
+                0 as libc::c_int,
+                ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong,
+            );
+            if snprintf(
+                saddr.un.sun_path.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
+                b"%s\x00" as *const u8 as *const libc::c_char,
+                (*message).remote_addr.path,
+            ) as libc::c_ulong
+                >= ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong
+            {
+                if 0 as libc::c_int != 0
+                    && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                {
+                    LOG_Message(
+                        LOGS_DEBUG,
+                        b"Unix socket path %s too long\x00" as *const u8 as *const libc::c_char,
+                        (*message).remote_addr.path,
+                    );
                 }
-                return 0 as libc::c_int
+                return 0 as libc::c_int;
             }
             saddr.un.sun_family = 1 as libc::c_int as sa_family_t;
-            saddr_len =
-                ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as
-                    socklen_t
+            saddr_len = ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as socklen_t
         }
         _ => {
-            __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                          b"socket.c\x00" as *const u8 as *const libc::c_char,
-                          977 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 42],
-                                                    &[libc::c_char; 42]>(b"int send_message(int, SCK_Message *, int)\x00")).as_ptr());
+            __assert_fail(
+                b"0\x00" as *const u8 as *const libc::c_char,
+                b"socket.c\x00" as *const u8 as *const libc::c_char,
+                977 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 42], &[libc::c_char; 42]>(
+                    b"int send_message(int, SCK_Message *, int)\x00",
+                ))
+                .as_ptr(),
+            );
         }
     }
     if saddr_len != 0 {
@@ -2239,41 +2410,42 @@ unsafe extern "C" fn send_message(mut sock_fd: libc::c_int,
     msg.msg_control = cmsg_buf.as_mut_ptr() as *mut libc::c_void;
     msg.msg_controllen = 0 as libc::c_int as size_t;
     msg.msg_flags = 0 as libc::c_int;
-    if (*message).addr_type as libc::c_uint ==
-           SCK_ADDR_IP as libc::c_int as libc::c_uint {
-        if (*message).local_addr.ip.family as libc::c_int == 1 as libc::c_int
-           {
+    if (*message).addr_type as libc::c_uint == SCK_ADDR_IP as libc::c_int as libc::c_uint {
+        if (*message).local_addr.ip.family as libc::c_int == 1 as libc::c_int {
             let mut ipi: *mut in_pktinfo = 0 as *mut in_pktinfo;
-            ipi =
-                add_control_message(&mut msg, IPPROTO_IP as libc::c_int,
-                                    8 as libc::c_int,
-                                    ::std::mem::size_of::<in_pktinfo>() as
-                                        libc::c_ulong,
-                                    ::std::mem::size_of::<[cmsghdr; 16]>() as
-                                        libc::c_ulong) as *mut in_pktinfo;
-            if ipi.is_null() { return 0 as libc::c_int }
-            (*ipi).ipi_spec_dst.s_addr =
-                htonl((*message).local_addr.ip.addr.in4);
+            ipi = add_control_message(
+                &mut msg,
+                IPPROTO_IP as libc::c_int,
+                8 as libc::c_int,
+                ::std::mem::size_of::<in_pktinfo>() as libc::c_ulong,
+                ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong,
+            ) as *mut in_pktinfo;
+            if ipi.is_null() {
+                return 0 as libc::c_int;
+            }
+            (*ipi).ipi_spec_dst.s_addr = htonl((*message).local_addr.ip.addr.in4);
             if (*message).if_index != -(1 as libc::c_int) {
                 (*ipi).ipi_ifindex = (*message).if_index
             }
         }
-        if (*message).local_addr.ip.family as libc::c_int == 2 as libc::c_int
-           {
+        if (*message).local_addr.ip.family as libc::c_int == 2 as libc::c_int {
             let mut ipi_0: *mut in6_pktinfo = 0 as *mut in6_pktinfo;
-            ipi_0 =
-                add_control_message(&mut msg, IPPROTO_IPV6 as libc::c_int,
-                                    50 as libc::c_int,
-                                    ::std::mem::size_of::<in6_pktinfo>() as
-                                        libc::c_ulong,
-                                    ::std::mem::size_of::<[cmsghdr; 16]>() as
-                                        libc::c_ulong) as *mut in6_pktinfo;
-            if ipi_0.is_null() { return 0 as libc::c_int }
-            memcpy(&mut (*ipi_0).ipi6_addr.__in6_u.__u6_addr8 as
-                       *mut [uint8_t; 16] as *mut libc::c_void,
-                   &mut (*message).local_addr.ip.addr.in6 as
-                       *mut [uint8_t; 16] as *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            ipi_0 = add_control_message(
+                &mut msg,
+                IPPROTO_IPV6 as libc::c_int,
+                50 as libc::c_int,
+                ::std::mem::size_of::<in6_pktinfo>() as libc::c_ulong,
+                ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong,
+            ) as *mut in6_pktinfo;
+            if ipi_0.is_null() {
+                return 0 as libc::c_int;
+            }
+            memcpy(
+                &mut (*ipi_0).ipi6_addr.__in6_u.__u6_addr8 as *mut [uint8_t; 16]
+                    as *mut libc::c_void,
+                &mut (*message).local_addr.ip.addr.in6 as *mut [uint8_t; 16] as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
             if (*message).if_index != -(1 as libc::c_int) {
                 (*ipi_0).ipi6_ifindex = (*message).if_index as libc::c_uint
             }
@@ -2282,63 +2454,81 @@ unsafe extern "C" fn send_message(mut sock_fd: libc::c_int,
     if (*message).timestamp.tx_flags != 0 {
         let mut ts_tx_flags: *mut libc::c_int = 0 as *mut libc::c_int;
         /* Set timestamping flags for this message */
-        ts_tx_flags =
-            add_control_message(&mut msg, 1 as libc::c_int, 37 as libc::c_int,
-                                ::std::mem::size_of::<libc::c_int>() as
-                                    libc::c_ulong,
-                                ::std::mem::size_of::<[cmsghdr; 16]>() as
-                                    libc::c_ulong) as *mut libc::c_int;
-        if ts_tx_flags.is_null() { return 0 as libc::c_int }
+        ts_tx_flags = add_control_message(
+            &mut msg,
+            1 as libc::c_int,
+            37 as libc::c_int,
+            ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
+            ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong,
+        ) as *mut libc::c_int;
+        if ts_tx_flags.is_null() {
+            return 0 as libc::c_int;
+        }
         *ts_tx_flags = (*message).timestamp.tx_flags
     }
     if flags & 2 as libc::c_int != 0 {
         let mut fd: *mut libc::c_int = 0 as *mut libc::c_int;
-        fd =
-            add_control_message(&mut msg, 1 as libc::c_int,
-                                SCM_RIGHTS as libc::c_int,
-                                ::std::mem::size_of::<libc::c_int>() as
-                                    libc::c_ulong,
-                                ::std::mem::size_of::<[cmsghdr; 16]>() as
-                                    libc::c_ulong) as *mut libc::c_int;
-        if fd.is_null() { return 0 as libc::c_int }
+        fd = add_control_message(
+            &mut msg,
+            1 as libc::c_int,
+            SCM_RIGHTS as libc::c_int,
+            ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
+            ::std::mem::size_of::<[cmsghdr; 16]>() as libc::c_ulong,
+        ) as *mut libc::c_int;
+        if fd.is_null() {
+            return 0 as libc::c_int;
+        }
         *fd = (*message).descriptor
     }
     /* This is apparently required on some systems */
     if msg.msg_controllen == 0 as libc::c_int as libc::c_ulong {
         msg.msg_control = 0 as *mut libc::c_void
     }
-    if sendmsg(sock_fd, &mut msg, 0 as libc::c_int) <
-           0 as libc::c_int as libc::c_long {
-        log_message(sock_fd, -(1 as libc::c_int), message,
-                    b"Could not send\x00" as *const u8 as *const libc::c_char,
-                    strerror(*__errno_location()));
-        return 0 as libc::c_int
+    if sendmsg(sock_fd, &mut msg, 0 as libc::c_int) < 0 as libc::c_int as libc::c_long {
+        log_message(
+            sock_fd,
+            -(1 as libc::c_int),
+            message,
+            b"Could not send\x00" as *const u8 as *const libc::c_char,
+            strerror(*__errno_location()),
+        );
+        return 0 as libc::c_int;
     }
-    log_message(sock_fd, -(1 as libc::c_int), message,
-                b"Sent\x00" as *const u8 as *const libc::c_char,
-                0 as *const libc::c_char);
+    log_message(
+        sock_fd,
+        -(1 as libc::c_int),
+        message,
+        b"Sent\x00" as *const u8 as *const libc::c_char,
+        0 as *const libc::c_char,
+    );
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn SCK_Initialise() {
     recv_messages =
-        ARR_CreateInstance(::std::mem::size_of::<Message>() as libc::c_ulong
-                               as libc::c_uint);
+        ARR_CreateInstance(::std::mem::size_of::<Message>() as libc::c_ulong as libc::c_uint);
     ARR_SetSize(recv_messages, 4 as libc::c_int as libc::c_uint);
     recv_headers =
-        ARR_CreateInstance(::std::mem::size_of::<mmsghdr>() as libc::c_ulong
-                               as libc::c_uint);
+        ARR_CreateInstance(::std::mem::size_of::<mmsghdr>() as libc::c_ulong as libc::c_uint);
     ARR_SetSize(recv_headers, 4 as libc::c_int as libc::c_uint);
     received_messages = 4 as libc::c_int as libc::c_uint;
     priv_bind_function = None;
     supported_socket_flags = 0 as libc::c_int;
-    if check_socket_flag(SOCK_CLOEXEC as libc::c_int, 1 as libc::c_int,
-                         0 as libc::c_int) != 0 {
+    if check_socket_flag(
+        SOCK_CLOEXEC as libc::c_int,
+        1 as libc::c_int,
+        0 as libc::c_int,
+    ) != 0
+    {
         supported_socket_flags |= SOCK_CLOEXEC as libc::c_int
     }
-    if check_socket_flag(SOCK_NONBLOCK as libc::c_int, 0 as libc::c_int,
-                         0o4000 as libc::c_int) != 0 {
+    if check_socket_flag(
+        SOCK_NONBLOCK as libc::c_int,
+        0 as libc::c_int,
+        0o4000 as libc::c_int,
+    ) != 0
+    {
         supported_socket_flags |= SOCK_NONBLOCK as libc::c_int
     }
     initialised = 1 as libc::c_int;
@@ -2352,378 +2542,416 @@ pub unsafe extern "C" fn SCK_Finalise() {
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_IsFamilySupported(mut family: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_IsFamilySupported(mut family: libc::c_int) -> libc::c_int {
     match family {
-        1 => { return 1 as libc::c_int }
-        2 => { return 1 as libc::c_int }
-        _ => { return 0 as libc::c_int }
+        1 => return 1 as libc::c_int,
+        2 => return 1 as libc::c_int,
+        _ => return 0 as libc::c_int,
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_GetAnyLocalIPAddress(mut family: libc::c_int,
-                                                  mut local_addr:
-                                                      *mut IPAddr) {
+pub unsafe extern "C" fn SCK_GetAnyLocalIPAddress(
+    mut family: libc::c_int,
+    mut local_addr: *mut IPAddr,
+) {
     (*local_addr).family = family as uint16_t;
     match family {
-        1 => { (*local_addr).addr.in4 = 0 as libc::c_int as in_addr_t }
+        1 => (*local_addr).addr.in4 = 0 as libc::c_int as in_addr_t,
         2 => {
-            memcpy(&mut (*local_addr).addr.in6 as *mut [uint8_t; 16] as
-                       *mut libc::c_void,
-                   &in6addr_any as *const in6_addr as *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            memcpy(
+                &mut (*local_addr).addr.in6 as *mut [uint8_t; 16] as *mut libc::c_void,
+                &in6addr_any as *const in6_addr as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
         }
-        _ => { }
+        _ => {}
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_GetLoopbackIPAddress(mut family: libc::c_int,
-                                                  mut local_addr:
-                                                      *mut IPAddr) {
+pub unsafe extern "C" fn SCK_GetLoopbackIPAddress(
+    mut family: libc::c_int,
+    mut local_addr: *mut IPAddr,
+) {
     (*local_addr).family = family as uint16_t;
     match family {
-        1 => {
-            (*local_addr).addr.in4 = 0x7f000001 as libc::c_int as in_addr_t
-        }
+        1 => (*local_addr).addr.in4 = 0x7f000001 as libc::c_int as in_addr_t,
         2 => {
-            memcpy(&mut (*local_addr).addr.in6 as *mut [uint8_t; 16] as
-                       *mut libc::c_void,
-                   &in6addr_loopback as *const in6_addr as
-                       *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            memcpy(
+                &mut (*local_addr).addr.in6 as *mut [uint8_t; 16] as *mut libc::c_void,
+                &in6addr_loopback as *const in6_addr as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
         }
-        _ => { }
+        _ => {}
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_SetPrivBind(mut function:
-                                             Option<unsafe extern "C" fn(_:
-                                                                             libc::c_int,
-                                                                         _:
-                                                                             *mut sockaddr,
-                                                                         _:
-                                                                             socklen_t)
-                                                        -> libc::c_int>) {
+pub unsafe extern "C" fn SCK_SetPrivBind(
+    mut function: Option<
+        unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr, _: socklen_t) -> libc::c_int,
+    >,
+) {
     priv_bind_function = function;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_OpenUdpSocket(mut remote_addr: *mut IPSockAddr,
-                                           mut local_addr: *mut IPSockAddr,
-                                           mut flags: libc::c_int)
- -> libc::c_int {
-    return open_ip_socket(remote_addr, local_addr, SOCK_DGRAM as libc::c_int,
-                          flags);
+pub unsafe extern "C" fn SCK_OpenUdpSocket(
+    mut remote_addr: *mut IPSockAddr,
+    mut local_addr: *mut IPSockAddr,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    return open_ip_socket(remote_addr, local_addr, SOCK_DGRAM as libc::c_int, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_OpenTcpSocket(mut remote_addr: *mut IPSockAddr,
-                                           mut local_addr: *mut IPSockAddr,
-                                           mut flags: libc::c_int)
- -> libc::c_int {
-    return open_ip_socket(remote_addr, local_addr, SOCK_STREAM as libc::c_int,
-                          flags);
+pub unsafe extern "C" fn SCK_OpenTcpSocket(
+    mut remote_addr: *mut IPSockAddr,
+    mut local_addr: *mut IPSockAddr,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    return open_ip_socket(remote_addr, local_addr, SOCK_STREAM as libc::c_int, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_OpenUnixDatagramSocket(mut remote_addr:
-                                                        *const libc::c_char,
-                                                    mut local_addr:
-                                                        *const libc::c_char,
-                                                    mut flags: libc::c_int)
- -> libc::c_int {
-    return open_unix_socket(remote_addr, local_addr,
-                            SOCK_DGRAM as libc::c_int, flags);
+pub unsafe extern "C" fn SCK_OpenUnixDatagramSocket(
+    mut remote_addr: *const libc::c_char,
+    mut local_addr: *const libc::c_char,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    return open_unix_socket(remote_addr, local_addr, SOCK_DGRAM as libc::c_int, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_OpenUnixStreamSocket(mut remote_addr:
-                                                      *const libc::c_char,
-                                                  mut local_addr:
-                                                      *const libc::c_char,
-                                                  mut flags: libc::c_int)
- -> libc::c_int {
-    return open_unix_socket(remote_addr, local_addr,
-                            SOCK_STREAM as libc::c_int, flags);
+pub unsafe extern "C" fn SCK_OpenUnixStreamSocket(
+    mut remote_addr: *const libc::c_char,
+    mut local_addr: *const libc::c_char,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    return open_unix_socket(remote_addr, local_addr, SOCK_STREAM as libc::c_int, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_OpenUnixSocketPair(mut flags: libc::c_int,
-                                                mut other_fd:
-                                                    *mut libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_OpenUnixSocketPair(
+    mut flags: libc::c_int,
+    mut other_fd: *mut libc::c_int,
+) -> libc::c_int {
     let mut sock_fd: libc::c_int = 0;
     /* Prefer SEQPACKET sockets over DGRAM in order to receive a zero-length
-     message (end of file) when the other end is unexpectedly closed */
-    sock_fd =
-        open_unix_socket_pair(SOCK_SEQPACKET as libc::c_int, flags, other_fd);
-    if sock_fd < 0 as libc::c_int &&
-           {
-               sock_fd =
-                   open_unix_socket_pair(SOCK_DGRAM as libc::c_int, flags,
-                                         other_fd);
-               (sock_fd) < 0 as libc::c_int
-           } {
-        return -(4 as libc::c_int)
+    message (end of file) when the other end is unexpectedly closed */
+    sock_fd = open_unix_socket_pair(SOCK_SEQPACKET as libc::c_int, flags, other_fd);
+    if sock_fd < 0 as libc::c_int && {
+        sock_fd = open_unix_socket_pair(SOCK_DGRAM as libc::c_int, flags, other_fd);
+        (sock_fd) < 0 as libc::c_int
+    } {
+        return -(4 as libc::c_int);
     }
     return sock_fd;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_SetIntOption(mut sock_fd: libc::c_int,
-                                          mut level: libc::c_int,
-                                          mut name: libc::c_int,
-                                          mut value: libc::c_int)
- -> libc::c_int {
-    if setsockopt(sock_fd, level, name,
-                  &mut value as *mut libc::c_int as *const libc::c_void,
-                  ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as
-                      socklen_t) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"setsockopt() failed fd=%d level=%d name=%d value=%d : %s\x00"
-                            as *const u8 as *const libc::c_char, sock_fd,
-                        level, name, value, strerror(*__errno_location()));
+pub unsafe extern "C" fn SCK_SetIntOption(
+    mut sock_fd: libc::c_int,
+    mut level: libc::c_int,
+    mut name: libc::c_int,
+    mut value: libc::c_int,
+) -> libc::c_int {
+    if setsockopt(
+        sock_fd,
+        level,
+        name,
+        &mut value as *mut libc::c_int as *const libc::c_void,
+        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as socklen_t,
+    ) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"setsockopt() failed fd=%d level=%d name=%d value=%d : %s\x00" as *const u8
+                    as *const libc::c_char,
+                sock_fd,
+                level,
+                name,
+                value,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_GetIntOption(mut sock_fd: libc::c_int,
-                                          mut level: libc::c_int,
-                                          mut name: libc::c_int,
-                                          mut value: *mut libc::c_int)
- -> libc::c_int {
-    let mut len: socklen_t =
-        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as socklen_t;
-    if getsockopt(sock_fd, level, name, value as *mut libc::c_void, &mut len)
-           < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"getsockopt() failed fd=%d level=%d name=%d : %s\x00"
-                            as *const u8 as *const libc::c_char, sock_fd,
-                        level, name, strerror(*__errno_location()));
+pub unsafe extern "C" fn SCK_GetIntOption(
+    mut sock_fd: libc::c_int,
+    mut level: libc::c_int,
+    mut name: libc::c_int,
+    mut value: *mut libc::c_int,
+) -> libc::c_int {
+    let mut len: socklen_t = ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as socklen_t;
+    if getsockopt(sock_fd, level, name, value as *mut libc::c_void, &mut len) < 0 as libc::c_int {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"getsockopt() failed fd=%d level=%d name=%d : %s\x00" as *const u8
+                    as *const libc::c_char,
+                sock_fd,
+                level,
+                name,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_EnableKernelRxTimestamping(mut sock_fd:
-                                                            libc::c_int)
- -> libc::c_int {
-    if SCK_SetIntOption(sock_fd, 1 as libc::c_int, 35 as libc::c_int,
-                        1 as libc::c_int) != 0 {
-        return 1 as libc::c_int
+pub unsafe extern "C" fn SCK_EnableKernelRxTimestamping(mut sock_fd: libc::c_int) -> libc::c_int {
+    if SCK_SetIntOption(
+        sock_fd,
+        1 as libc::c_int,
+        35 as libc::c_int,
+        1 as libc::c_int,
+    ) != 0
+    {
+        return 1 as libc::c_int;
     }
-    if SCK_SetIntOption(sock_fd, 1 as libc::c_int, 29 as libc::c_int,
-                        1 as libc::c_int) != 0 {
-        return 1 as libc::c_int
+    if SCK_SetIntOption(
+        sock_fd,
+        1 as libc::c_int,
+        29 as libc::c_int,
+        1 as libc::c_int,
+    ) != 0
+    {
+        return 1 as libc::c_int;
     }
     return 0 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_ListenOnSocket(mut sock_fd: libc::c_int,
-                                            mut backlog: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_ListenOnSocket(
+    mut sock_fd: libc::c_int,
+    mut backlog: libc::c_int,
+) -> libc::c_int {
     if listen(sock_fd, backlog) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"listen() failed : %s\x00" as *const u8 as
-                            *const libc::c_char,
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"listen() failed : %s\x00" as *const u8 as *const libc::c_char,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_AcceptConnection(mut sock_fd: libc::c_int,
-                                              mut remote_addr:
-                                                  *mut IPSockAddr)
- -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
+pub unsafe extern "C" fn SCK_AcceptConnection(
+    mut sock_fd: libc::c_int,
+    mut remote_addr: *mut IPSockAddr,
+) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
     let mut saddr_len: socklen_t =
         ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as socklen_t;
     let mut conn_fd: libc::c_int = 0;
-    conn_fd =
-        accept(sock_fd,
-               __SOCKADDR_ARG{__sockaddr__: &mut saddr.sa as *mut sockaddr,},
-               &mut saddr_len);
+    conn_fd = accept(
+        sock_fd,
+        __SOCKADDR_ARG {
+            __sockaddr__: &mut saddr.sa as *mut sockaddr,
+        },
+        &mut saddr_len,
+    );
     if conn_fd < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"accept() failed : %s\x00" as *const u8 as
-                            *const libc::c_char,
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"accept() failed : %s\x00" as *const u8 as *const libc::c_char,
+                strerror(*__errno_location()),
+            );
         }
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
     if UTI_FdSetCloexec(conn_fd) == 0 || set_socket_nonblock(conn_fd) == 0 {
         close(conn_fd);
-        return -(4 as libc::c_int)
+        return -(4 as libc::c_int);
     }
-    SCK_SockaddrToIPSockAddr(&mut saddr.sa, saddr_len as libc::c_int,
-                             remote_addr);
+    SCK_SockaddrToIPSockAddr(&mut saddr.sa, saddr_len as libc::c_int, remote_addr);
     return conn_fd;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_ShutdownConnection(mut sock_fd: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_ShutdownConnection(mut sock_fd: libc::c_int) -> libc::c_int {
     if shutdown(sock_fd, SHUT_RDWR as libc::c_int) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"shutdown() failed : %s\x00" as *const u8 as
-                            *const libc::c_char,
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"shutdown() failed : %s\x00" as *const u8 as *const libc::c_char,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_Receive(mut sock_fd: libc::c_int,
-                                     mut buffer: *mut libc::c_void,
-                                     mut length: libc::c_uint,
-                                     mut flags: libc::c_int) -> libc::c_int {
+pub unsafe extern "C" fn SCK_Receive(
+    mut sock_fd: libc::c_int,
+    mut buffer: *mut libc::c_void,
+    mut length: libc::c_uint,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut r: libc::c_int = 0;
-    r =
-        recv(sock_fd, buffer, length as size_t, get_recv_flags(flags)) as
-            libc::c_int;
-    if r < 0 as libc::c_int { handle_recv_error(sock_fd, flags); return r }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Received data fd=%d len=%d\x00" as *const u8 as
-                        *const libc::c_char, sock_fd, r);
+    r = recv(sock_fd, buffer, length as size_t, get_recv_flags(flags)) as libc::c_int;
+    if r < 0 as libc::c_int {
+        handle_recv_error(sock_fd, flags);
+        return r;
+    }
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Received data fd=%d len=%d\x00" as *const u8 as *const libc::c_char,
+            sock_fd,
+            r,
+        );
     }
     return r;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_Send(mut sock_fd: libc::c_int,
-                                  mut buffer: *const libc::c_void,
-                                  mut length: libc::c_uint,
-                                  mut flags: libc::c_int) -> libc::c_int {
+pub unsafe extern "C" fn SCK_Send(
+    mut sock_fd: libc::c_int,
+    mut buffer: *const libc::c_void,
+    mut length: libc::c_uint,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     let mut r: libc::c_int = 0;
     if flags == 0 as libc::c_int {
     } else {
-        __assert_fail(b"flags == 0\x00" as *const u8 as *const libc::c_char,
-                      b"socket.c\x00" as *const u8 as *const libc::c_char,
-                      1360 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 51],
-                                                &[libc::c_char; 51]>(b"int SCK_Send(int, const void *, unsigned int, int)\x00")).as_ptr());
+        __assert_fail(
+            b"flags == 0\x00" as *const u8 as *const libc::c_char,
+            b"socket.c\x00" as *const u8 as *const libc::c_char,
+            1360 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 51], &[libc::c_char; 51]>(
+                b"int SCK_Send(int, const void *, unsigned int, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    r =
-        send(sock_fd, buffer, length as size_t, 0 as libc::c_int) as
-            libc::c_int;
+    r = send(sock_fd, buffer, length as size_t, 0 as libc::c_int) as libc::c_int;
     if r < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"Could not send data fd=%d len=%u : %s\x00" as
-                            *const u8 as *const libc::c_char, sock_fd, length,
-                        strerror(*__errno_location()));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"Could not send data fd=%d len=%u : %s\x00" as *const u8 as *const libc::c_char,
+                sock_fd,
+                length,
+                strerror(*__errno_location()),
+            );
         }
-        return r
+        return r;
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Sent data fd=%d len=%d\x00" as *const u8 as
-                        *const libc::c_char, sock_fd, r);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Sent data fd=%d len=%d\x00" as *const u8 as *const libc::c_char,
+            sock_fd,
+            r,
+        );
     }
     return r;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_ReceiveMessage(mut sock_fd: libc::c_int,
-                                            mut message: *mut SCK_Message,
-                                            mut flags: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_ReceiveMessage(
+    mut sock_fd: libc::c_int,
+    mut message: *mut SCK_Message,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     return SCK_ReceiveMessages(sock_fd, message, 1 as libc::c_int, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_ReceiveMessages(mut sock_fd: libc::c_int,
-                                             mut messages: *mut SCK_Message,
-                                             mut max_messages: libc::c_int,
-                                             mut flags: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_ReceiveMessages(
+    mut sock_fd: libc::c_int,
+    mut messages: *mut SCK_Message,
+    mut max_messages: libc::c_int,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     return receive_messages(sock_fd, messages, max_messages, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_InitMessage(mut message: *mut SCK_Message,
-                                         mut addr_type: SCK_AddressType) {
+pub unsafe extern "C" fn SCK_InitMessage(
+    mut message: *mut SCK_Message,
+    mut addr_type: SCK_AddressType,
+) {
     init_message_addresses(message, addr_type);
     init_message_nonaddress(message);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_SendMessage(mut sock_fd: libc::c_int,
-                                         mut message: *mut SCK_Message,
-                                         mut flags: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_SendMessage(
+    mut sock_fd: libc::c_int,
+    mut message: *mut SCK_Message,
+    mut flags: libc::c_int,
+) -> libc::c_int {
     return send_message(sock_fd, message, flags);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_RemoveSocket(mut sock_fd: libc::c_int)
- -> libc::c_int {
-    let mut saddr: sockaddr_all =
-        sockaddr_all{in4:
-                         sockaddr_in{sin_family: 0,
-                                     sin_port: 0,
-                                     sin_addr: in_addr{s_addr: 0,},
-                                     sin_zero: [0; 8],},};
+pub unsafe extern "C" fn SCK_RemoveSocket(mut sock_fd: libc::c_int) -> libc::c_int {
+    let mut saddr: sockaddr_all = sockaddr_all {
+        in4: sockaddr_in {
+            sin_family: 0,
+            sin_port: 0,
+            sin_addr: in_addr { s_addr: 0 },
+            sin_zero: [0; 8],
+        },
+    };
     let mut saddr_len: socklen_t = 0;
-    saddr_len =
-        ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as socklen_t;
-    if getsockname(sock_fd,
-                   __SOCKADDR_ARG{__sockaddr__:
-                                      &mut saddr.sa as *mut sockaddr,},
-                   &mut saddr_len) < 0 as libc::c_int {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"getsockname() failed : %s\x00" as *const u8 as
-                            *const libc::c_char,
-                        strerror(*__errno_location()));
+    saddr_len = ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong as socklen_t;
+    if getsockname(
+        sock_fd,
+        __SOCKADDR_ARG {
+            __sockaddr__: &mut saddr.sa as *mut sockaddr,
+        },
+        &mut saddr_len,
+    ) < 0 as libc::c_int
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"getsockname() failed : %s\x00" as *const u8 as *const libc::c_char,
+                strerror(*__errno_location()),
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    if saddr_len as libc::c_ulong >
-           ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong ||
-           saddr_len as libc::c_ulong <=
-               ::std::mem::size_of::<sa_family_t>() as libc::c_ulong ||
-           saddr.sa.sa_family as libc::c_int != 1 as libc::c_int {
-        return 0 as libc::c_int
+    if saddr_len as libc::c_ulong > ::std::mem::size_of::<sockaddr_all>() as libc::c_ulong
+        || saddr_len as libc::c_ulong <= ::std::mem::size_of::<sa_family_t>() as libc::c_ulong
+        || saddr.sa.sa_family as libc::c_int != 1 as libc::c_int
+    {
+        return 0 as libc::c_int;
     }
-    if UTI_RemoveFile(0 as *const libc::c_char,
-                      saddr.un.sun_path.as_mut_ptr(),
-                      0 as *const libc::c_char) == 0 {
-        return 0 as libc::c_int
+    if UTI_RemoveFile(
+        0 as *const libc::c_char,
+        saddr.un.sun_path.as_mut_ptr(),
+        0 as *const libc::c_char,
+    ) == 0
+    {
+        return 0 as libc::c_int;
     }
     return 1 as libc::c_int;
 }
@@ -2734,38 +2962,41 @@ pub unsafe extern "C" fn SCK_CloseSocket(mut sock_fd: libc::c_int) {
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_SockaddrToIPSockAddr(mut sa: *mut sockaddr,
-                                                  mut sa_length: libc::c_int,
-                                                  mut ip_sa:
-                                                      *mut IPSockAddr) {
+pub unsafe extern "C" fn SCK_SockaddrToIPSockAddr(
+    mut sa: *mut sockaddr,
+    mut sa_length: libc::c_int,
+    mut ip_sa: *mut IPSockAddr,
+) {
     (*ip_sa).ip_addr.family = 0 as libc::c_int as uint16_t;
     (*ip_sa).port = 0 as libc::c_int as uint16_t;
     match (*sa).sa_family as libc::c_int {
         2 => {
-            if (sa_length as libc::c_ulong) <
-                   ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong {
-                return
+            if (sa_length as libc::c_ulong) < ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong
+            {
+                return;
             }
             (*ip_sa).ip_addr.family = 1 as libc::c_int as uint16_t;
-            (*ip_sa).ip_addr.addr.in4 =
-                ntohl((*(sa as *mut sockaddr_in)).sin_addr.s_addr);
+            (*ip_sa).ip_addr.addr.in4 = ntohl((*(sa as *mut sockaddr_in)).sin_addr.s_addr);
             (*ip_sa).port = ntohs((*(sa as *mut sockaddr_in)).sin_port)
         }
         10 => {
-            if (sa_length as libc::c_ulong) <
-                   ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong {
-                return
+            if (sa_length as libc::c_ulong) < ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong
+            {
+                return;
             }
             (*ip_sa).ip_addr.family = 2 as libc::c_int as uint16_t;
-            memcpy(&mut (*ip_sa).ip_addr.addr.in6 as *mut [uint8_t; 16] as
-                       *mut libc::c_void,
-                   (*(sa as
-                          *mut sockaddr_in6)).sin6_addr.__in6_u.__u6_addr8.as_mut_ptr()
-                       as *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            memcpy(
+                &mut (*ip_sa).ip_addr.addr.in6 as *mut [uint8_t; 16] as *mut libc::c_void,
+                (*(sa as *mut sockaddr_in6))
+                    .sin6_addr
+                    .__in6_u
+                    .__u6_addr8
+                    .as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
             (*ip_sa).port = ntohs((*(sa as *mut sockaddr_in6)).sin6_port)
         }
-        _ => { }
+        _ => {}
     };
 }
 /* Initialisation function */
@@ -2773,15 +3004,15 @@ pub unsafe extern "C" fn SCK_SockaddrToIPSockAddr(mut sa: *mut sockaddr,
 /* Check if support for the IP family was enabled in the build */
 /* Get the 0.0.0.0/::0 or 127.0.0.1/::1 address */
 /* Specify a bind()-like function for binding sockets to privileged ports when
-   running in a restricted process (e.g. after dropping root privileges) */
+running in a restricted process (e.g. after dropping root privileges) */
 /* Open socket */
 /* Set and get a socket option of int size */
 /* Enable RX timestamping socket option */
 /* Operate on a stream socket - listen()/accept()/shutdown() wrappers */
 /* Receive and send data on connected sockets - recv()/send() wrappers */
 /* Receive a single message or multiple messages.  The functions return the
-   number of received messages, or 0 on error.  The returned data point to
-   static buffers, which are valid until another call of these functions.  */
+number of received messages, or 0 on error.  The returned data point to
+static buffers, which are valid until another call of these functions.  */
 /* Initialise a new message (e.g. before sending) */
 /* Send a message */
 /* Remove bound Unix socket */
@@ -2789,52 +3020,58 @@ pub unsafe extern "C" fn SCK_SockaddrToIPSockAddr(mut sa: *mut sockaddr,
 /* Convert between IPSockAddr and sockaddr_in/in6 */
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn SCK_IPSockAddrToSockaddr(mut ip_sa: *mut IPSockAddr,
-                                                  mut sa: *mut sockaddr,
-                                                  mut sa_length: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn SCK_IPSockAddrToSockaddr(
+    mut ip_sa: *mut IPSockAddr,
+    mut sa: *mut sockaddr,
+    mut sa_length: libc::c_int,
+) -> libc::c_int {
     match (*ip_sa).ip_addr.family as libc::c_int {
         1 => {
-            if (sa_length as libc::c_ulong) <
-                   ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong {
-                return 0 as libc::c_int
+            if (sa_length as libc::c_ulong) < ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong
+            {
+                return 0 as libc::c_int;
             }
-            memset(sa as *mut libc::c_void, 0 as libc::c_int,
-                   ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong);
+            memset(
+                sa as *mut libc::c_void,
+                0 as libc::c_int,
+                ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong,
+            );
             (*sa).sa_family = 2 as libc::c_int as sa_family_t;
-            (*(sa as *mut sockaddr_in)).sin_addr.s_addr =
-                htonl((*ip_sa).ip_addr.addr.in4);
+            (*(sa as *mut sockaddr_in)).sin_addr.s_addr = htonl((*ip_sa).ip_addr.addr.in4);
             (*(sa as *mut sockaddr_in)).sin_port = htons((*ip_sa).port);
-            return ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as
-                       libc::c_int
+            return ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as libc::c_int;
         }
         2 => {
-            if (sa_length as libc::c_ulong) <
-                   ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong {
-                return 0 as libc::c_int
+            if (sa_length as libc::c_ulong) < ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong
+            {
+                return 0 as libc::c_int;
             }
-            memset(sa as *mut libc::c_void, 0 as libc::c_int,
-                   ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong);
+            memset(
+                sa as *mut libc::c_void,
+                0 as libc::c_int,
+                ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
+            );
             (*sa).sa_family = 10 as libc::c_int as sa_family_t;
-            memcpy(&mut (*(sa as
-                               *mut sockaddr_in6)).sin6_addr.__in6_u.__u6_addr8
-                       as *mut [uint8_t; 16] as *mut libc::c_void,
-                   (*ip_sa).ip_addr.addr.in6.as_mut_ptr() as
-                       *const libc::c_void,
-                   ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong);
+            memcpy(
+                &mut (*(sa as *mut sockaddr_in6)).sin6_addr.__in6_u.__u6_addr8 as *mut [uint8_t; 16]
+                    as *mut libc::c_void,
+                (*ip_sa).ip_addr.addr.in6.as_mut_ptr() as *const libc::c_void,
+                ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+            );
             (*(sa as *mut sockaddr_in6)).sin6_port = htons((*ip_sa).port);
-            return ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong as
-                       libc::c_int
+            return ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong as libc::c_int;
         }
         _ => {
-            if (sa_length as libc::c_ulong) <
-                   ::std::mem::size_of::<sockaddr>() as libc::c_ulong {
-                return 0 as libc::c_int
+            if (sa_length as libc::c_ulong) < ::std::mem::size_of::<sockaddr>() as libc::c_ulong {
+                return 0 as libc::c_int;
             }
-            memset(sa as *mut libc::c_void, 0 as libc::c_int,
-                   ::std::mem::size_of::<sockaddr>() as libc::c_ulong);
+            memset(
+                sa as *mut libc::c_void,
+                0 as libc::c_int,
+                ::std::mem::size_of::<sockaddr>() as libc::c_ulong,
+            );
             (*sa).sa_family = 0 as libc::c_int as sa_family_t;
-            return 0 as libc::c_int
+            return 0 as libc::c_int;
         }
     };
 }

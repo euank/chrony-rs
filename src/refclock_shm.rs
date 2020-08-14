@@ -9,18 +9,23 @@ extern "C" {
     #[no_mangle]
     fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     #[no_mangle]
-    fn strtol(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char,
-              __base: libc::c_int) -> libc::c_long;
+    fn strtol(
+        __nptr: *const libc::c_char,
+        __endptr: *mut *mut libc::c_char,
+        __base: libc::c_int,
+    ) -> libc::c_long;
     #[no_mangle]
     fn exit(_: libc::c_int) -> !;
     #[no_mangle]
     fn strerror(_: libc::c_int) -> *mut libc::c_char;
     #[no_mangle]
-    fn shmget(__key: key_t, __size: size_t, __shmflg: libc::c_int)
-     -> libc::c_int;
+    fn shmget(__key: key_t, __size: size_t, __shmflg: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn shmat(__shmid: libc::c_int, __shmaddr: *const libc::c_void,
-             __shmflg: libc::c_int) -> *mut libc::c_void;
+    fn shmat(
+        __shmid: libc::c_int,
+        __shmaddr: *const libc::c_void,
+        __shmflg: libc::c_int,
+    ) -> *mut libc::c_void;
     #[no_mangle]
     fn shmdt(__shmaddr: *const libc::c_void) -> libc::c_int;
     /* functions used by drivers */
@@ -31,30 +36,29 @@ extern "C" {
     #[no_mangle]
     fn RCL_GetDriverParameter(instance: RCL_Instance) -> *mut libc::c_char;
     #[no_mangle]
-    fn RCL_CheckDriverOptions(instance: RCL_Instance,
-                              options: *mut *const libc::c_char);
+    fn RCL_CheckDriverOptions(instance: RCL_Instance, options: *mut *const libc::c_char);
     #[no_mangle]
-    fn RCL_GetDriverOption(instance: RCL_Instance, name: *mut libc::c_char)
-     -> *mut libc::c_char;
+    fn RCL_GetDriverOption(instance: RCL_Instance, name: *mut libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
-    fn RCL_AddSample(instance: RCL_Instance, sample_time: *mut timespec,
-                     offset: libc::c_double, leap: libc::c_int)
-     -> libc::c_int;
+    fn RCL_AddSample(
+        instance: RCL_Instance,
+        sample_time: *mut timespec,
+        offset: libc::c_double,
+        leap: libc::c_int,
+    ) -> libc::c_int;
     /* Minimum severity of messages to be logged */
     #[no_mangle]
     static mut log_min_severity: LOG_Severity;
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
     /* Normalise a timespec, by adding or subtracting seconds to bring
-   its nanosecond field into range */
+    its nanosecond field into range */
     #[no_mangle]
     fn UTI_NormaliseTimespec(ts: *mut timespec);
     /* Calculate result = a - b and return as a double */
     #[no_mangle]
-    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec)
-     -> libc::c_double;
+    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec) -> libc::c_double;
 }
 pub type __time_t = libc::c_long;
 pub type __key_t = libc::c_int;
@@ -99,11 +103,11 @@ pub struct shmTime {
     pub receiveTimeStampNSec: libc::c_int,
     pub dummy: [libc::c_int; 8],
 }
-unsafe extern "C" fn shm_initialise(mut instance: RCL_Instance)
- -> libc::c_int {
-    let mut options: [*const libc::c_char; 2] =
-        [b"perm\x00" as *const u8 as *const libc::c_char,
-         0 as *const libc::c_char];
+unsafe extern "C" fn shm_initialise(mut instance: RCL_Instance) -> libc::c_int {
+    let mut options: [*const libc::c_char; 2] = [
+        b"perm\x00" as *const u8 as *const libc::c_char,
+        0 as *const libc::c_char,
+    ];
     let mut id: libc::c_int = 0;
     let mut param: libc::c_int = 0;
     let mut perm: libc::c_int = 0;
@@ -111,31 +115,36 @@ unsafe extern "C" fn shm_initialise(mut instance: RCL_Instance)
     let mut shm: *mut shmTime = 0 as *mut shmTime;
     RCL_CheckDriverOptions(instance, options.as_mut_ptr());
     param = atoi(RCL_GetDriverParameter(instance));
-    s =
-        RCL_GetDriverOption(instance,
-                            b"perm\x00" as *const u8 as *const libc::c_char as
-                                *mut libc::c_char);
-    perm =
-        if !s.is_null() {
-            (strtol(s, 0 as *mut *mut libc::c_char, 8 as libc::c_int)) &
-                0o777 as libc::c_int as libc::c_long
-        } else { 0o600 as libc::c_int as libc::c_long } as libc::c_int;
-    id =
-        shmget(0x4e545030 as libc::c_int + param,
-               ::std::mem::size_of::<shmTime>() as libc::c_ulong,
-               0o1000 as libc::c_int | perm);
+    s = RCL_GetDriverOption(
+        instance,
+        b"perm\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+    );
+    perm = if !s.is_null() {
+        (strtol(s, 0 as *mut *mut libc::c_char, 8 as libc::c_int))
+            & 0o777 as libc::c_int as libc::c_long
+    } else {
+        0o600 as libc::c_int as libc::c_long
+    } as libc::c_int;
+    id = shmget(
+        0x4e545030 as libc::c_int + param,
+        ::std::mem::size_of::<shmTime>() as libc::c_ulong,
+        0o1000 as libc::c_int | perm,
+    );
     if id == -(1 as libc::c_int) {
-        LOG_Message(LOGS_FATAL,
-                    b"shmget() failed : %s\x00" as *const u8 as
-                        *const libc::c_char, strerror(*__errno_location()));
+        LOG_Message(
+            LOGS_FATAL,
+            b"shmget() failed : %s\x00" as *const u8 as *const libc::c_char,
+            strerror(*__errno_location()),
+        );
         exit(1 as libc::c_int);
     }
-    shm =
-        shmat(id, 0 as *const libc::c_void, 0 as libc::c_int) as *mut shmTime;
+    shm = shmat(id, 0 as *const libc::c_void, 0 as libc::c_int) as *mut shmTime;
     if shm as libc::c_long == -(1 as libc::c_int) as libc::c_long {
-        LOG_Message(LOGS_FATAL,
-                    b"shmat() failed : %s\x00" as *const u8 as
-                        *const libc::c_char, strerror(*__errno_location()));
+        LOG_Message(
+            LOGS_FATAL,
+            b"shmat() failed : %s\x00" as *const u8 as *const libc::c_char,
+            strerror(*__errno_location()),
+        );
         exit(1 as libc::c_int);
     }
     RCL_SetDriverData(instance, shm as *mut libc::c_void);
@@ -145,53 +154,60 @@ unsafe extern "C" fn shm_finalise(mut instance: RCL_Instance) {
     shmdt(RCL_GetDriverData(instance));
 }
 unsafe extern "C" fn shm_poll(mut instance: RCL_Instance) -> libc::c_int {
-    let mut receive_ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut clock_ts: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut t: shmTime =
-        shmTime{mode: 0,
-                count: 0,
-                clockTimeStampSec: 0,
-                clockTimeStampUSec: 0,
-                receiveTimeStampSec: 0,
-                receiveTimeStampUSec: 0,
-                leap: 0,
-                precision: 0,
-                nsamples: 0,
-                valid: 0,
-                clockTimeStampNSec: 0,
-                receiveTimeStampNSec: 0,
-                dummy: [0; 8],};
+    let mut receive_ts: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut clock_ts: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut t: shmTime = shmTime {
+        mode: 0,
+        count: 0,
+        clockTimeStampSec: 0,
+        clockTimeStampUSec: 0,
+        receiveTimeStampSec: 0,
+        receiveTimeStampUSec: 0,
+        leap: 0,
+        precision: 0,
+        nsamples: 0,
+        valid: 0,
+        clockTimeStampNSec: 0,
+        receiveTimeStampNSec: 0,
+        dummy: [0; 8],
+    };
     let mut shm: *mut shmTime = 0 as *mut shmTime;
     let mut offset: libc::c_double = 0.;
     shm = RCL_GetDriverData(instance) as *mut shmTime;
     t = *shm;
-    if t.mode == 1 as libc::c_int && t.count != (*shm).count ||
-           !(t.mode == 0 as libc::c_int || t.mode == 1 as libc::c_int) ||
-           t.valid == 0 {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"SHM sample ignored mode=%d count=%d valid=%d\x00" as
-                            *const u8 as *const libc::c_char, t.mode, t.count,
-                        t.valid);
+    if t.mode == 1 as libc::c_int && t.count != (*shm).count
+        || !(t.mode == 0 as libc::c_int || t.mode == 1 as libc::c_int)
+        || t.valid == 0
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"SHM sample ignored mode=%d count=%d valid=%d\x00" as *const u8
+                    as *const libc::c_char,
+                t.mode,
+                t.count,
+                t.valid,
+            );
         }
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    ::std::ptr::write_volatile(&mut (*shm).valid as *mut libc::c_int,
-                               0 as libc::c_int);
+    ::std::ptr::write_volatile(&mut (*shm).valid as *mut libc::c_int, 0 as libc::c_int);
     receive_ts.tv_sec = t.receiveTimeStampSec;
     clock_ts.tv_sec = t.clockTimeStampSec;
-    if t.clockTimeStampNSec / 1000 as libc::c_int == t.clockTimeStampUSec &&
-           t.receiveTimeStampNSec / 1000 as libc::c_int ==
-               t.receiveTimeStampUSec {
+    if t.clockTimeStampNSec / 1000 as libc::c_int == t.clockTimeStampUSec
+        && t.receiveTimeStampNSec / 1000 as libc::c_int == t.receiveTimeStampUSec
+    {
         receive_ts.tv_nsec = t.receiveTimeStampNSec as __syscall_slong_t;
         clock_ts.tv_nsec = t.clockTimeStampNSec as __syscall_slong_t
     } else {
-        receive_ts.tv_nsec =
-            (1000 as libc::c_int * t.receiveTimeStampUSec) as
-                __syscall_slong_t;
-        clock_ts.tv_nsec =
-            (1000 as libc::c_int * t.clockTimeStampUSec) as __syscall_slong_t
+        receive_ts.tv_nsec = (1000 as libc::c_int * t.receiveTimeStampUSec) as __syscall_slong_t;
+        clock_ts.tv_nsec = (1000 as libc::c_int * t.clockTimeStampUSec) as __syscall_slong_t
     }
     UTI_NormaliseTimespec(&mut clock_ts);
     UTI_NormaliseTimespec(&mut receive_ts);
@@ -199,25 +215,13 @@ unsafe extern "C" fn shm_poll(mut instance: RCL_Instance) -> libc::c_int {
     return RCL_AddSample(instance, &mut receive_ts, offset, t.leap);
 }
 #[no_mangle]
-pub static mut RCL_SHM_driver: RefclockDriver =
-    unsafe {
-        {
-            let mut init =
-                RefclockDriver{init:
-                                   Some(shm_initialise as
-                                            unsafe extern "C" fn(_:
-                                                                     RCL_Instance)
-                                                -> libc::c_int),
-                               fini:
-                                   Some(shm_finalise as
-                                            unsafe extern "C" fn(_:
-                                                                     RCL_Instance)
-                                                -> ()),
-                               poll:
-                                   Some(shm_poll as
-                                            unsafe extern "C" fn(_:
-                                                                     RCL_Instance)
-                                                -> libc::c_int),};
-            init
-        }
-    };
+pub static mut RCL_SHM_driver: RefclockDriver = unsafe {
+    {
+        let mut init = RefclockDriver {
+            init: Some(shm_initialise as unsafe extern "C" fn(_: RCL_Instance) -> libc::c_int),
+            fini: Some(shm_finalise as unsafe extern "C" fn(_: RCL_Instance) -> ()),
+            poll: Some(shm_poll as unsafe extern "C" fn(_: RCL_Instance) -> libc::c_int),
+        };
+        init
+    }
+};

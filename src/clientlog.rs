@@ -8,9 +8,12 @@ extern "C" {
     #[no_mangle]
     fn exit(_: libc::c_int) -> !;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     /* Create a new array with given element size */
     #[no_mangle]
     fn ARR_CreateInstance(elem_size: libc::c_uint) -> ARR_Instance;
@@ -19,8 +22,7 @@ extern "C" {
     fn ARR_DestroyInstance(array: ARR_Instance);
     /* Return element with given index */
     #[no_mangle]
-    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint)
-     -> *mut libc::c_void;
+    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint) -> *mut libc::c_void;
     /* Return pointer to the internal array of elements */
     #[no_mangle]
     fn ARR_GetElements(array: ARR_Instance) -> *mut libc::c_void;
@@ -35,23 +37,26 @@ extern "C" {
     #[no_mangle]
     fn CNF_GetNoClientLog() -> libc::c_int;
     #[no_mangle]
-    fn CNF_GetCommandRateLimit(interval: *mut libc::c_int,
-                               burst: *mut libc::c_int,
-                               leak: *mut libc::c_int) -> libc::c_int;
+    fn CNF_GetCommandRateLimit(
+        interval: *mut libc::c_int,
+        burst: *mut libc::c_int,
+        leak: *mut libc::c_int,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn CNF_GetNTPRateLimit(interval: *mut libc::c_int,
-                           burst: *mut libc::c_int, leak: *mut libc::c_int)
-     -> libc::c_int;
+    fn CNF_GetNTPRateLimit(
+        interval: *mut libc::c_int,
+        burst: *mut libc::c_int,
+        leak: *mut libc::c_int,
+    ) -> libc::c_int;
     #[no_mangle]
     fn UTI_ZeroNtp64(ts: *mut NTP_int64);
     #[no_mangle]
     fn UTI_IPToHash(ip: *mut IPAddr) -> uint32_t;
     #[no_mangle]
-    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr)
-     -> libc::c_int;
+    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr) -> libc::c_int;
     /* Fill buffer with random bytes from /dev/urandom or a faster source if it's
-   available (e.g. arc4random()), which may not necessarily be suitable for
-   generating long-term keys */
+    available (e.g. arc4random()), which may not necessarily be suitable for
+    generating long-term keys */
     #[no_mangle]
     fn UTI_GetRandomBytes(buf: *mut libc::c_void, len: libc::c_uint);
     /* Minimum severity of messages to be logged */
@@ -59,8 +64,7 @@ extern "C" {
     static mut log_min_severity: LOG_Severity;
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
 }
 pub type __int8_t = libc::c_schar;
 pub type __uint8_t = libc::c_uchar;
@@ -82,58 +86,58 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type time_t = __time_t;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for array functions.
-  */
+ Header file for array functions.
+ */
 pub type ARR_Instance = *mut ARR_Instance_Record;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Types used for addressing sources etc
-  */
+ Types used for addressing sources etc
+ */
 /* This type is used to represent an IPv4 address or IPv6 address.
-   All parts are in HOST order, NOT network order. */
+All parts are in HOST order, NOT network order. */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct IPAddr {
@@ -202,8 +206,7 @@ pub const LOGS_WARN: LOG_Severity = 1;
 pub const LOGS_INFO: LOG_Severity = 0;
 pub const LOGS_DEBUG: LOG_Severity = -1;
 /* Hash table of records, there is a fixed number of records per slot */
-static mut records: ARR_Instance =
-    0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
+static mut records: ARR_Instance = 0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
 /* Minimum number of slots */
 /* Maximum number of slots, this is a hard limit */
 /* Number of slots in the hash table */
@@ -211,20 +214,20 @@ static mut slots: libc::c_uint = 0;
 /* Maximum number of slots given memory allocation limit */
 static mut max_slots: libc::c_uint = 0;
 /* Static offset included in conversion to the fixed-point timestamps to
-   randomise their alignment */
+randomise their alignment */
 static mut ts_offset: uint32_t = 0;
 static mut max_ntp_tokens: uint16_t = 0;
 static mut max_cmd_tokens: uint16_t = 0;
 static mut ntp_tokens_per_packet: uint16_t = 0;
 static mut cmd_tokens_per_packet: uint16_t = 0;
 /* Reduction of token rates to avoid overflow of 16-bit counters.  Negative
-   shift is used for coarse limiting with intervals shorter than -TS_FRAC. */
+shift is used for coarse limiting with intervals shorter than -TS_FRAC. */
 static mut ntp_token_shift: libc::c_int = 0;
 static mut cmd_token_shift: libc::c_int = 0;
 /* Rates at which responses are randomly allowed (in log2) when the
-   buckets don't have enough tokens.  This is necessary in order to
-   prevent an attacker sending requests with spoofed source address
-   from blocking responses to the address completely. */
+buckets don't have enough tokens.  This is necessary in order to
+prevent an attacker sending requests with spoofed source address
+from blocking responses to the address completely. */
 static mut ntp_leak_rate: libc::c_int = 0;
 static mut cmd_leak_rate: libc::c_int = 0;
 /* NTP limit interval in log2 */
@@ -238,13 +241,18 @@ static mut total_ntp_drops: uint32_t = 0;
 static mut total_cmd_drops: uint32_t = 0;
 static mut total_record_drops: uint32_t = 0;
 /* ================================================== */
-unsafe extern "C" fn compare_ts(mut x: uint32_t, mut y: uint32_t)
- -> libc::c_int {
-    if x == y { return 0 as libc::c_int }
-    if y == 0 as libc::c_int as libc::c_uint { return 1 as libc::c_int }
+unsafe extern "C" fn compare_ts(mut x: uint32_t, mut y: uint32_t) -> libc::c_int {
+    if x == y {
+        return 0 as libc::c_int;
+    }
+    if y == 0 as libc::c_int as libc::c_uint {
+        return 1 as libc::c_int;
+    }
     return if x.wrapping_sub(y) as int32_t > 0 as libc::c_int {
-               1 as libc::c_int
-           } else { -(1 as libc::c_int) };
+        1 as libc::c_int
+    } else {
+        -(1 as libc::c_int)
+    };
 }
 /* ================================================== */
 unsafe extern "C" fn get_record(mut ip: *mut IPAddr) -> *mut Record {
@@ -254,43 +262,41 @@ unsafe extern "C" fn get_record(mut ip: *mut IPAddr) -> *mut Record {
     let mut oldest_hit: time_t = 0 as libc::c_int as time_t;
     let mut record: *mut Record = 0 as *mut Record;
     let mut oldest_record: *mut Record = 0 as *mut Record;
-    if active == 0 ||
-           (*ip).family as libc::c_int != 1 as libc::c_int &&
-               (*ip).family as libc::c_int != 2 as libc::c_int {
-        return 0 as *mut Record
+    if active == 0
+        || (*ip).family as libc::c_int != 1 as libc::c_int
+            && (*ip).family as libc::c_int != 2 as libc::c_int
+    {
+        return 0 as *mut Record;
     }
-    loop  {
+    loop {
         /* Get index of the first record in the slot */
-        first =
-            UTI_IPToHash(ip).wrapping_rem(slots).wrapping_mul((1 as
-                                                                   libc::c_uint)
-                                                                  <<
-                                                                  4 as
-                                                                      libc::c_int);
+        first = UTI_IPToHash(ip)
+            .wrapping_rem(slots)
+            .wrapping_mul((1 as libc::c_uint) << 4 as libc::c_int);
         i = 0 as libc::c_int as libc::c_uint;
         oldest_record = 0 as *mut Record;
         while i < (1 as libc::c_uint) << 4 as libc::c_int {
-            record =
-                ARR_GetElement(records, first.wrapping_add(i)) as *mut Record;
-            if UTI_CompareIPs(ip, &mut (*record).ip_addr, 0 as *mut IPAddr) ==
-                   0 {
-                return record
+            record = ARR_GetElement(records, first.wrapping_add(i)) as *mut Record;
+            if UTI_CompareIPs(ip, &mut (*record).ip_addr, 0 as *mut IPAddr) == 0 {
+                return record;
             }
             if (*record).ip_addr.family as libc::c_int == 0 as libc::c_int {
-                break ;
+                break;
             }
             last_hit =
-                if compare_ts((*record).last_ntp_hit, (*record).last_cmd_hit)
-                       > 0 as libc::c_int {
+                if compare_ts((*record).last_ntp_hit, (*record).last_cmd_hit) > 0 as libc::c_int {
                     (*record).last_ntp_hit
-                } else { (*record).last_cmd_hit } as time_t;
-            if oldest_record.is_null() ||
-                   compare_ts(oldest_hit as uint32_t, last_hit as uint32_t) >
-                       0 as libc::c_int ||
-                   oldest_hit == last_hit &&
-                       (*record).ntp_hits.wrapping_add((*record).cmd_hits) <
-                           (*oldest_record).ntp_hits.wrapping_add((*oldest_record).cmd_hits)
-               {
+                } else {
+                    (*record).last_cmd_hit
+                } as time_t;
+            if oldest_record.is_null()
+                || compare_ts(oldest_hit as uint32_t, last_hit as uint32_t) > 0 as libc::c_int
+                || oldest_hit == last_hit
+                    && (*record).ntp_hits.wrapping_add((*record).cmd_hits)
+                        < (*oldest_record)
+                            .ntp_hits
+                            .wrapping_add((*oldest_record).cmd_hits)
+            {
                 oldest_record = record;
                 oldest_hit = last_hit
             }
@@ -298,15 +304,17 @@ unsafe extern "C" fn get_record(mut ip: *mut IPAddr) -> *mut Record {
         }
         /* If the slot still has an empty record, use it */
         if (*record).ip_addr.family as libc::c_int == 0 as libc::c_int {
-            break ;
+            break;
         }
         /* Resize the table if possible and try again as the new slot may
-       have some empty records */
-        if expand_hashtable() != 0 { continue ; }
+        have some empty records */
+        if expand_hashtable() != 0 {
+            continue;
+        }
         /* There is no other option, replace the oldest record */
         record = oldest_record;
         total_record_drops = total_record_drops.wrapping_add(1);
-        break ;
+        break;
     }
     (*record).ip_addr = *ip;
     (*record).last_cmd_hit = 0 as libc::c_int as uint32_t;
@@ -334,27 +342,32 @@ unsafe extern "C" fn expand_hashtable() -> libc::c_int {
     let mut i: libc::c_uint = 0;
     old_records = records;
     if (2 as libc::c_int as libc::c_uint).wrapping_mul(slots) > max_slots {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    records =
-        ARR_CreateInstance(::std::mem::size_of::<Record>() as libc::c_ulong as
-                               libc::c_uint);
-    slots =
-        if 1 as libc::c_int as libc::c_uint >
-               (2 as libc::c_int as libc::c_uint).wrapping_mul(slots) {
-            1 as libc::c_int as libc::c_uint
-        } else { (2 as libc::c_int as libc::c_uint).wrapping_mul(slots) };
+    records = ARR_CreateInstance(::std::mem::size_of::<Record>() as libc::c_ulong as libc::c_uint);
+    slots = if 1 as libc::c_int as libc::c_uint
+        > (2 as libc::c_int as libc::c_uint).wrapping_mul(slots)
+    {
+        1 as libc::c_int as libc::c_uint
+    } else {
+        (2 as libc::c_int as libc::c_uint).wrapping_mul(slots)
+    };
     if slots <= max_slots {
     } else {
-        __assert_fail(b"slots <= max_slots\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"clientlog.c\x00" as *const u8 as *const libc::c_char,
-                      245 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 27],
-                                                &[libc::c_char; 27]>(b"int expand_hashtable(void)\x00")).as_ptr());
+        __assert_fail(
+            b"slots <= max_slots\x00" as *const u8 as *const libc::c_char,
+            b"clientlog.c\x00" as *const u8 as *const libc::c_char,
+            245 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 27], &[libc::c_char; 27]>(
+                b"int expand_hashtable(void)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    ARR_SetSize(records,
-                slots.wrapping_mul((1 as libc::c_uint) << 4 as libc::c_int));
+    ARR_SetSize(
+        records,
+        slots.wrapping_mul((1 as libc::c_uint) << 4 as libc::c_int),
+    );
     /* Mark all new records as empty */
     i = 0 as libc::c_int as libc::c_uint;
     while i < slots.wrapping_mul((1 as libc::c_uint) << 4 as libc::c_int) {
@@ -362,23 +375,26 @@ unsafe extern "C" fn expand_hashtable() -> libc::c_int {
         (*new_record).ip_addr.family = 0 as libc::c_int as uint16_t;
         i = i.wrapping_add(1)
     }
-    if old_records.is_null() { return 1 as libc::c_int }
+    if old_records.is_null() {
+        return 1 as libc::c_int;
+    }
     /* Copy old records to the new hash table */
     i = 0 as libc::c_int as libc::c_uint;
     while i < ARR_GetSize(old_records) {
         old_record = ARR_GetElement(old_records, i) as *mut Record;
-        if !((*old_record).ip_addr.family as libc::c_int == 0 as libc::c_int)
-           {
+        if !((*old_record).ip_addr.family as libc::c_int == 0 as libc::c_int) {
             new_record = get_record(&mut (*old_record).ip_addr);
             if !new_record.is_null() {
             } else {
-                __assert_fail(b"new_record\x00" as *const u8 as
-                                  *const libc::c_char,
-                              b"clientlog.c\x00" as *const u8 as
-                                  *const libc::c_char,
-                              266 as libc::c_int as libc::c_uint,
-                              (*::std::mem::transmute::<&[u8; 27],
-                                                        &[libc::c_char; 27]>(b"int expand_hashtable(void)\x00")).as_ptr());
+                __assert_fail(
+                    b"new_record\x00" as *const u8 as *const libc::c_char,
+                    b"clientlog.c\x00" as *const u8 as *const libc::c_char,
+                    266 as libc::c_int as libc::c_uint,
+                    (*::std::mem::transmute::<&[u8; 27], &[libc::c_char; 27]>(
+                        b"int expand_hashtable(void)\x00",
+                    ))
+                    .as_ptr(),
+                );
             }
             *new_record = *old_record
         }
@@ -388,36 +404,45 @@ unsafe extern "C" fn expand_hashtable() -> libc::c_int {
     return 1 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn set_bucket_params(mut interval: libc::c_int,
-                                       mut burst: libc::c_int,
-                                       mut max_tokens: *mut uint16_t,
-                                       mut tokens_per_packet: *mut uint16_t,
-                                       mut token_shift: *mut libc::c_int) {
-    interval =
-        if -(15 as libc::c_int) - 4 as libc::c_int >
-               (if interval < 12 as libc::c_int {
-                    interval
-                } else { 12 as libc::c_int }) {
-            (-(15 as libc::c_int)) - 4 as libc::c_int
-        } else if interval < 12 as libc::c_int {
+unsafe extern "C" fn set_bucket_params(
+    mut interval: libc::c_int,
+    mut burst: libc::c_int,
+    mut max_tokens: *mut uint16_t,
+    mut tokens_per_packet: *mut uint16_t,
+    mut token_shift: *mut libc::c_int,
+) {
+    interval = if -(15 as libc::c_int) - 4 as libc::c_int
+        > (if interval < 12 as libc::c_int {
             interval
-        } else { 12 as libc::c_int };
-    burst =
-        if 1 as libc::c_int >
-               (if burst < 255 as libc::c_int {
-                    burst
-                } else { 255 as libc::c_int }) {
-            1 as libc::c_int
-        } else if burst < 255 as libc::c_int {
+        } else {
+            12 as libc::c_int
+        }) {
+        (-(15 as libc::c_int)) - 4 as libc::c_int
+    } else if interval < 12 as libc::c_int {
+        interval
+    } else {
+        12 as libc::c_int
+    };
+    burst = if 1 as libc::c_int
+        > (if burst < 255 as libc::c_int {
             burst
-        } else { 255 as libc::c_int };
+        } else {
+            255 as libc::c_int
+        }) {
+        1 as libc::c_int
+    } else if burst < 255 as libc::c_int {
+        burst
+    } else {
+        255 as libc::c_int
+    };
     if interval >= -(4 as libc::c_int) {
         /* Find the smallest shift with which the maximum number fits in 16 bits */
         *token_shift = 0 as libc::c_int;
         while *token_shift < interval + 4 as libc::c_int {
-            if ((burst << 4 as libc::c_int + interval - *token_shift) as
-                    libc::c_uint) < (1 as libc::c_uint) << 16 as libc::c_int {
-                break ;
+            if ((burst << 4 as libc::c_int + interval - *token_shift) as libc::c_uint)
+                < (1 as libc::c_uint) << 16 as libc::c_int
+            {
+                break;
             }
             *token_shift += 1
         }
@@ -425,21 +450,23 @@ unsafe extern "C" fn set_bucket_params(mut interval: libc::c_int,
         /* Coarse rate limiting */
         *token_shift = interval + 4 as libc::c_int;
         *tokens_per_packet = 1 as libc::c_int as uint16_t;
-        burst =
-            if (1 as libc::c_uint) << -*token_shift > burst as libc::c_uint {
-                ((1 as libc::c_uint)) << -*token_shift
-            } else { burst as libc::c_uint } as libc::c_int
+        burst = if (1 as libc::c_uint) << -*token_shift > burst as libc::c_uint {
+            (1 as libc::c_uint) << -*token_shift
+        } else {
+            burst as libc::c_uint
+        } as libc::c_int
     }
     *tokens_per_packet =
-        ((1 as libc::c_uint) << 4 as libc::c_int + interval - *token_shift) as
-            uint16_t;
+        ((1 as libc::c_uint) << 4 as libc::c_int + interval - *token_shift) as uint16_t;
     *max_tokens = (*tokens_per_packet as libc::c_int * burst) as uint16_t;
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Tokens max %d packet %d shift %d\x00" as *const u8 as
-                        *const libc::c_char, *max_tokens as libc::c_int,
-                    *tokens_per_packet as libc::c_int, *token_shift);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Tokens max %d packet %d shift %d\x00" as *const u8 as *const libc::c_char,
+            *max_tokens as libc::c_int,
+            *tokens_per_packet as libc::c_int,
+            *token_shift,
+        );
     };
 }
 /* ================================================== */
@@ -458,143 +485,136 @@ pub unsafe extern "C" fn CLG_Initialise() {
     ntp_leak_rate = cmd_leak_rate;
     ntp_limit_interval = -(15 as libc::c_int) - 4 as libc::c_int;
     if CNF_GetNTPRateLimit(&mut interval, &mut burst, &mut leak_rate) != 0 {
-        set_bucket_params(interval, burst, &mut max_ntp_tokens,
-                          &mut ntp_tokens_per_packet, &mut ntp_token_shift);
-        ntp_leak_rate =
-            if 1 as libc::c_int >
-                   (if leak_rate < 4 as libc::c_int {
-                        leak_rate
-                    } else { 4 as libc::c_int }) {
-                1 as libc::c_int
-            } else if leak_rate < 4 as libc::c_int {
+        set_bucket_params(
+            interval,
+            burst,
+            &mut max_ntp_tokens,
+            &mut ntp_tokens_per_packet,
+            &mut ntp_token_shift,
+        );
+        ntp_leak_rate = if 1 as libc::c_int
+            > (if leak_rate < 4 as libc::c_int {
                 leak_rate
-            } else { 4 as libc::c_int };
-        ntp_limit_interval =
-            if -(15 as libc::c_int) - 4 as libc::c_int >
-                   (if interval < 12 as libc::c_int {
-                        interval
-                    } else { 12 as libc::c_int }) {
-                (-(15 as libc::c_int)) - 4 as libc::c_int
-            } else if interval < 12 as libc::c_int {
+            } else {
+                4 as libc::c_int
+            }) {
+            1 as libc::c_int
+        } else if leak_rate < 4 as libc::c_int {
+            leak_rate
+        } else {
+            4 as libc::c_int
+        };
+        ntp_limit_interval = if -(15 as libc::c_int) - 4 as libc::c_int
+            > (if interval < 12 as libc::c_int {
                 interval
-            } else { 12 as libc::c_int }
+            } else {
+                12 as libc::c_int
+            }) {
+            (-(15 as libc::c_int)) - 4 as libc::c_int
+        } else if interval < 12 as libc::c_int {
+            interval
+        } else {
+            12 as libc::c_int
+        }
     }
-    if CNF_GetCommandRateLimit(&mut interval, &mut burst, &mut leak_rate) != 0
-       {
-        set_bucket_params(interval, burst, &mut max_cmd_tokens,
-                          &mut cmd_tokens_per_packet, &mut cmd_token_shift);
-        cmd_leak_rate =
-            if 1 as libc::c_int >
-                   (if leak_rate < 4 as libc::c_int {
-                        leak_rate
-                    } else { 4 as libc::c_int }) {
-                1 as libc::c_int
-            } else if leak_rate < 4 as libc::c_int {
+    if CNF_GetCommandRateLimit(&mut interval, &mut burst, &mut leak_rate) != 0 {
+        set_bucket_params(
+            interval,
+            burst,
+            &mut max_cmd_tokens,
+            &mut cmd_tokens_per_packet,
+            &mut cmd_token_shift,
+        );
+        cmd_leak_rate = if 1 as libc::c_int
+            > (if leak_rate < 4 as libc::c_int {
                 leak_rate
-            } else { 4 as libc::c_int }
+            } else {
+                4 as libc::c_int
+            }) {
+            1 as libc::c_int
+        } else if leak_rate < 4 as libc::c_int {
+            leak_rate
+        } else {
+            4 as libc::c_int
+        }
     }
     active = (CNF_GetNoClientLog() == 0) as libc::c_int;
     if active == 0 {
         if ntp_leak_rate != 0 || cmd_leak_rate != 0 {
-            LOG_Message(LOGS_FATAL,
-                        b"ratelimit cannot be used with noclientlog\x00" as
-                            *const u8 as *const libc::c_char);
+            LOG_Message(
+                LOGS_FATAL,
+                b"ratelimit cannot be used with noclientlog\x00" as *const u8
+                    as *const libc::c_char,
+            );
             exit(1 as libc::c_int);
         }
-        return
+        return;
     }
     /* Calculate the maximum number of slots that can be allocated in the
-     configured memory limit.  Take into account expanding of the hash
-     table where two copies exist at the same time. */
-    max_slots =
-        CNF_GetClientLogLimit().wrapping_div((::std::mem::size_of::<Record>()
-                                                  as
-                                                  libc::c_ulong).wrapping_mul(((1
-                                                                                    as
-                                                                                    libc::c_uint)
-                                                                                   <<
-                                                                                   4
-                                                                                       as
-                                                                                       libc::c_int)
-                                                                                  as
-                                                                                  libc::c_ulong).wrapping_mul(3
-                                                                                                                  as
-                                                                                                                  libc::c_int
-                                                                                                                  as
-                                                                                                                  libc::c_ulong).wrapping_div(2
-                                                                                                                                                  as
-                                                                                                                                                  libc::c_int
-                                                                                                                                                  as
-                                                                                                                                                  libc::c_ulong))
-            as libc::c_uint;
-    max_slots =
-        if 1 as libc::c_int as libc::c_uint >
-               (if max_slots <
-                       (1 as libc::c_uint) <<
-                           24 as libc::c_int - 4 as libc::c_int {
-                    max_slots
-                } else {
-                    ((1 as libc::c_uint)) <<
-                        24 as libc::c_int - 4 as libc::c_int
-                }) {
-            1 as libc::c_int as libc::c_uint
-        } else if max_slots <
-                      (1 as libc::c_uint) <<
-                          24 as libc::c_int - 4 as libc::c_int {
+    configured memory limit.  Take into account expanding of the hash
+    table where two copies exist at the same time. */
+    max_slots = CNF_GetClientLogLimit().wrapping_div(
+        (::std::mem::size_of::<Record>() as libc::c_ulong)
+            .wrapping_mul(((1 as libc::c_uint) << 4 as libc::c_int) as libc::c_ulong)
+            .wrapping_mul(3 as libc::c_int as libc::c_ulong)
+            .wrapping_div(2 as libc::c_int as libc::c_ulong),
+    ) as libc::c_uint;
+    max_slots = if 1 as libc::c_int as libc::c_uint
+        > (if max_slots < (1 as libc::c_uint) << 24 as libc::c_int - 4 as libc::c_int {
             max_slots
         } else {
-            ((1 as libc::c_uint)) << 24 as libc::c_int - 4 as libc::c_int
-        };
+            (1 as libc::c_uint) << 24 as libc::c_int - 4 as libc::c_int
+        }) {
+        1 as libc::c_int as libc::c_uint
+    } else if max_slots < (1 as libc::c_uint) << 24 as libc::c_int - 4 as libc::c_int {
+        max_slots
+    } else {
+        (1 as libc::c_uint) << 24 as libc::c_int - 4 as libc::c_int
+    };
     slots = 0 as libc::c_int as libc::c_uint;
     records = 0 as ARR_Instance;
     expand_hashtable();
-    UTI_GetRandomBytes(&mut ts_offset as *mut uint32_t as *mut libc::c_void,
-                       ::std::mem::size_of::<uint32_t>() as libc::c_ulong as
-                           libc::c_uint);
-    ts_offset =
-        (ts_offset as
-             libc::c_uint).wrapping_rem((1000000000 as
-                                             libc::c_uint).wrapping_div((1 as
-                                                                             libc::c_uint)
-                                                                            <<
-                                                                            4
-                                                                                as
-                                                                                libc::c_int))
-            as uint32_t as uint32_t;
+    UTI_GetRandomBytes(
+        &mut ts_offset as *mut uint32_t as *mut libc::c_void,
+        ::std::mem::size_of::<uint32_t>() as libc::c_ulong as libc::c_uint,
+    );
+    ts_offset = (ts_offset as libc::c_uint).wrapping_rem(
+        (1000000000 as libc::c_uint).wrapping_div((1 as libc::c_uint) << 4 as libc::c_int),
+    ) as uint32_t as uint32_t;
 }
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn CLG_Finalise() {
-    if active == 0 { return }
+    if active == 0 {
+        return;
+    }
     ARR_DestroyInstance(records);
 }
 /* ================================================== */
 unsafe extern "C" fn get_ts_from_timespec(mut ts: *mut timespec) -> uint32_t {
     let mut sec: uint32_t = (*ts).tv_sec as uint32_t;
     let mut nsec: uint32_t = (*ts).tv_nsec as uint32_t;
-    nsec =
-        (nsec as libc::c_uint).wrapping_add(ts_offset) as uint32_t as
-            uint32_t;
+    nsec = (nsec as libc::c_uint).wrapping_add(ts_offset) as uint32_t as uint32_t;
     if nsec >= 1000000000 as libc::c_uint {
         nsec =
-            (nsec as libc::c_uint).wrapping_sub(1000000000 as libc::c_uint) as
-                uint32_t as uint32_t;
+            (nsec as libc::c_uint).wrapping_sub(1000000000 as libc::c_uint) as uint32_t as uint32_t;
         sec = sec.wrapping_add(1)
     }
     /* This is fast and accurate enough */
-    return sec << 4 as libc::c_int |
-               (140740 as
-                    libc::c_uint).wrapping_mul(nsec >> 15 as libc::c_int) >>
-                   32 as libc::c_int - 4 as libc::c_int;
+    return sec << 4 as libc::c_int
+        | (140740 as libc::c_uint).wrapping_mul(nsec >> 15 as libc::c_int)
+            >> 32 as libc::c_int - 4 as libc::c_int;
 }
 /* ================================================== */
-unsafe extern "C" fn update_record(mut now: *mut timespec,
-                                   mut last_hit: *mut uint32_t,
-                                   mut hits: *mut uint32_t,
-                                   mut tokens: *mut uint16_t,
-                                   mut max_tokens: uint32_t,
-                                   mut token_shift: libc::c_int,
-                                   mut rate: *mut int8_t) {
+unsafe extern "C" fn update_record(
+    mut now: *mut timespec,
+    mut last_hit: *mut uint32_t,
+    mut hits: *mut uint32_t,
+    mut tokens: *mut uint16_t,
+    mut max_tokens: uint32_t,
+    mut token_shift: libc::c_int,
+    mut rate: *mut int8_t,
+) {
     let mut interval: uint32_t = 0;
     let mut now_ts: uint32_t = 0;
     let mut prev_hit: uint32_t = 0;
@@ -605,35 +625,35 @@ unsafe extern "C" fn update_record(mut now: *mut timespec,
     *last_hit = now_ts;
     *hits = (*hits).wrapping_add(1);
     interval = now_ts.wrapping_sub(prev_hit);
-    if prev_hit == 0 as libc::c_int as libc::c_uint ||
-           (interval as int32_t) < 0 as libc::c_int {
-        return
+    if prev_hit == 0 as libc::c_int as libc::c_uint || (interval as int32_t) < 0 as libc::c_int {
+        return;
     }
     if token_shift >= 0 as libc::c_int {
-        new_tokens =
-            (now_ts >> token_shift).wrapping_sub(prev_hit >> token_shift)
+        new_tokens = (now_ts >> token_shift).wrapping_sub(prev_hit >> token_shift)
     } else if now_ts.wrapping_sub(prev_hit) > max_tokens {
         new_tokens = max_tokens
-    } else { new_tokens = now_ts.wrapping_sub(prev_hit) << -token_shift }
-    *tokens =
-        if (*tokens as libc::c_uint).wrapping_add(new_tokens) < max_tokens {
-            (*tokens as libc::c_uint).wrapping_add(new_tokens)
-        } else { max_tokens } as uint16_t;
+    } else {
+        new_tokens = now_ts.wrapping_sub(prev_hit) << -token_shift
+    }
+    *tokens = if (*tokens as libc::c_uint).wrapping_add(new_tokens) < max_tokens {
+        (*tokens as libc::c_uint).wrapping_add(new_tokens)
+    } else {
+        max_tokens
+    } as uint16_t;
     /* Convert the interval to scaled and rounded log2 */
     if interval != 0 {
-        interval =
-            (interval as
-                 libc::c_uint).wrapping_add(interval >> 1 as libc::c_int) as
-                uint32_t as uint32_t;
+        interval = (interval as libc::c_uint).wrapping_add(interval >> 1 as libc::c_int) as uint32_t
+            as uint32_t;
         interval2 = -(4 as libc::c_int) * 4 as libc::c_int;
         while interval2 < -(-(14 as libc::c_int) * 4 as libc::c_int) {
-            if interval <= 1 as libc::c_int as libc::c_uint { break ; }
+            if interval <= 1 as libc::c_int as libc::c_uint {
+                break;
+            }
             interval >>= 1 as libc::c_int;
             interval2 += 4 as libc::c_int
         }
     } else {
-        interval2 =
-            -(4 as libc::c_int) * (4 as libc::c_int + 1 as libc::c_int)
+        interval2 = -(4 as libc::c_int) * (4 as libc::c_int + 1 as libc::c_int)
     }
     /* Update the rate in a rough approximation of exponential moving average */
     if *rate as libc::c_int == -(128 as libc::c_int) {
@@ -641,165 +661,177 @@ unsafe extern "C" fn update_record(mut now: *mut timespec,
     } else if (*rate as libc::c_int) < -interval2 {
         *rate += 1
     } else if *rate as libc::c_int > -interval2 {
-        if *rate as libc::c_int >
-               4 as libc::c_int * 5 as libc::c_int / 2 as libc::c_int -
-                   interval2 {
-            *rate =
-                (4 as libc::c_int * 5 as libc::c_int / 2 as libc::c_int -
-                     interval2) as int8_t
+        if *rate as libc::c_int > 4 as libc::c_int * 5 as libc::c_int / 2 as libc::c_int - interval2
+        {
+            *rate = (4 as libc::c_int * 5 as libc::c_int / 2 as libc::c_int - interval2) as int8_t
         } else {
             *rate =
-                ((*rate as libc::c_int - interval2 - 1 as libc::c_int) /
-                     2 as libc::c_int) as int8_t
+                ((*rate as libc::c_int - interval2 - 1 as libc::c_int) / 2 as libc::c_int) as int8_t
         }
     };
 }
 /* ================================================== */
 unsafe extern "C" fn get_index(mut record: *mut Record) -> libc::c_int {
-    return record.wrapping_offset_from(ARR_GetElements(records) as
-                                           *mut Record) as libc::c_long as
-               libc::c_int;
+    return record.wrapping_offset_from(ARR_GetElements(records) as *mut Record) as libc::c_long
+        as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_GetClientIndex(mut client: *mut IPAddr)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_GetClientIndex(mut client: *mut IPAddr) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
     record = get_record(client);
-    if record.is_null() { return -(1 as libc::c_int) }
+    if record.is_null() {
+        return -(1 as libc::c_int);
+    }
     return get_index(record);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_LogNTPAccess(mut client: *mut IPAddr,
-                                          mut now: *mut timespec)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_LogNTPAccess(
+    mut client: *mut IPAddr,
+    mut now: *mut timespec,
+) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
     total_ntp_hits = total_ntp_hits.wrapping_add(1);
     record = get_record(client);
-    if record.is_null() { return -(1 as libc::c_int) }
+    if record.is_null() {
+        return -(1 as libc::c_int);
+    }
     /* Update one of the two rates depending on whether the previous request
-     of the client had a reply or it timed out */
-    update_record(now, &mut (*record).last_ntp_hit, &mut (*record).ntp_hits,
-                  &mut (*record).ntp_tokens, max_ntp_tokens as uint32_t,
-                  ntp_token_shift,
-                  if (*record).flags as libc::c_int & 0x1 as libc::c_int != 0
-                     {
-                      &mut (*record).ntp_timeout_rate
-                  } else { &mut (*record).ntp_rate });
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"NTP hits %u rate %d trate %d tokens %d\x00" as *const u8
-                        as *const libc::c_char, (*record).ntp_hits,
-                    (*record).ntp_rate as libc::c_int,
-                    (*record).ntp_timeout_rate as libc::c_int,
-                    (*record).ntp_tokens as libc::c_int);
+    of the client had a reply or it timed out */
+    update_record(
+        now,
+        &mut (*record).last_ntp_hit,
+        &mut (*record).ntp_hits,
+        &mut (*record).ntp_tokens,
+        max_ntp_tokens as uint32_t,
+        ntp_token_shift,
+        if (*record).flags as libc::c_int & 0x1 as libc::c_int != 0 {
+            &mut (*record).ntp_timeout_rate
+        } else {
+            &mut (*record).ntp_rate
+        },
+    );
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"NTP hits %u rate %d trate %d tokens %d\x00" as *const u8 as *const libc::c_char,
+            (*record).ntp_hits,
+            (*record).ntp_rate as libc::c_int,
+            (*record).ntp_timeout_rate as libc::c_int,
+            (*record).ntp_tokens as libc::c_int,
+        );
     }
     return get_index(record);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_LogCommandAccess(mut client: *mut IPAddr,
-                                              mut now: *mut timespec)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_LogCommandAccess(
+    mut client: *mut IPAddr,
+    mut now: *mut timespec,
+) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
     total_cmd_hits = total_cmd_hits.wrapping_add(1);
     record = get_record(client);
-    if record.is_null() { return -(1 as libc::c_int) }
-    update_record(now, &mut (*record).last_cmd_hit, &mut (*record).cmd_hits,
-                  &mut (*record).cmd_tokens, max_cmd_tokens as uint32_t,
-                  cmd_token_shift, &mut (*record).cmd_rate);
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"Cmd hits %u rate %d tokens %d\x00" as *const u8 as
-                        *const libc::c_char, (*record).cmd_hits,
-                    (*record).cmd_rate as libc::c_int,
-                    (*record).cmd_tokens as libc::c_int);
+    if record.is_null() {
+        return -(1 as libc::c_int);
+    }
+    update_record(
+        now,
+        &mut (*record).last_cmd_hit,
+        &mut (*record).cmd_hits,
+        &mut (*record).cmd_tokens,
+        max_cmd_tokens as uint32_t,
+        cmd_token_shift,
+        &mut (*record).cmd_rate,
+    );
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"Cmd hits %u rate %d tokens %d\x00" as *const u8 as *const libc::c_char,
+            (*record).cmd_hits,
+            (*record).cmd_rate as libc::c_int,
+            (*record).cmd_tokens as libc::c_int,
+        );
     }
     return get_index(record);
 }
 /* ================================================== */
-unsafe extern "C" fn limit_response_random(mut leak_rate: libc::c_int)
- -> libc::c_int {
+unsafe extern "C" fn limit_response_random(mut leak_rate: libc::c_int) -> libc::c_int {
     static mut rnd: uint32_t = 0;
     static mut bits_left: libc::c_int = 0 as libc::c_int;
     let mut r: libc::c_int = 0;
     if bits_left < leak_rate {
-        UTI_GetRandomBytes(&mut rnd as *mut uint32_t as *mut libc::c_void,
-                           ::std::mem::size_of::<uint32_t>() as libc::c_ulong
-                               as libc::c_uint);
-        bits_left =
-            (8 as libc::c_int as
-                 libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint32_t>()
-                                                 as libc::c_ulong) as
-                libc::c_int
+        UTI_GetRandomBytes(
+            &mut rnd as *mut uint32_t as *mut libc::c_void,
+            ::std::mem::size_of::<uint32_t>() as libc::c_ulong as libc::c_uint,
+        );
+        bits_left = (8 as libc::c_int as libc::c_ulong)
+            .wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
+            as libc::c_int
     }
     /* Return zero on average once per 2^leak_rate */
-    r =
-        if rnd.wrapping_rem((1 as libc::c_uint) << leak_rate) != 0 {
-            1 as libc::c_int
-        } else { 0 as libc::c_int };
+    r = if rnd.wrapping_rem((1 as libc::c_uint) << leak_rate) != 0 {
+        1 as libc::c_int
+    } else {
+        0 as libc::c_int
+    };
     rnd >>= leak_rate;
     bits_left -= leak_rate;
     return r;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_LimitNTPResponseRate(mut index: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_LimitNTPResponseRate(mut index: libc::c_int) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
     let mut drop_0: libc::c_int = 0;
-    if ntp_tokens_per_packet == 0 { return 0 as libc::c_int }
+    if ntp_tokens_per_packet == 0 {
+        return 0 as libc::c_int;
+    }
     record = ARR_GetElement(records, index as libc::c_uint) as *mut Record;
-    (*record).flags =
-        ((*record).flags as libc::c_int & !(0x1 as libc::c_int)) as uint8_t;
-    if (*record).ntp_tokens as libc::c_int >=
-           ntp_tokens_per_packet as libc::c_int {
-        (*record).ntp_tokens =
-            ((*record).ntp_tokens as libc::c_int -
-                 ntp_tokens_per_packet as libc::c_int) as uint16_t;
-        return 0 as libc::c_int
+    (*record).flags = ((*record).flags as libc::c_int & !(0x1 as libc::c_int)) as uint8_t;
+    if (*record).ntp_tokens as libc::c_int >= ntp_tokens_per_packet as libc::c_int {
+        (*record).ntp_tokens = ((*record).ntp_tokens as libc::c_int
+            - ntp_tokens_per_packet as libc::c_int) as uint16_t;
+        return 0 as libc::c_int;
     }
     drop_0 = limit_response_random(ntp_leak_rate);
     /* Poorly implemented clients may send new requests at even a higher rate
-     when they are not getting replies.  If the request rate seems to be more
-     than twice as much as when replies are sent, give up on rate limiting to
-     reduce the amount of traffic.  Invert the sense of the leak to respond to
-     most of the requests, but still keep the estimated rate updated. */
-    if (*record).ntp_timeout_rate as libc::c_int != -(128 as libc::c_int) &&
-           (*record).ntp_timeout_rate as libc::c_int >
-               (*record).ntp_rate as libc::c_int + 4 as libc::c_int {
+    when they are not getting replies.  If the request rate seems to be more
+    than twice as much as when replies are sent, give up on rate limiting to
+    reduce the amount of traffic.  Invert the sense of the leak to respond to
+    most of the requests, but still keep the estimated rate updated. */
+    if (*record).ntp_timeout_rate as libc::c_int != -(128 as libc::c_int)
+        && (*record).ntp_timeout_rate as libc::c_int
+            > (*record).ntp_rate as libc::c_int + 4 as libc::c_int
+    {
         drop_0 = (drop_0 == 0) as libc::c_int
     }
     if drop_0 == 0 {
         (*record).ntp_tokens = 0 as libc::c_int as uint16_t;
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
-    (*record).flags =
-        ((*record).flags as libc::c_int | 0x1 as libc::c_int) as uint8_t;
+    (*record).flags = ((*record).flags as libc::c_int | 0x1 as libc::c_int) as uint8_t;
     (*record).ntp_drops = (*record).ntp_drops.wrapping_add(1);
     total_ntp_drops = total_ntp_drops.wrapping_add(1);
     return 1 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_LimitCommandResponseRate(mut index: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_LimitCommandResponseRate(mut index: libc::c_int) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
-    if cmd_tokens_per_packet == 0 { return 0 as libc::c_int }
+    if cmd_tokens_per_packet == 0 {
+        return 0 as libc::c_int;
+    }
     record = ARR_GetElement(records, index as libc::c_uint) as *mut Record;
-    if (*record).cmd_tokens as libc::c_int >=
-           cmd_tokens_per_packet as libc::c_int {
-        (*record).cmd_tokens =
-            ((*record).cmd_tokens as libc::c_int -
-                 cmd_tokens_per_packet as libc::c_int) as uint16_t;
-        return 0 as libc::c_int
+    if (*record).cmd_tokens as libc::c_int >= cmd_tokens_per_packet as libc::c_int {
+        (*record).cmd_tokens = ((*record).cmd_tokens as libc::c_int
+            - cmd_tokens_per_packet as libc::c_int) as uint16_t;
+        return 0 as libc::c_int;
     }
     if limit_response_random(cmd_leak_rate) == 0 {
         (*record).cmd_tokens = 0 as libc::c_int as uint16_t;
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     (*record).cmd_drops = (*record).cmd_drops.wrapping_add(1);
     total_cmd_drops = total_cmd_drops.wrapping_add(1);
@@ -807,10 +839,11 @@ pub unsafe extern "C" fn CLG_LimitCommandResponseRate(mut index: libc::c_int)
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_GetNtpTimestamps(mut index: libc::c_int,
-                                              mut rx_ts: *mut *mut NTP_int64,
-                                              mut tx_ts:
-                                                  *mut *mut NTP_int64) {
+pub unsafe extern "C" fn CLG_GetNtpTimestamps(
+    mut index: libc::c_int,
+    mut rx_ts: *mut *mut NTP_int64,
+    mut tx_ts: *mut *mut NTP_int64,
+) {
     let mut record: *mut Record = 0 as *mut Record;
     record = ARR_GetElement(records, index as libc::c_uint) as *mut Record;
     *rx_ts = &mut (*record).ntp_rx_ts;
@@ -824,45 +857,45 @@ pub unsafe extern "C" fn CLG_GetNtpMinPoll() -> libc::c_int {
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn CLG_GetNumberOfIndices() -> libc::c_int {
-    if active == 0 { return -(1 as libc::c_int) }
+    if active == 0 {
+        return -(1 as libc::c_int);
+    }
     return ARR_GetSize(records) as libc::c_int;
 }
 /* ================================================== */
 unsafe extern "C" fn get_interval(mut rate: libc::c_int) -> libc::c_int {
-    if rate == -(128 as libc::c_int) { return 127 as libc::c_int }
-    rate +=
-        if rate > 0 as libc::c_int {
-            (4 as libc::c_int) / 2 as libc::c_int
-        } else { (-(4 as libc::c_int)) / 2 as libc::c_int };
+    if rate == -(128 as libc::c_int) {
+        return 127 as libc::c_int;
+    }
+    rate += if rate > 0 as libc::c_int {
+        (4 as libc::c_int) / 2 as libc::c_int
+    } else {
+        (-(4 as libc::c_int)) / 2 as libc::c_int
+    };
     return rate / -(4 as libc::c_int);
 }
 /* ================================================== */
-unsafe extern "C" fn get_last_ago(mut x: uint32_t, mut y: uint32_t)
- -> uint32_t {
-    if y == 0 as libc::c_int as libc::c_uint ||
-           (x.wrapping_sub(y) as int32_t) < 0 as libc::c_int {
-        return -(1 as libc::c_int) as uint32_t
+unsafe extern "C" fn get_last_ago(mut x: uint32_t, mut y: uint32_t) -> uint32_t {
+    if y == 0 as libc::c_int as libc::c_uint || (x.wrapping_sub(y) as int32_t) < 0 as libc::c_int {
+        return -(1 as libc::c_int) as uint32_t;
     }
     return x.wrapping_sub(y) >> 4 as libc::c_int;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_GetClientAccessReportByIndex(mut index:
-                                                              libc::c_int,
-                                                          mut report:
-                                                              *mut RPT_ClientAccessByIndex_Report,
-                                                          mut now:
-                                                              *mut timespec)
- -> libc::c_int {
+pub unsafe extern "C" fn CLG_GetClientAccessReportByIndex(
+    mut index: libc::c_int,
+    mut report: *mut RPT_ClientAccessByIndex_Report,
+    mut now: *mut timespec,
+) -> libc::c_int {
     let mut record: *mut Record = 0 as *mut Record;
     let mut now_ts: uint32_t = 0;
-    if active == 0 || index < 0 as libc::c_int ||
-           index as libc::c_uint >= ARR_GetSize(records) {
-        return 0 as libc::c_int
+    if active == 0 || index < 0 as libc::c_int || index as libc::c_uint >= ARR_GetSize(records) {
+        return 0 as libc::c_int;
     }
     record = ARR_GetElement(records, index as libc::c_uint) as *mut Record;
     if (*record).ip_addr.family as libc::c_int == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     now_ts = get_ts_from_timespec(now);
     (*report).ip_addr = (*record).ip_addr;
@@ -870,10 +903,8 @@ pub unsafe extern "C" fn CLG_GetClientAccessReportByIndex(mut index:
     (*report).cmd_hits = (*record).cmd_hits;
     (*report).ntp_drops = (*record).ntp_drops;
     (*report).cmd_drops = (*record).cmd_drops;
-    (*report).ntp_interval =
-        get_interval((*record).ntp_rate as libc::c_int) as int8_t;
-    (*report).cmd_interval =
-        get_interval((*record).cmd_rate as libc::c_int) as int8_t;
+    (*report).ntp_interval = get_interval((*record).ntp_rate as libc::c_int) as int8_t;
+    (*report).cmd_interval = get_interval((*record).cmd_rate as libc::c_int) as int8_t;
     (*report).ntp_timeout_interval =
         get_interval((*record).ntp_timeout_rate as libc::c_int) as int8_t;
     (*report).last_ntp_hit_ago = get_last_ago(now_ts, (*record).last_ntp_hit);
@@ -881,36 +912,35 @@ pub unsafe extern "C" fn CLG_GetClientAccessReportByIndex(mut index:
     return 1 as libc::c_int;
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2003
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  This module contains facilities for logging access by clients.
+ This module contains facilities for logging access by clients.
 
-  */
+ */
 /* And some reporting functions, for use by chronyc. */
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn CLG_GetServerStatsReport(mut report:
-                                                      *mut RPT_ServerStatsReport) {
+pub unsafe extern "C" fn CLG_GetServerStatsReport(mut report: *mut RPT_ServerStatsReport) {
     (*report).ntp_hits = total_ntp_hits;
     (*report).cmd_hits = total_cmd_hits;
     (*report).ntp_drops = total_ntp_drops;

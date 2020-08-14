@@ -1,10 +1,25 @@
-#![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
-         non_upper_case_globals, unused_assignments, unused_mut)]
+#![allow(
+    dead_code,
+    mutable_transmutes,
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused_assignments,
+    unused_mut
+)]
 #![register_tool(c2rust)]
-#![feature(llvm_asm, const_raw_ptr_to_usize_cast, extern_types, label_break_value, main,
-           register_tool, ptr_wrapping_offset_from, c_variadic)]
+#![feature(
+    llvm_asm,
+    const_raw_ptr_to_usize_cast,
+    extern_types,
+    label_break_value,
+    main,
+    register_tool,
+    ptr_wrapping_offset_from,
+    c_variadic
+)]
 
-use anyhow::{Result, Error};
+use anyhow::{Error, Result};
 use log::error;
 use std::io::Read;
 
@@ -24,22 +39,22 @@ mod local;
 mod logging;
 mod manual;
 mod memory;
-mod nameserv_async;
 mod nameserv;
+mod nameserv_async;
 mod ntp_core;
-mod ntp_io_linux;
 mod ntp_io;
+mod ntp_io_linux;
 mod ntp_sources;
 mod pktlength;
+mod refclock;
 mod refclock_phc;
 mod refclock_pps;
-mod refclock;
 mod refclock_shm;
 mod refclock_sock;
 mod reference;
 mod regress;
-mod rtc_linux;
 mod rtc;
+mod rtc_linux;
 mod samplefilt;
 mod sched;
 mod smooth;
@@ -47,11 +62,11 @@ mod socket;
 mod sources;
 mod sourcestats;
 mod stubs;
+mod sys;
 mod sys_generic;
 mod sys_linux;
 mod sys_null;
 mod sys_posix;
-mod sys;
 mod sys_timex;
 mod tempcomp;
 mod util;
@@ -63,15 +78,20 @@ extern "C" {
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...)
-     -> libc::c_int;
+    fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
-    fn getopt(___argc: libc::c_int, ___argv: *const *mut libc::c_char,
-              __shortopts: *const libc::c_char) -> libc::c_int;
+    fn getopt(
+        ___argc: libc::c_int,
+        ___argv: *const *mut libc::c_char,
+        __shortopts: *const libc::c_char,
+    ) -> libc::c_int;
     #[no_mangle]
     static mut optind: libc::c_int;
     #[no_mangle]
@@ -91,8 +111,7 @@ extern "C" {
     #[no_mangle]
     fn pipe(__pipedes: *mut libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t)
-     -> ssize_t;
+    fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
     #[no_mangle]
     fn close(__fd: libc::c_int) -> libc::c_int;
     #[no_mangle]
@@ -102,8 +121,7 @@ extern "C" {
     #[no_mangle]
     fn exit(_: libc::c_int) -> !;
     #[no_mangle]
-    fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...)
-     -> libc::c_int;
+    fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
     #[no_mangle]
     fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
     #[no_mangle]
@@ -125,47 +143,50 @@ extern "C" {
     fn SCH_Finalise();
     /* This queues a timeout to elapse at a given delta time relative to the current (raw) time */
     #[no_mangle]
-    fn SCH_AddTimeoutByDelay(delay: libc::c_double, _: SCH_TimeoutHandler,
-                             _: SCH_ArbitraryArgument) -> SCH_TimeoutID;
+    fn SCH_AddTimeoutByDelay(
+        delay: libc::c_double,
+        _: SCH_TimeoutHandler,
+        _: SCH_ArbitraryArgument,
+    ) -> SCH_TimeoutID;
     #[no_mangle]
     fn SCH_MainLoop();
     #[no_mangle]
     fn SCH_QuitProgram();
     /* Routine to initialise the module (to be called once at program
-   start-up) */
+    start-up) */
     #[no_mangle]
     fn LCL_Initialise();
     /* Routine to finalise the module (to be called once at end of
-   run). */
+    run). */
     #[no_mangle]
     fn LCL_Finalise();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+      chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+     **********************************************************************
+     * Copyright (C) Richard P. Curnow  1997-2002
+     *
+     * This program is free software; you can redistribute it and/or modify
+     * it under the terms of version 2 of the GNU General Public License as
+     * published by the Free Software Foundation.
+     *
+     * This program is distributed in the hope that it will be useful, but
+     * WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     * General Public License for more details.
+     *
+     * You should have received a copy of the GNU General Public License along
+     * with this program; if not, write to the Free Software Foundation, Inc.,
+     * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+     *
+     **********************************************************************
 
-  =======================================================================
+      =======================================================================
 
-  This is the header for the file that links in the operating system-
-  specific parts of the software
+      This is the header for the file that links in the operating system-
+      specific parts of the software
 
-*/
+    */
     /* Called at the start of the run to do initialisation */
     #[no_mangle]
     fn SYS_Initialise(clock_control: libc::c_int);
@@ -176,7 +197,7 @@ extern "C" {
     #[no_mangle]
     fn SYS_DropRoot(uid: uid_t, gid: gid_t);
     /* Enable a system call filter to allow only system calls
-   which chronyd normally needs after initialization */
+    which chronyd normally needs after initialization */
     #[no_mangle]
     fn SYS_EnableSystemCallFilter(level: libc::c_int);
     #[no_mangle]
@@ -184,31 +205,31 @@ extern "C" {
     #[no_mangle]
     fn SYS_LockMemory();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2012
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Miroslav Lichvar  2012
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for crypto hashing.
+     Header file for crypto hashing.
 
-  */
+     */
     /* length of hash values produced by SHA512 */
     #[no_mangle]
     fn HSH_Finalise();
@@ -217,29 +238,29 @@ extern "C" {
     #[no_mangle]
     fn NIO_Finalise();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2016
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Miroslav Lichvar  2016
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header for MS-SNTP authentication via Samba (ntp_signd) */
+     Header for MS-SNTP authentication via Samba (ntp_signd) */
     /* Initialisation function */
     #[no_mangle]
     fn NSD_Initialise();
@@ -272,8 +293,7 @@ extern "C" {
     #[no_mangle]
     fn SST_Finalise();
     #[no_mangle]
-    fn NSR_SetSourceResolvingEndHandler(handler:
-                                            NSR_SourceResolvingEndHandler);
+    fn NSR_SetSourceResolvingEndHandler(handler: NSR_SourceResolvingEndHandler);
     #[no_mangle]
     fn NSR_ResolveSources();
     #[no_mangle]
@@ -309,7 +329,7 @@ extern "C" {
     #[no_mangle]
     fn REF_SetUnsynchronised();
     /* Return the current stratum of this host or 16 if the host is not
-   synchronised */
+    synchronised */
     #[no_mangle]
     fn REF_GetOurStratum() -> libc::c_int;
     /* Init function */
@@ -320,11 +340,10 @@ extern "C" {
     fn LOG_Finalise();
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
     /* Set the minimum severity of a message to be logged or printed to terminal.
-   If the severity is LOGS_DEBUG and DEBUG is enabled, all messages will be
-   prefixed with the filename, line number, and function name. */
+    If the severity is LOGS_DEBUG and DEBUG is enabled, all messages will be
+    prefixed with the filename, line number, and function name. */
     #[no_mangle]
     fn LOG_SetMinSeverity(severity: LOG_Severity);
     /* Log messages to a file instead of stderr, or stderr again if NULL */
@@ -340,31 +359,31 @@ extern "C" {
     #[no_mangle]
     fn LOG_CloseParentFd();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2013-2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2003
+    * Copyright (C) Miroslav Lichvar  2013-2014
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for configuration module
-  */
+     Header file for configuration module
+     */
     #[no_mangle]
     fn CNF_Initialise(restarted: libc::c_int, client_only: libc::c_int);
     #[no_mangle]
@@ -372,8 +391,7 @@ extern "C" {
     #[no_mangle]
     fn CNF_ReadFile(filename: *const libc::c_char);
     #[no_mangle]
-    fn CNF_ParseLine(filename: *const libc::c_char, number: libc::c_int,
-                     line: *mut libc::c_char);
+    fn CNF_ParseLine(filename: *const libc::c_char, number: libc::c_int, line: *mut libc::c_char);
     #[no_mangle]
     fn CNF_CreateDirs(uid: uid_t, gid: gid_t);
     #[no_mangle]
@@ -395,30 +413,30 @@ extern "C" {
     #[no_mangle]
     fn CNF_GetInitSources() -> libc::c_int;
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for the control and monitoring module in the software
-  */
+     Header file for the control and monitoring module in the software
+     */
     #[no_mangle]
     fn CAM_Initialise(family: libc::c_int);
     #[no_mangle]
@@ -426,96 +444,97 @@ extern "C" {
     #[no_mangle]
     fn CAM_OpenUnixSocket();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header for key management module
-  */
+     Header for key management module
+     */
     #[no_mangle]
     fn KEY_Initialise();
     #[no_mangle]
     fn KEY_Finalise();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for manual time input module.
+     Header file for manual time input module.
 
-  */
+     */
     #[no_mangle]
     fn MNL_Initialise();
     #[no_mangle]
     fn MNL_Finalise();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  */
+     */
     #[no_mangle]
     fn RTC_Initialise(initial_set: libc::c_int);
     #[no_mangle]
     fn RTC_Finalise();
     #[no_mangle]
-    fn RTC_TimeInit(after_hook:
-                        Option<unsafe extern "C" fn(_: *mut libc::c_void)
-                                   -> ()>, anything: *mut libc::c_void);
+    fn RTC_TimeInit(
+        after_hook: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+        anything: *mut libc::c_void,
+    );
     #[no_mangle]
     fn RTC_StartMeasurements();
     #[no_mangle]
@@ -525,31 +544,31 @@ extern "C" {
     #[no_mangle]
     fn RCL_StartRefclocks();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2003
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  This module contains facilities for logging access by clients.
+     This module contains facilities for logging access by clients.
 
-  */
+     */
     #[no_mangle]
     fn CLG_Initialise();
     #[no_mangle]
@@ -558,77 +577,83 @@ extern "C" {
     #[no_mangle]
     fn DNS_SetAddressFamily(family: libc::c_int);
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2015
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Miroslav Lichvar  2015
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  This module implements time smoothing.
-  */
+     This module implements time smoothing.
+     */
     #[no_mangle]
     fn SMT_Initialise();
     #[no_mangle]
     fn SMT_Finalise();
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2011
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Miroslav Lichvar  2011
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for temperature compensation.
+     Header file for temperature compensation.
 
-  */
+     */
     #[no_mangle]
     fn TMC_Initialise();
     #[no_mangle]
     fn TMC_Finalise();
     #[no_mangle]
-    fn UTI_SetQuitSignalsHandler(handler:
-                                     Option<unsafe extern "C" fn(_:
-                                                                     libc::c_int)
-                                                -> ()>,
-                                 ignore_sigpipe: libc::c_int);
+    fn UTI_SetQuitSignalsHandler(
+        handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
+        ignore_sigpipe: libc::c_int,
+    );
     #[no_mangle]
-    fn UTI_OpenFile(basedir: *const libc::c_char, name: *const libc::c_char,
-                    suffix: *const libc::c_char, mode: libc::c_char,
-                    perm: mode_t) -> *mut FILE;
+    fn UTI_OpenFile(
+        basedir: *const libc::c_char,
+        name: *const libc::c_char,
+        suffix: *const libc::c_char,
+        mode: libc::c_char,
+        perm: mode_t,
+    ) -> *mut FILE;
     #[no_mangle]
-    fn UTI_RemoveFile(basedir: *const libc::c_char, name: *const libc::c_char,
-                      suffix: *const libc::c_char) -> libc::c_int;
+    fn UTI_RemoveFile(
+        basedir: *const libc::c_char,
+        name: *const libc::c_char,
+        suffix: *const libc::c_char,
+    ) -> libc::c_int;
 }
 pub type __int32_t = libc::c_int;
 pub type __uid_t = libc::c_uint;
@@ -698,40 +723,36 @@ pub const REF_ModeUpdateOnce: REF_Mode = 2;
 pub const REF_ModeInitStepSlew: REF_Mode = 1;
 pub const REF_ModeNormal: REF_Mode = 0;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Exported header file for sched.c
-  */
+ Exported header file for sched.c
+ */
 /* Type for timeout IDs, valid IDs are always greater than zero */
 pub type SCH_TimeoutID = libc::c_uint;
 pub type SCH_ArbitraryArgument = *mut libc::c_void;
-pub type SCH_TimeoutHandler
-    =
-    Option<unsafe extern "C" fn(_: SCH_ArbitraryArgument) -> ()>;
+pub type SCH_TimeoutHandler = Option<unsafe extern "C" fn(_: SCH_ArbitraryArgument) -> ()>;
 /* Function type for handlers to be called back when mode ends */
-pub type REF_ModeEndHandler
-    =
-    Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+pub type REF_ModeEndHandler = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 pub type LOG_Severity = libc::c_int;
 pub const LOGS_FATAL: LOG_Severity = 3;
 pub const LOGS_ERR: LOG_Severity = 2;
@@ -739,32 +760,32 @@ pub const LOGS_WARN: LOG_Severity = 1;
 pub const LOGS_INFO: LOG_Severity = 0;
 pub const LOGS_DEBUG: LOG_Severity = -1;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) John G. Hasler  2009
- * Copyright (C) Miroslav Lichvar  2012-2018
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2003
+* Copyright (C) John G. Hasler  2009
+* Copyright (C) Miroslav Lichvar  2012-2018
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  The main program
-  */
+ The main program
+ */
 /* ================================================== */
 /* Set when the initialisation chain has been completed.  Prevents finalisation
  * chain being run if a fatal error happened early. */
@@ -775,67 +796,77 @@ static mut ref_mode: REF_Mode = REF_ModeNormal;
 /* ================================================== */
 unsafe extern "C" fn do_platform_checks() {
     /* Require at least 32-bit integers, two's complement representation and
-     the usual implementation of conversion of unsigned integers */
-    if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong >=
-           4 as libc::c_int as libc::c_ulong {
+    the usual implementation of conversion of unsigned integers */
+    if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong >= 4 as libc::c_int as libc::c_ulong {
     } else {
-        __assert_fail(b"sizeof (int) >= 4\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"main.c\x00" as *const u8 as *const libc::c_char,
-                      79 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 30],
-                                                &[libc::c_char; 30]>(b"void do_platform_checks(void)\x00")).as_ptr());
+        __assert_fail(
+            b"sizeof (int) >= 4\x00" as *const u8 as *const libc::c_char,
+            b"main.c\x00" as *const u8 as *const libc::c_char,
+            79 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 30], &[libc::c_char; 30]>(
+                b"void do_platform_checks(void)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if -(1 as libc::c_int) == !(0 as libc::c_int) {
     } else {
-        __assert_fail(b"-1 == ~0\x00" as *const u8 as *const libc::c_char,
-                      b"main.c\x00" as *const u8 as *const libc::c_char,
-                      80 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 30],
-                                                &[libc::c_char; 30]>(b"void do_platform_checks(void)\x00")).as_ptr());
+        __assert_fail(
+            b"-1 == ~0\x00" as *const u8 as *const libc::c_char,
+            b"main.c\x00" as *const u8 as *const libc::c_char,
+            80 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 30], &[libc::c_char; 30]>(
+                b"void do_platform_checks(void)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if 4294967295 as libc::c_uint as int32_t == -(1 as libc::c_int) {
     } else {
-        __assert_fail(b"(int32_t)4294967295U == (int32_t)-1\x00" as *const u8
-                          as *const libc::c_char,
-                      b"main.c\x00" as *const u8 as *const libc::c_char,
-                      81 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 30],
-                                                &[libc::c_char; 30]>(b"void do_platform_checks(void)\x00")).as_ptr());
+        __assert_fail(
+            b"(int32_t)4294967295U == (int32_t)-1\x00" as *const u8 as *const libc::c_char,
+            b"main.c\x00" as *const u8 as *const libc::c_char,
+            81 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 30], &[libc::c_char; 30]>(
+                b"void do_platform_checks(void)\x00",
+            ))
+            .as_ptr(),
+        );
     };
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for main routine
-  */
+ Header file for main routine
+ */
 /* Function to clean up at end of run */
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn MAI_CleanupAndExit() {
-    if initialised == 0 { exit(exit_status); }
-    if *CNF_GetDumpDir().offset(0 as libc::c_int as isize) as libc::c_int !=
-           '\u{0}' as i32 {
+    if initialised == 0 {
+        exit(exit_status);
+    }
+    if *CNF_GetDumpDir().offset(0 as libc::c_int as isize) as libc::c_int != '\u{0}' as i32 {
         SRC_DumpSources();
     }
     /* Don't update clock when removing sources */
@@ -866,7 +897,9 @@ pub unsafe extern "C" fn MAI_CleanupAndExit() {
 }
 /* ================================================== */
 unsafe extern "C" fn signal_cleanup(mut x: libc::c_int) {
-    if initialised == 0 { exit(0 as libc::c_int); }
+    if initialised == 0 {
+        exit(0 as libc::c_int);
+    }
     SCH_QuitProgram();
 }
 /* ================================================== */
@@ -880,9 +913,9 @@ unsafe extern "C" fn ntp_source_resolving_end() {
     NSR_SetSourceResolvingEndHandler(None);
     if reload != 0 {
         /* Note, we want reload to come well after the initialisation from
-       the real time clock - this gives us a fighting chance that the
-       system-clock scale for the reloaded samples still has a
-       semblence of validity about it. */
+        the real time clock - this gives us a fighting chance that the
+        system-clock scale for the reloaded samples still has a
+        semblence of validity about it. */
         SRC_ReloadSources();
     }
     SRC_RemoveDumpFiles();
@@ -891,17 +924,16 @@ unsafe extern "C" fn ntp_source_resolving_end() {
     NSR_StartSources();
     NSR_AutoStartSources();
     /* Special modes can end only when sources update their reachability.
-     Give up immediatelly if there are no active sources. */
-    if ref_mode as libc::c_uint !=
-           REF_ModeNormal as libc::c_int as libc::c_uint &&
-           SRC_ActiveSources() == 0 {
+    Give up immediatelly if there are no active sources. */
+    if ref_mode as libc::c_uint != REF_ModeNormal as libc::c_int as libc::c_uint
+        && SRC_ActiveSources() == 0
+    {
         REF_SetUnsynchronised();
     };
 }
 /* ================================================== */
 unsafe extern "C" fn post_init_ntp_hook(mut anything: *mut libc::c_void) {
-    if ref_mode as libc::c_uint ==
-           REF_ModeInitStepSlew as libc::c_int as libc::c_uint {
+    if ref_mode as libc::c_uint == REF_ModeInitStepSlew as libc::c_int as libc::c_uint {
         /* Remove the initstepslew sources and set normal mode */
         NSR_RemoveAllSources();
         ref_mode = REF_ModeNormal;
@@ -911,8 +943,9 @@ unsafe extern "C" fn post_init_ntp_hook(mut anything: *mut libc::c_void) {
     LOG_CloseParentFd();
     CNF_AddSources();
     CNF_AddBroadcasts();
-    NSR_SetSourceResolvingEndHandler(Some(ntp_source_resolving_end as
-                                              unsafe extern "C" fn() -> ()));
+    NSR_SetSourceResolvingEndHandler(Some(
+        ntp_source_resolving_end as unsafe extern "C" fn() -> (),
+    ));
     NSR_ResolveSources();
 }
 /* ================================================== */
@@ -924,21 +957,24 @@ unsafe extern "C" fn reference_mode_end(mut result: libc::c_int) {
         }
         1 => {
             /* Switch to the normal mode, the delay is used to prevent polling
-         interval shorter than the burst interval if some configured servers
-         were used also for initstepslew */
-            SCH_AddTimeoutByDelay(2.0f64,
-                                  Some(post_init_ntp_hook as
-                                           unsafe extern "C" fn(_:
-                                                                    *mut libc::c_void)
-                                               -> ()),
-                                  0 as *mut libc::c_void);
+            interval shorter than the burst interval if some configured servers
+            were used also for initstepslew */
+            SCH_AddTimeoutByDelay(
+                2.0f64,
+                Some(post_init_ntp_hook as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+                0 as *mut libc::c_void,
+            );
         }
         _ => {
-            __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                          b"main.c\x00" as *const u8 as *const libc::c_char,
-                          230 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 29],
-                                                    &[libc::c_char; 29]>(b"void reference_mode_end(int)\x00")).as_ptr());
+            __assert_fail(
+                b"0\x00" as *const u8 as *const libc::c_char,
+                b"main.c\x00" as *const u8 as *const libc::c_char,
+                230 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 29], &[libc::c_char; 29]>(
+                    b"void reference_mode_end(int)\x00",
+                ))
+                .as_ptr(),
+            );
         }
     };
 }
@@ -947,23 +983,30 @@ unsafe extern "C" fn post_init_rtc_hook(mut anything: *mut libc::c_void) {
     if CNF_GetInitSources() > 0 as libc::c_int {
         CNF_AddInitSources();
         NSR_StartSources();
-        if REF_GetMode() as libc::c_uint !=
-               REF_ModeNormal as libc::c_int as libc::c_uint {
+        if REF_GetMode() as libc::c_uint != REF_ModeNormal as libc::c_int as libc::c_uint {
         } else {
-            __assert_fail(b"REF_GetMode() != REF_ModeNormal\x00" as *const u8
-                              as *const libc::c_char,
-                          b"main.c\x00" as *const u8 as *const libc::c_char,
-                          242 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 32],
-                                                    &[libc::c_char; 32]>(b"void post_init_rtc_hook(void *)\x00")).as_ptr());
+            __assert_fail(
+                b"REF_GetMode() != REF_ModeNormal\x00" as *const u8 as *const libc::c_char,
+                b"main.c\x00" as *const u8 as *const libc::c_char,
+                242 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 32], &[libc::c_char; 32]>(
+                    b"void post_init_rtc_hook(void *)\x00",
+                ))
+                .as_ptr(),
+            );
         }
-        /* Wait for mode end notification */
-    } else { post_init_ntp_hook(0 as *mut libc::c_void); };
+    /* Wait for mode end notification */
+    } else {
+        post_init_ntp_hook(0 as *mut libc::c_void);
+    };
 }
 /* ================================================== */
 unsafe extern "C" fn print_help(mut progname: *const libc::c_char) {
-    printf(b"Usage: %s [-4|-6] [-d] [-q|-Q] [-r] [-R] [-s] [-t TIMEOUT] [-f FILE|COMMAND...]\n\x00"
-               as *const u8 as *const libc::c_char, progname);
+    printf(
+        b"Usage: %s [-4|-6] [-d] [-q|-Q] [-r] [-R] [-s] [-t TIMEOUT] [-f FILE|COMMAND...]\n\x00"
+            as *const u8 as *const libc::c_char,
+        progname,
+    );
 }
 /* ================================================== */
 unsafe extern "C" fn print_version() {
@@ -974,25 +1017,28 @@ unsafe extern "C" fn print_version() {
                as *const u8 as *const libc::c_char);
 }
 /* ================================================== */
-unsafe extern "C" fn parse_int_arg(mut arg: *const libc::c_char)
- -> libc::c_int {
+unsafe extern "C" fn parse_int_arg(mut arg: *const libc::c_char) -> libc::c_int {
     let mut i: libc::c_int = 0;
-    if sscanf(arg, b"%d\x00" as *const u8 as *const libc::c_char,
-              &mut i as *mut libc::c_int) != 1 as libc::c_int {
-        LOG_Message(LOGS_FATAL,
-                    b"Invalid argument %s\x00" as *const u8 as
-                        *const libc::c_char, arg);
+    if sscanf(
+        arg,
+        b"%d\x00" as *const u8 as *const libc::c_char,
+        &mut i as *mut libc::c_int,
+    ) != 1 as libc::c_int
+    {
+        LOG_Message(
+            LOGS_FATAL,
+            b"Invalid argument %s\x00" as *const u8 as *const libc::c_char,
+            arg,
+        );
         exit(1 as libc::c_int);
     }
     return i;
 }
 /* ================================================== */
-unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
- -> libc::c_int {
+unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
     let mut conf_file: *const libc::c_char =
         b"/etc/chrony.conf\x00" as *const u8 as *const libc::c_char;
-    let mut progname: *const libc::c_char =
-        *argv.offset(0 as libc::c_int as isize);
+    let mut progname: *const libc::c_char = *argv.offset(0 as libc::c_int as isize);
     let mut user: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut log_file: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut pw: *mut passwd = 0 as *mut passwd;
@@ -1015,45 +1061,55 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     /* Parse (undocumented) long command-line options */
     optind = 1 as libc::c_int;
     while optind < argc {
-        if strcmp(b"--help\x00" as *const u8 as *const libc::c_char,
-                  *argv.offset(optind as isize)) == 0 {
+        if strcmp(
+            b"--help\x00" as *const u8 as *const libc::c_char,
+            *argv.offset(optind as isize),
+        ) == 0
+        {
             print_help(progname);
-            return 0 as libc::c_int
+            return 0 as libc::c_int;
         } else {
-            if strcmp(b"--version\x00" as *const u8 as *const libc::c_char,
-                      *argv.offset(optind as isize)) == 0 {
+            if strcmp(
+                b"--version\x00" as *const u8 as *const libc::c_char,
+                *argv.offset(optind as isize),
+            ) == 0
+            {
                 print_version();
-                return 0 as libc::c_int
+                return 0 as libc::c_int;
             }
         }
         optind += 1
     }
     optind = 1 as libc::c_int;
-    loop 
-         /* Parse short command-line options */
-         {
-        opt =
-            getopt(argc, argv,
-                   b"46df:F:hl:L:mP:qQrRst:u:vx\x00" as *const u8 as
-                       *const libc::c_char);
-        if !(opt != -(1 as libc::c_int)) { break ; }
+    loop
+    /* Parse short command-line options */
+    {
+        opt = getopt(
+            argc,
+            argv,
+            b"46df:F:hl:L:mP:qQrRst:u:vx\x00" as *const u8 as *const libc::c_char,
+        );
+        if !(opt != -(1 as libc::c_int)) {
+            break;
+        }
         match opt {
             52 | 54 => {
-                address_family =
-                    if opt == '4' as i32 {
-                        1 as libc::c_int
-                    } else { 2 as libc::c_int }
+                address_family = if opt == '4' as i32 {
+                    1 as libc::c_int
+                } else {
+                    2 as libc::c_int
+                }
             }
             100 => {
                 debug += 1;
                 system_log = 0 as libc::c_int
             }
-            102 => { conf_file = optarg }
-            70 => { scfilter_level = parse_int_arg(optarg) }
-            108 => { log_file = optarg }
-            76 => { log_severity = parse_int_arg(optarg) }
-            109 => { lock_memory = 1 as libc::c_int }
-            80 => { sched_priority = parse_int_arg(optarg) }
+            102 => conf_file = optarg,
+            70 => scfilter_level = parse_int_arg(optarg),
+            108 => log_file = optarg,
+            76 => log_severity = parse_int_arg(optarg),
+            109 => lock_memory = 1 as libc::c_int,
+            80 => sched_priority = parse_int_arg(optarg),
             113 => {
                 ref_mode = REF_ModeUpdateOnce;
                 client_only = 0 as libc::c_int;
@@ -1065,23 +1121,28 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                 clock_control = 0 as libc::c_int;
                 system_log = 0 as libc::c_int
             }
-            114 => { reload = 1 as libc::c_int }
-            82 => { restarted = 1 as libc::c_int }
-            115 => { do_init_rtc = 1 as libc::c_int }
-            116 => { timeout = parse_int_arg(optarg) }
-            117 => { user = optarg }
-            118 => { print_version(); return 0 as libc::c_int }
-            120 => { clock_control = 0 as libc::c_int }
+            114 => reload = 1 as libc::c_int,
+            82 => restarted = 1 as libc::c_int,
+            115 => do_init_rtc = 1 as libc::c_int,
+            116 => timeout = parse_int_arg(optarg),
+            117 => user = optarg,
+            118 => {
+                print_version();
+                return 0 as libc::c_int;
+            }
+            120 => clock_control = 0 as libc::c_int,
             _ => {
                 print_help(progname);
-                return (opt != 'h' as i32) as libc::c_int
+                return (opt != 'h' as i32) as libc::c_int;
             }
         }
     }
     // TODO: logging rework here too
     if !log_file.is_null() {
         LOG_OpenFileLog(log_file);
-    } else if system_log != 0 { LOG_OpenSystemLog(); }
+    } else if system_log != 0 {
+        LOG_OpenSystemLog();
+    }
 
     let log_level = if debug >= 2 {
         log::LevelFilter::Debug
@@ -1092,15 +1153,13 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             LOGS_FATAL => log::LevelFilter::Error,
             LOGS_ERR => log::LevelFilter::Error,
             LOGS_WARN => log::LevelFilter::Warn,
-            LOGS_INFO=> log::LevelFilter::Info,
+            LOGS_INFO => log::LevelFilter::Info,
             LOGS_DEBUG => log::LevelFilter::Debug,
             _ => panic!("invalid log level"),
         }
     };
-    env_logger::builder()
-        .filter_level(log_level)
-        .init();
-     println!("logging at {}", log_level);
+    env_logger::builder().filter_level(log_level).init();
+    println!("logging at {}", log_level);
 
     if getuid() != 0 && client_only == 0 {
         error!("Fatal error: Not superuser");
@@ -1127,18 +1186,24 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         CNF_ReadFile(conf_file);
     } else {
         while optind < argc {
-            CNF_ParseLine(0 as *const libc::c_char,
-                          config_args + optind - argc + 1 as libc::c_int,
-                          *argv.offset(optind as isize));
+            CNF_ParseLine(
+                0 as *const libc::c_char,
+                config_args + optind - argc + 1 as libc::c_int,
+                *argv.offset(optind as isize),
+            );
             optind += 1
         }
     }
-    if user.is_null() { user = CNF_GetUser() }
+    if user.is_null() {
+        user = CNF_GetUser()
+    }
     pw = getpwnam(user);
     if pw.is_null() {
-        LOG_Message(LOGS_FATAL,
-                    b"Could not get user/group ID of %s\x00" as *const u8 as
-                        *const libc::c_char, user);
+        LOG_Message(
+            LOGS_FATAL,
+            b"Could not get user/group ID of %s\x00" as *const u8 as *const libc::c_char,
+            user,
+        );
         exit(1 as libc::c_int);
     }
     /* Create directories for sockets, log files, and dump files */
@@ -1157,9 +1222,15 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     NCR_Initialise();
     CNF_SetupAccessRestrictions();
     /* Command-line switch must have priority */
-    if sched_priority == 0 { sched_priority = CNF_GetSchedPriority() }
-    if sched_priority != 0 { SYS_SetScheduler(sched_priority); }
-    if lock_memory != 0 || CNF_GetLockMemory() != 0 { SYS_LockMemory(); }
+    if sched_priority == 0 {
+        sched_priority = CNF_GetSchedPriority()
+    }
+    if sched_priority != 0 {
+        SYS_SetScheduler(sched_priority);
+    }
+    if lock_memory != 0 || CNF_GetLockMemory() != 0 {
+        SYS_LockMemory();
+    }
     /* Drop root privileges if the specified user has a non-zero UID */
     if geteuid() == 0 && ((*pw).pw_uid != 0 || (*pw).pw_gid != 0) {
         SYS_DropRoot((*pw).pw_uid, (*pw).pw_gid);
@@ -1174,37 +1245,45 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     SMT_Initialise();
     /* From now on, it is safe to do finalisation on exit */
     initialised = 1 as libc::c_int;
-    UTI_SetQuitSignalsHandler(Some(signal_cleanup as
-                                       unsafe extern "C" fn(_: libc::c_int)
-                                           -> ()), 1 as libc::c_int);
+    UTI_SetQuitSignalsHandler(
+        Some(signal_cleanup as unsafe extern "C" fn(_: libc::c_int) -> ()),
+        1 as libc::c_int,
+    );
     CAM_OpenUnixSocket();
-    if scfilter_level != 0 { SYS_EnableSystemCallFilter(scfilter_level); }
-    if ref_mode as libc::c_uint ==
-           REF_ModeNormal as libc::c_int as libc::c_uint &&
-           CNF_GetInitSources() > 0 as libc::c_int {
+    if scfilter_level != 0 {
+        SYS_EnableSystemCallFilter(scfilter_level);
+    }
+    if ref_mode as libc::c_uint == REF_ModeNormal as libc::c_int as libc::c_uint
+        && CNF_GetInitSources() > 0 as libc::c_int
+    {
         ref_mode = REF_ModeInitStepSlew
     }
-    REF_SetModeEndHandler(Some(reference_mode_end as
-                                   unsafe extern "C" fn(_: libc::c_int)
-                                       -> ()));
+    REF_SetModeEndHandler(Some(
+        reference_mode_end as unsafe extern "C" fn(_: libc::c_int) -> (),
+    ));
     REF_SetMode(ref_mode);
     if timeout > 0 as libc::c_int {
-        SCH_AddTimeoutByDelay(timeout as libc::c_double,
-                              Some(quit_timeout as
-                                       unsafe extern "C" fn(_:
-                                                                *mut libc::c_void)
-                                           -> ()), 0 as *mut libc::c_void);
+        SCH_AddTimeoutByDelay(
+            timeout as libc::c_double,
+            Some(quit_timeout as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+            0 as *mut libc::c_void,
+        );
     }
     if do_init_rtc != 0 {
-        RTC_TimeInit(Some(post_init_rtc_hook as
-                              unsafe extern "C" fn(_: *mut libc::c_void)
-                                  -> ()), 0 as *mut libc::c_void);
-    } else { post_init_rtc_hook(0 as *mut libc::c_void); }
+        RTC_TimeInit(
+            Some(post_init_rtc_hook as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+            0 as *mut libc::c_void,
+        );
+    } else {
+        post_init_rtc_hook(0 as *mut libc::c_void);
+    }
     /* The program normally runs under control of the main loop in
-     the scheduler. */
+    the scheduler. */
     SCH_MainLoop();
-    LOG_Message(LOGS_INFO,
-                b"chronyd exiting\x00" as *const u8 as *const libc::c_char);
+    LOG_Message(
+        LOGS_INFO,
+        b"chronyd exiting\x00" as *const u8 as *const libc::c_char,
+    );
     MAI_CleanupAndExit();
     return 0 as libc::c_int;
 }
@@ -1212,13 +1291,18 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
 pub fn main() {
     let mut args: Vec<*mut libc::c_char> = Vec::new();
     for arg in ::std::env::args() {
-        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
-    };
+        args.push(
+            ::std::ffi::CString::new(arg)
+                .expect("Failed to convert argument into CString.")
+                .into_raw(),
+        );
+    }
     args.push(::std::ptr::null_mut());
     unsafe {
-        ::std::process::exit(main_0((args.len() - 1) as libc::c_int,
-                                    args.as_mut_ptr() as
-                                        *mut *mut libc::c_char) as i32)
+        ::std::process::exit(main_0(
+            (args.len() - 1) as libc::c_int,
+            args.as_mut_ptr() as *mut *mut libc::c_char,
+        ) as i32)
     }
 }
 /* ================================================== */

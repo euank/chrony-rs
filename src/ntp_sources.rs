@@ -11,12 +11,14 @@ extern "C" {
     #[no_mangle]
     fn __ctype_b_loc() -> *mut *const libc::c_ushort;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
-    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     fn free(__ptr: *mut libc::c_void);
     /* Create a new array with given element size */
@@ -30,8 +32,7 @@ extern "C" {
     fn ARR_GetNewElement(array: ARR_Instance) -> *mut libc::c_void;
     /* Return element with given index */
     #[no_mangle]
-    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint)
-     -> *mut libc::c_void;
+    fn ARR_GetElement(array: ARR_Instance, index: libc::c_uint) -> *mut libc::c_void;
     /* Return pointer to the internal array of elements */
     #[no_mangle]
     fn ARR_GetElements(array: ARR_Instance) -> *mut libc::c_void;
@@ -42,32 +43,32 @@ extern "C" {
     #[no_mangle]
     fn ARR_GetSize(array: ARR_Instance) -> libc::c_uint;
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for the main NTP protocol engine
-  */
+     Header file for the main NTP protocol engine
+     */
     /* This is a private data type used for storing the instance record for
-   each source that we are chiming with */
+    each source that we are chiming with */
     /* Init and fini functions */
     /* Get a new instance for a server or peer */
     /* Destroy an instance */
@@ -76,22 +77,24 @@ extern "C" {
     /* Reset polling interval of an instance */
     /* Change the remote address of an instance */
     /* This routine is called when a new packet arrives off the network,
-   and it relates to a source we have an ongoing protocol exchange with */
+    and it relates to a source we have an ongoing protocol exchange with */
     /* This routine is called when a new packet arrives off the network,
-   and we do not recognize its source */
+    and we do not recognize its source */
     /* This routine is called when a packet is sent to a source we have
-   an ongoing protocol exchange with */
+    an ongoing protocol exchange with */
     /* This routine is called when a packet is sent to a destination we
-   do not recognize */
+    do not recognize */
     /* Slew receive and transmit times in instance records */
     /* Take a particular source online (i.e. start sampling it) or offline
-   (i.e. stop sampling it) */
+    (i.e. stop sampling it) */
     #[no_mangle]
     fn NCR_IsSyncPeer(instance: NCR_Instance) -> libc::c_int;
     #[no_mangle]
-    fn NCR_GetInstance(remote_addr: *mut NTP_Remote_Address,
-                       type_0: NTP_Source_Type, params: *mut SourceParameters)
-     -> NCR_Instance;
+    fn NCR_GetInstance(
+        remote_addr: *mut NTP_Remote_Address,
+        type_0: NTP_Source_Type,
+        params: *mut SourceParameters,
+    ) -> NCR_Instance;
     #[no_mangle]
     fn NCR_DestroyInstance(instance: NCR_Instance);
     #[no_mangle]
@@ -101,35 +104,48 @@ extern "C" {
     #[no_mangle]
     fn NCR_ResetPoll(instance: NCR_Instance);
     #[no_mangle]
-    fn NCR_ChangeRemoteAddress(inst: NCR_Instance,
-                               remote_addr: *mut NTP_Remote_Address);
+    fn NCR_ChangeRemoteAddress(inst: NCR_Instance, remote_addr: *mut NTP_Remote_Address);
     #[no_mangle]
-    fn NCR_ProcessRxKnown(inst: NCR_Instance,
-                          local_addr: *mut NTP_Local_Address,
-                          rx_ts: *mut NTP_Local_Timestamp,
-                          message: *mut NTP_Packet, length: libc::c_int)
-     -> libc::c_int;
+    fn NCR_ProcessRxKnown(
+        inst: NCR_Instance,
+        local_addr: *mut NTP_Local_Address,
+        rx_ts: *mut NTP_Local_Timestamp,
+        message: *mut NTP_Packet,
+        length: libc::c_int,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn NCR_ProcessRxUnknown(remote_addr: *mut NTP_Remote_Address,
-                            local_addr: *mut NTP_Local_Address,
-                            rx_ts: *mut NTP_Local_Timestamp,
-                            message: *mut NTP_Packet, length: libc::c_int);
+    fn NCR_ProcessRxUnknown(
+        remote_addr: *mut NTP_Remote_Address,
+        local_addr: *mut NTP_Local_Address,
+        rx_ts: *mut NTP_Local_Timestamp,
+        message: *mut NTP_Packet,
+        length: libc::c_int,
+    );
     #[no_mangle]
-    fn NCR_ProcessTxKnown(inst: NCR_Instance,
-                          local_addr: *mut NTP_Local_Address,
-                          tx_ts: *mut NTP_Local_Timestamp,
-                          message: *mut NTP_Packet, length: libc::c_int);
+    fn NCR_ProcessTxKnown(
+        inst: NCR_Instance,
+        local_addr: *mut NTP_Local_Address,
+        tx_ts: *mut NTP_Local_Timestamp,
+        message: *mut NTP_Packet,
+        length: libc::c_int,
+    );
     #[no_mangle]
-    fn NCR_ProcessTxUnknown(remote_addr: *mut NTP_Remote_Address,
-                            local_addr: *mut NTP_Local_Address,
-                            tx_ts: *mut NTP_Local_Timestamp,
-                            message: *mut NTP_Packet, length: libc::c_int);
+    fn NCR_ProcessTxUnknown(
+        remote_addr: *mut NTP_Remote_Address,
+        local_addr: *mut NTP_Local_Address,
+        tx_ts: *mut NTP_Local_Timestamp,
+        message: *mut NTP_Packet,
+        length: libc::c_int,
+    );
     #[no_mangle]
-    fn NCR_SlewTimes(inst: NCR_Instance, when: *mut timespec,
-                     dfreq: libc::c_double, doffset: libc::c_double);
+    fn NCR_SlewTimes(
+        inst: NCR_Instance,
+        when: *mut timespec,
+        dfreq: libc::c_double,
+        doffset: libc::c_double,
+    );
     #[no_mangle]
-    fn NCR_SetConnectivity(inst: NCR_Instance,
-                           connectivity: SRC_Connectivity);
+    fn NCR_SetConnectivity(inst: NCR_Instance, connectivity: SRC_Connectivity);
     #[no_mangle]
     fn NCR_ModifyMinpoll(inst: NCR_Instance, new_minpoll: libc::c_int);
     #[no_mangle]
@@ -137,51 +153,48 @@ extern "C" {
     #[no_mangle]
     fn NCR_ModifyMaxdelay(inst: NCR_Instance, new_max_delay: libc::c_double);
     #[no_mangle]
-    fn NCR_ModifyMaxdelayratio(inst: NCR_Instance,
-                               new_max_delay_ratio: libc::c_double);
+    fn NCR_ModifyMaxdelayratio(inst: NCR_Instance, new_max_delay_ratio: libc::c_double);
     #[no_mangle]
-    fn NCR_ModifyMaxdelaydevratio(inst: NCR_Instance,
-                                  new_max_delay_dev_ratio: libc::c_double);
+    fn NCR_ModifyMaxdelaydevratio(inst: NCR_Instance, new_max_delay_dev_ratio: libc::c_double);
     #[no_mangle]
     fn NCR_ModifyMinstratum(inst: NCR_Instance, new_min_stratum: libc::c_int);
     #[no_mangle]
     fn NCR_ModifyPolltarget(inst: NCR_Instance, new_poll_target: libc::c_int);
     #[no_mangle]
-    fn NCR_InitiateSampleBurst(inst: NCR_Instance,
-                               n_good_samples: libc::c_int,
-                               n_total_samples: libc::c_int);
+    fn NCR_InitiateSampleBurst(
+        inst: NCR_Instance,
+        n_good_samples: libc::c_int,
+        n_total_samples: libc::c_int,
+    );
     #[no_mangle]
-    fn NCR_ReportSource(inst: NCR_Instance, report: *mut RPT_SourceReport,
-                        now: *mut timespec);
+    fn NCR_ReportSource(inst: NCR_Instance, report: *mut RPT_SourceReport, now: *mut timespec);
     #[no_mangle]
     fn NCR_GetNTPReport(inst: NCR_Instance, report: *mut RPT_NTPReport);
     #[no_mangle]
-    fn NCR_IncrementActivityCounters(inst: NCR_Instance,
-                                     online: *mut libc::c_int,
-                                     offline: *mut libc::c_int,
-                                     burst_online: *mut libc::c_int,
-                                     burst_offline: *mut libc::c_int);
+    fn NCR_IncrementActivityCounters(
+        inst: NCR_Instance,
+        online: *mut libc::c_int,
+        offline: *mut libc::c_int,
+        burst_online: *mut libc::c_int,
+        burst_offline: *mut libc::c_int,
+    );
     #[no_mangle]
-    fn NCR_GetRemoteAddress(instance: NCR_Instance)
-     -> *mut NTP_Remote_Address;
+    fn NCR_GetRemoteAddress(instance: NCR_Instance) -> *mut NTP_Remote_Address;
     #[no_mangle]
     fn NCR_GetLocalRefid(inst: NCR_Instance) -> uint32_t;
     #[no_mangle]
-    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr)
-     -> libc::c_int;
+    fn UTI_CompareIPs(a: *mut IPAddr, b: *mut IPAddr, mask: *mut IPAddr) -> libc::c_int;
     #[no_mangle]
     fn UTI_IPToHash(ip: *mut IPAddr) -> uint32_t;
     #[no_mangle]
-    fn UTI_StringToIP(addr: *const libc::c_char, ip: *mut IPAddr)
-     -> libc::c_int;
+    fn UTI_StringToIP(addr: *const libc::c_char, ip: *mut IPAddr) -> libc::c_int;
     #[no_mangle]
-    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec)
-     -> libc::c_double;
+    fn UTI_DiffTimespecsToDouble(a: *mut timespec, b: *mut timespec) -> libc::c_double;
     #[no_mangle]
     fn UTI_IPToString(ip: *mut IPAddr) -> *mut libc::c_char;
     /* Fill buffer with random bytes from /dev/urandom or a faster source if it's
-   available (e.g. arc4random()), which may not necessarily be suitable for
-   generating long-term keys */
+    available (e.g. arc4random()), which may not necessarily be suitable for
+    generating long-term keys */
     #[no_mangle]
     fn UTI_GetRandomBytes(buf: *mut libc::c_void, len: libc::c_uint);
     /* Minimum severity of messages to be logged */
@@ -189,37 +202,38 @@ extern "C" {
     static mut log_min_severity: LOG_Severity;
     /* Line logging function */
     #[no_mangle]
-    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char,
-                   _: ...);
+    fn LOG_Message(severity: LOG_Severity, format: *const libc::c_char, _: ...);
     /* Add a handler.  Then handler MUST NOT deregister itself!!! */
     #[no_mangle]
-    fn LCL_AddParameterChangeHandler(handler: LCL_ParameterChangeHandler,
-                                     anything: *mut libc::c_void);
+    fn LCL_AddParameterChangeHandler(
+        handler: LCL_ParameterChangeHandler,
+        anything: *mut libc::c_void,
+    );
     /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+     chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+    **********************************************************************
+    * Copyright (C) Richard P. Curnow  1997-2002
+    *
+    * This program is free software; you can redistribute it and/or modify
+    * it under the terms of version 2 of the GNU General Public License as
+    * published by the Free Software Foundation.
+    *
+    * This program is distributed in the hope that it will be useful, but
+    * WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    * General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License along
+    * with this program; if not, write to the Free Software Foundation, Inc.,
+    * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    *
+    **********************************************************************
 
-  =======================================================================
+     =======================================================================
 
-  Header file for memory functions
-  */
+     Header file for memory functions
+     */
     /* Wrappers checking for errors */
     #[no_mangle]
     fn Malloc(size: size_t) -> *mut libc::c_void;
@@ -228,21 +242,25 @@ extern "C" {
     #[no_mangle]
     fn Strdup(s: *const libc::c_char) -> *mut libc::c_char;
     /* Request resolving of a name to IP address. The handler will be
-   called when the result is available. */
+    called when the result is available. */
     #[no_mangle]
-    fn DNS_Name2IPAddressAsync(name: *const libc::c_char,
-                               handler: DNS_NameResolveHandler,
-                               anything: *mut libc::c_void);
+    fn DNS_Name2IPAddressAsync(
+        name: *const libc::c_char,
+        handler: DNS_NameResolveHandler,
+        anything: *mut libc::c_void,
+    );
     #[no_mangle]
     fn DNS_Reload();
     /* Get the time stamp taken after a file descriptor became ready or a timeout expired */
     #[no_mangle]
-    fn SCH_GetLastEventTime(cooked: *mut timespec, err: *mut libc::c_double,
-                            raw: *mut timespec);
+    fn SCH_GetLastEventTime(cooked: *mut timespec, err: *mut libc::c_double, raw: *mut timespec);
     /* This queues a timeout to elapse at a given delta time relative to the current (raw) time */
     #[no_mangle]
-    fn SCH_AddTimeoutByDelay(delay: libc::c_double, _: SCH_TimeoutHandler,
-                             _: SCH_ArbitraryArgument) -> SCH_TimeoutID;
+    fn SCH_AddTimeoutByDelay(
+        delay: libc::c_double,
+        _: SCH_TimeoutHandler,
+        _: SCH_ArbitraryArgument,
+    ) -> SCH_TimeoutID;
     /* The next one probably ought to return a status code */
     #[no_mangle]
     fn SCH_RemoveTimeout(_: SCH_TimeoutID);
@@ -278,30 +296,30 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file for array functions.
-  */
+ Header file for array functions.
+ */
 pub type ARR_Instance = *mut ARR_Instance_Record;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -310,30 +328,30 @@ pub struct NTP_int64 {
     pub lo: uint32_t,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2003
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2003
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file containing common NTP bits and pieces
-  */
+ Header file containing common NTP bits and pieces
+ */
 pub type NTP_int32 = uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -353,32 +371,32 @@ pub struct NTP_Packet {
     pub auth_data: [uint8_t; 64],
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Types used for addressing sources etc
-  */
+ Types used for addressing sources etc
+ */
 /* This type is used to represent an IPv4 address or IPv6 address.
-   All parts are in HOST order, NOT network order. */
+All parts are in HOST order, NOT network order. */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct IPAddr {
@@ -407,30 +425,30 @@ pub struct NTP_Local_Address {
     pub sock_fd: libc::c_int,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Data structure definitions within the daemon for various reports that
-  can be generated */
+ Data structure definitions within the daemon for various reports that
+ can be generated */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct RPT_SourceReport {
@@ -497,30 +515,30 @@ pub struct RPT_NTPReport {
     pub total_valid_count: uint32_t,
 }
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header file defining parameters that can be set on a per source basis
-  */
+ Header file defining parameters that can be set on a per source basis
+ */
 pub type SRC_Connectivity = libc::c_uint;
 pub const SRC_MAYBE_ONLINE: SRC_Connectivity = 2;
 pub const SRC_ONLINE: SRC_Connectivity = 1;
@@ -568,36 +586,36 @@ pub struct NTP_Local_Timestamp {
 }
 pub type NCR_Instance = *mut NCR_Instance_Record;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header for the part of the software that deals with the set of
-  current NTP servers and peers, which can resolve an IP address into
-  a source record for further processing.
+ Header for the part of the software that deals with the set of
+ current NTP servers and peers, which can resolve an IP address into
+ a source record for further processing.
 
-  */
+ */
 /* Status values returned by operations that indirectly result from user
-   input. */
+input. */
 pub type NSR_Status = libc::c_uint;
 /* AddSourceByName - name will be resolved later */
 /* AddSourceByName - attempt to add a source with invalid name */
@@ -660,66 +678,63 @@ pub const DNS_Failure: DNS_Status = 2;
 pub const DNS_TryAgain: DNS_Status = 1;
 pub const DNS_Success: DNS_Status = 0;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Richard P. Curnow  1997-2002
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Richard P. Curnow  1997-2002
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Exported header file for sched.c
-  */
+ Exported header file for sched.c
+ */
 /* Type for timeout IDs, valid IDs are always greater than zero */
 pub type SCH_TimeoutID = libc::c_uint;
 pub type SCH_ArbitraryArgument = *mut libc::c_void;
-pub type SCH_TimeoutHandler
-    =
-    Option<unsafe extern "C" fn(_: SCH_ArbitraryArgument) -> ()>;
+pub type SCH_TimeoutHandler = Option<unsafe extern "C" fn(_: SCH_ArbitraryArgument) -> ()>;
 /*
-  chronyd/chronyc - Programs for keeping computer clocks accurate.
+ chronyd/chronyc - Programs for keeping computer clocks accurate.
 
- **********************************************************************
- * Copyright (C) Miroslav Lichvar  2014
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- **********************************************************************
+**********************************************************************
+* Copyright (C) Miroslav Lichvar  2014
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of version 2 of the GNU General Public License as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*
+**********************************************************************
 
-  =======================================================================
+ =======================================================================
 
-  Header for asynchronous nameserver functions
-  */
+ Header for asynchronous nameserver functions
+ */
 /* Function type for callback to process the result */
-pub type DNS_NameResolveHandler
-    =
-    Option<unsafe extern "C" fn(_: DNS_Status, _: libc::c_int, _: *mut IPAddr,
-                                _: *mut libc::c_void) -> ()>;
+pub type DNS_NameResolveHandler = Option<
+    unsafe extern "C" fn(_: DNS_Status, _: libc::c_int, _: *mut IPAddr, _: *mut libc::c_void) -> (),
+>;
 pub type LOG_Severity = libc::c_int;
 pub const LOGS_FATAL: LOG_Severity = 3;
 pub const LOGS_ERR: LOG_Severity = 2;
@@ -730,16 +745,19 @@ pub type LCL_ChangeType = libc::c_uint;
 pub const LCL_ChangeUnknownStep: LCL_ChangeType = 2;
 pub const LCL_ChangeStep: LCL_ChangeType = 1;
 pub const LCL_ChangeAdjust: LCL_ChangeType = 0;
-pub type LCL_ParameterChangeHandler
-    =
-    Option<unsafe extern "C" fn(_: *mut timespec, _: *mut timespec,
-                                _: libc::c_double, _: libc::c_double,
-                                _: LCL_ChangeType, _: *mut libc::c_void)
-               -> ()>;
+pub type LCL_ParameterChangeHandler = Option<
+    unsafe extern "C" fn(
+        _: *mut timespec,
+        _: *mut timespec,
+        _: libc::c_double,
+        _: libc::c_double,
+        _: LCL_ChangeType,
+        _: *mut libc::c_void,
+    ) -> (),
+>;
 /* Hash table of SourceRecord, its size is a power of two and it's never
-   more than half full */
-static mut records: ARR_Instance =
-    0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
+more than half full */
+static mut records: ARR_Instance = 0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
 /* Number of sources in the hash table */
 static mut n_sources: libc::c_int = 0;
 /* Flag indicating new sources will be started automatically when added */
@@ -752,14 +770,12 @@ static mut resolving_source: *mut UnresolvedSource =
     0 as *const UnresolvedSource as *mut UnresolvedSource;
 static mut resolving_end_handler: NSR_SourceResolvingEndHandler = None;
 /* Array of SourcePool */
-static mut pools: ARR_Instance =
-    0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
+static mut pools: ARR_Instance = 0 as *const ARR_Instance_Record as *mut ARR_Instance_Record;
 /* ================================================== */
 /* Flag indicating whether module is initialised */
 static mut initialised: libc::c_int = 0 as libc::c_int;
 /* ================================================== */
-unsafe extern "C" fn get_record(mut index: libc::c_uint)
- -> *mut SourceRecord {
+unsafe extern "C" fn get_record(mut index: libc::c_uint) -> *mut SourceRecord {
     return ARR_GetElement(records, index) as *mut SourceRecord;
 }
 /* ================================================== */
@@ -768,27 +784,24 @@ pub unsafe extern "C" fn NSR_Initialise() {
     n_sources = 0 as libc::c_int;
     initialised = 1 as libc::c_int;
     records =
-        ARR_CreateInstance(::std::mem::size_of::<SourceRecord>() as
-                               libc::c_ulong as libc::c_uint);
+        ARR_CreateInstance(::std::mem::size_of::<SourceRecord>() as libc::c_ulong as libc::c_uint);
     rehash_records();
     pools =
-        ARR_CreateInstance(::std::mem::size_of::<SourcePool>() as
-                               libc::c_ulong as libc::c_uint);
-    LCL_AddParameterChangeHandler(Some(slew_sources as
-                                           unsafe extern "C" fn(_:
-                                                                    *mut timespec,
-                                                                _:
-                                                                    *mut timespec,
-                                                                _:
-                                                                    libc::c_double,
-                                                                _:
-                                                                    libc::c_double,
-                                                                _:
-                                                                    LCL_ChangeType,
-                                                                _:
-                                                                    *mut libc::c_void)
-                                               -> ()),
-                                  0 as *mut libc::c_void);
+        ARR_CreateInstance(::std::mem::size_of::<SourcePool>() as libc::c_ulong as libc::c_uint);
+    LCL_AddParameterChangeHandler(
+        Some(
+            slew_sources
+                as unsafe extern "C" fn(
+                    _: *mut timespec,
+                    _: *mut timespec,
+                    _: libc::c_double,
+                    _: libc::c_double,
+                    _: LCL_ChangeType,
+                    _: *mut libc::c_void,
+                ) -> (),
+        ),
+        0 as *mut libc::c_void,
+    );
 }
 /* ================================================== */
 #[no_mangle]
@@ -800,7 +813,9 @@ pub unsafe extern "C" fn NSR_Finalise() {
     i = 0 as libc::c_int as libc::c_uint;
     while i < ARR_GetSize(records) {
         record = get_record(i);
-        if !(*record).remote_addr.is_null() { clean_source_record(record); }
+        if !(*record).remote_addr.is_null() {
+            clean_source_record(record);
+        }
         i = i.wrapping_add(1)
     }
     ARR_DestroyInstance(records);
@@ -814,20 +829,22 @@ pub unsafe extern "C" fn NSR_Finalise() {
 }
 /* ================================================== */
 /* Return slot number and whether the IP address was matched or not.
-   found = 0 => Neither IP nor port matched, empty slot returned
-   found = 1 => Only IP matched, port doesn't match
-   found = 2 => Both IP and port matched.
+ found = 0 => Neither IP nor port matched, empty slot returned
+ found = 1 => Only IP matched, port doesn't match
+ found = 2 => Both IP and port matched.
 
-   It is assumed that there can only ever be one record for a
-   particular IP address.  (If a different port comes up, it probably
-   means someone is running ntpdate -d or something).  Thus, if we
-   match the IP address we stop the search regardless of whether the
-   port number matches.
+ It is assumed that there can only ever be one record for a
+ particular IP address.  (If a different port comes up, it probably
+ means someone is running ntpdate -d or something).  Thus, if we
+ match the IP address we stop the search regardless of whether the
+ port number matches.
 
-  */
-unsafe extern "C" fn find_slot(mut remote_addr: *mut NTP_Remote_Address,
-                               mut slot: *mut libc::c_int,
-                               mut found: *mut libc::c_int) {
+*/
+unsafe extern "C" fn find_slot(
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut slot: *mut libc::c_int,
+    mut found: *mut libc::c_int,
+) {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut hash: uint32_t = 0;
     let mut i: libc::c_uint = 0;
@@ -836,44 +853,49 @@ unsafe extern "C" fn find_slot(mut remote_addr: *mut NTP_Remote_Address,
     size = ARR_GetSize(records);
     *slot = 0 as libc::c_int;
     *found = 0 as libc::c_int;
-    if (*remote_addr).ip_addr.family as libc::c_int != 1 as libc::c_int &&
-           (*remote_addr).ip_addr.family as libc::c_int != 2 as libc::c_int {
-        return
+    if (*remote_addr).ip_addr.family as libc::c_int != 1 as libc::c_int
+        && (*remote_addr).ip_addr.family as libc::c_int != 2 as libc::c_int
+    {
+        return;
     }
     hash = UTI_IPToHash(&mut (*remote_addr).ip_addr);
     port = (*remote_addr).port;
     i = 0 as libc::c_int as libc::c_uint;
     while i < size.wrapping_div(2 as libc::c_int as libc::c_uint) {
         /* Use quadratic probing */
-        *slot =
-            hash.wrapping_add(i.wrapping_add(i.wrapping_mul(i)).wrapping_div(2
-                                                                                 as
-                                                                                 libc::c_int
-                                                                                 as
-                                                                                 libc::c_uint)).wrapping_rem(size)
-                as libc::c_int;
+        *slot = hash
+            .wrapping_add(
+                i.wrapping_add(i.wrapping_mul(i))
+                    .wrapping_div(2 as libc::c_int as libc::c_uint),
+            )
+            .wrapping_rem(size) as libc::c_int;
         record = get_record(*slot as libc::c_uint);
-        if (*record).remote_addr.is_null() { break ; }
-        if UTI_CompareIPs(&mut (*(*record).remote_addr).ip_addr,
-                          &mut (*remote_addr).ip_addr, 0 as *mut IPAddr) == 0
-           {
-            *found =
-                if (*(*record).remote_addr).port as libc::c_int ==
-                       port as libc::c_int {
-                    2 as libc::c_int
-                } else { 1 as libc::c_int };
-            return
+        if (*record).remote_addr.is_null() {
+            break;
+        }
+        if UTI_CompareIPs(
+            &mut (*(*record).remote_addr).ip_addr,
+            &mut (*remote_addr).ip_addr,
+            0 as *mut IPAddr,
+        ) == 0
+        {
+            *found = if (*(*record).remote_addr).port as libc::c_int == port as libc::c_int {
+                2 as libc::c_int
+            } else {
+                1 as libc::c_int
+            };
+            return;
         }
         i = i.wrapping_add(1)
-    };
+    }
 }
 /* ================================================== */
 /* Check if hash table of given size is sufficient to contain sources */
-unsafe extern "C" fn check_hashtable_size(mut sources: libc::c_uint,
-                                          mut size: libc::c_uint)
- -> libc::c_int {
-    return (sources.wrapping_mul(2 as libc::c_int as libc::c_uint) <= size) as
-               libc::c_int;
+unsafe extern "C" fn check_hashtable_size(
+    mut sources: libc::c_uint,
+    mut size: libc::c_uint,
+) -> libc::c_int {
+    return (sources.wrapping_mul(2 as libc::c_int as libc::c_uint) <= size) as libc::c_int;
 }
 /* ================================================== */
 unsafe extern "C" fn rehash_records() {
@@ -884,14 +906,16 @@ unsafe extern "C" fn rehash_records() {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     old_size = ARR_GetSize(records);
-    temp_records =
-        Malloc2(old_size as size_t,
-                ::std::mem::size_of::<SourceRecord>() as libc::c_ulong) as
-            *mut SourceRecord;
-    memcpy(temp_records as *mut libc::c_void, ARR_GetElements(records),
-           (old_size as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<SourceRecord>()
-                                                as libc::c_ulong));
+    temp_records = Malloc2(
+        old_size as size_t,
+        ::std::mem::size_of::<SourceRecord>() as libc::c_ulong,
+    ) as *mut SourceRecord;
+    memcpy(
+        temp_records as *mut libc::c_void,
+        ARR_GetElements(records),
+        (old_size as libc::c_ulong)
+            .wrapping_mul(::std::mem::size_of::<SourceRecord>() as libc::c_ulong),
+    );
     /* The size of the hash table is always a power of two */
     new_size = 1 as libc::c_int as libc::c_uint;
     while check_hashtable_size(n_sources as libc::c_uint, new_size) == 0 {
@@ -907,20 +931,24 @@ unsafe extern "C" fn rehash_records() {
     i = 0 as libc::c_int as libc::c_uint;
     while i < old_size {
         if !(*temp_records.offset(i as isize)).remote_addr.is_null() {
-            find_slot((*temp_records.offset(i as isize)).remote_addr,
-                      &mut slot, &mut found);
+            find_slot(
+                (*temp_records.offset(i as isize)).remote_addr,
+                &mut slot,
+                &mut found,
+            );
             if found == 0 {
             } else {
-                __assert_fail(b"!found\x00" as *const u8 as
-                                  *const libc::c_char,
-                              b"ntp_sources.c\x00" as *const u8 as
-                                  *const libc::c_char,
-                              273 as libc::c_int as libc::c_uint,
-                              (*::std::mem::transmute::<&[u8; 26],
-                                                        &[libc::c_char; 26]>(b"void rehash_records(void)\x00")).as_ptr());
+                __assert_fail(
+                    b"!found\x00" as *const u8 as *const libc::c_char,
+                    b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+                    273 as libc::c_int as libc::c_uint,
+                    (*::std::mem::transmute::<&[u8; 26], &[libc::c_char; 26]>(
+                        b"void rehash_records(void)\x00",
+                    ))
+                    .as_ptr(),
+                );
             }
-            *get_record(slot as libc::c_uint) =
-                *temp_records.offset(i as isize)
+            *get_record(slot as libc::c_uint) = *temp_records.offset(i as isize)
         }
         i = i.wrapping_add(1)
     }
@@ -928,11 +956,13 @@ unsafe extern "C" fn rehash_records() {
 }
 /* ================================================== */
 /* Procedure to add a new source */
-unsafe extern "C" fn add_source(mut remote_addr: *mut NTP_Remote_Address,
-                                mut name: *mut libc::c_char,
-                                mut type_0: NTP_Source_Type,
-                                mut params: *mut SourceParameters,
-                                mut pool: libc::c_int) -> NSR_Status {
+unsafe extern "C" fn add_source(
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut name: *mut libc::c_char,
+    mut type_0: NTP_Source_Type,
+    mut params: *mut SourceParameters,
+    mut pool: libc::c_int,
+) -> NSR_Status {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
@@ -948,16 +978,14 @@ unsafe extern "C" fn add_source(mut remote_addr: *mut NTP_Remote_Address,
     /* Find empty bin & check that we don't have the address already */
     find_slot(remote_addr, &mut slot, &mut found);
     if found != 0 {
-        return NSR_AlreadyInUse
+        return NSR_AlreadyInUse;
     } else if (*remote_addr).ip_addr.family as libc::c_int != 1 as libc::c_int
-                  &&
-                  (*remote_addr).ip_addr.family as libc::c_int !=
-                      2 as libc::c_int {
-        return NSR_InvalidAF
+        && (*remote_addr).ip_addr.family as libc::c_int != 2 as libc::c_int
+    {
+        return NSR_InvalidAF;
     } else {
         n_sources += 1;
-        if check_hashtable_size(n_sources as libc::c_uint,
-                                ARR_GetSize(records)) == 0 {
+        if check_hashtable_size(n_sources as libc::c_uint, ARR_GetSize(records)) == 0 {
             rehash_records();
             find_slot(remote_addr, &mut slot, &mut found);
         }
@@ -973,20 +1001,24 @@ unsafe extern "C" fn add_source(mut remote_addr: *mut NTP_Remote_Address,
         record = get_record(slot as libc::c_uint);
         (*record).data = NCR_GetInstance(remote_addr, type_0, params);
         (*record).remote_addr = NCR_GetRemoteAddress((*record).data);
-        (*record).name =
-            if !name.is_null() {
-                Strdup(name)
-            } else { 0 as *mut libc::c_char };
+        (*record).name = if !name.is_null() {
+            Strdup(name)
+        } else {
+            0 as *mut libc::c_char
+        };
         (*record).pool = pool;
         (*record).tentative = 1 as libc::c_int;
-        if auto_start_sources != 0 { NCR_StartInstance((*record).data); }
-        return NSR_Success
+        if auto_start_sources != 0 {
+            NCR_StartInstance((*record).data);
+        }
+        return NSR_Success;
     };
 }
 /* ================================================== */
-unsafe extern "C" fn replace_source(mut old_addr: *mut NTP_Remote_Address,
-                                    mut new_addr: *mut NTP_Remote_Address)
- -> NSR_Status {
+unsafe extern "C" fn replace_source(
+    mut old_addr: *mut NTP_Remote_Address,
+    mut new_addr: *mut NTP_Remote_Address,
+) -> NSR_Status {
     let mut slot1: libc::c_int = 0;
     let mut slot2: libc::c_int = 0;
     let mut found: libc::c_int = 0;
@@ -994,189 +1026,218 @@ unsafe extern "C" fn replace_source(mut old_addr: *mut NTP_Remote_Address,
     let mut pool: *mut SourcePool = 0 as *mut SourcePool;
     let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
     find_slot(old_addr, &mut slot1, &mut found);
-    if found == 0 { return NSR_NoSuchSource }
+    if found == 0 {
+        return NSR_NoSuchSource;
+    }
     find_slot(new_addr, &mut slot2, &mut found);
-    if found != 0 { return NSR_AlreadyInUse }
+    if found != 0 {
+        return NSR_AlreadyInUse;
+    }
     record = get_record(slot1 as libc::c_uint);
     NCR_ChangeRemoteAddress((*record).data, new_addr);
     (*record).remote_addr = NCR_GetRemoteAddress((*record).data);
     if (*record).tentative == 0 {
         (*record).tentative = 1 as libc::c_int;
         if (*record).pool != -(1 as libc::c_int) {
-            pool =
-                ARR_GetElement(pools, (*record).pool as libc::c_uint) as
-                    *mut SourcePool;
+            pool = ARR_GetElement(pools, (*record).pool as libc::c_uint) as *mut SourcePool;
             (*pool).sources -= 1
         }
     }
     name = (*record).name;
     /* The hash table must be rebuilt for the new address */
     rehash_records();
-    LOG_Message(LOGS_INFO,
-                b"Source %s replaced with %s (%s)\x00" as *const u8 as
-                    *const libc::c_char,
-                UTI_IPToString(&mut (*old_addr).ip_addr),
-                UTI_IPToString(&mut (*new_addr).ip_addr),
-                if !name.is_null() {
-                    name
-                } else { b"\x00" as *const u8 as *const libc::c_char });
+    LOG_Message(
+        LOGS_INFO,
+        b"Source %s replaced with %s (%s)\x00" as *const u8 as *const libc::c_char,
+        UTI_IPToString(&mut (*old_addr).ip_addr),
+        UTI_IPToString(&mut (*new_addr).ip_addr),
+        if !name.is_null() {
+            name
+        } else {
+            b"\x00" as *const u8 as *const libc::c_char
+        },
+    );
     return NSR_Success;
 }
 /* ================================================== */
-unsafe extern "C" fn process_resolved_name(mut us: *mut UnresolvedSource,
-                                           mut ip_addrs: *mut IPAddr,
-                                           mut n_addrs: libc::c_int) {
-    let mut address: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+unsafe extern "C" fn process_resolved_name(
+    mut us: *mut UnresolvedSource,
+    mut ip_addrs: *mut IPAddr,
+    mut n_addrs: libc::c_int,
+) {
+    let mut address: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut i: libc::c_int = 0;
     let mut added: libc::c_int = 0;
     let mut first: libc::c_ushort = 0 as libc::c_int as libc::c_ushort;
     if (*us).random_order != 0 {
-        UTI_GetRandomBytes(&mut first as *mut libc::c_ushort as
-                               *mut libc::c_void,
-                           ::std::mem::size_of::<libc::c_ushort>() as
-                               libc::c_ulong as libc::c_uint);
+        UTI_GetRandomBytes(
+            &mut first as *mut libc::c_ushort as *mut libc::c_void,
+            ::std::mem::size_of::<libc::c_ushort>() as libc::c_ulong as libc::c_uint,
+        );
     }
     added = 0 as libc::c_int;
     i = added;
     while i < n_addrs {
-        address.ip_addr =
-            *ip_addrs.offset((i as
-                                  libc::c_uint).wrapping_add(first as
-                                                                 libc::c_uint).wrapping_rem(n_addrs
-                                                                                                as
-                                                                                                libc::c_uint)
-                                 as isize);
+        address.ip_addr = *ip_addrs.offset(
+            (i as libc::c_uint)
+                .wrapping_add(first as libc::c_uint)
+                .wrapping_rem(n_addrs as libc::c_uint) as isize,
+        );
         address.port = (*us).port as uint16_t;
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"(%d) %s\x00" as *const u8 as *const libc::c_char,
-                        i + 1 as libc::c_int,
-                        UTI_IPToString(&mut address.ip_addr));
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"(%d) %s\x00" as *const u8 as *const libc::c_char,
+                i + 1 as libc::c_int,
+                UTI_IPToString(&mut address.ip_addr),
+            );
         }
         if (*us).replacement != 0 {
-            if replace_source(&mut (*us).c2rust_unnamed.replace_source,
-                              &mut address) as libc::c_uint !=
-                   NSR_AlreadyInUse as libc::c_int as libc::c_uint {
-                break ;
+            if replace_source(&mut (*us).c2rust_unnamed.replace_source, &mut address)
+                as libc::c_uint
+                != NSR_AlreadyInUse as libc::c_int as libc::c_uint
+            {
+                break;
             }
         } else {
-            if add_source(&mut address, (*us).name,
-                          (*us).c2rust_unnamed.new_source.type_0,
-                          &mut (*us).c2rust_unnamed.new_source.params,
-                          (*us).c2rust_unnamed.new_source.pool) as
-                   libc::c_uint == NSR_Success as libc::c_int as libc::c_uint
-               {
+            if add_source(
+                &mut address,
+                (*us).name,
+                (*us).c2rust_unnamed.new_source.type_0,
+                &mut (*us).c2rust_unnamed.new_source.params,
+                (*us).c2rust_unnamed.new_source.pool,
+            ) as libc::c_uint
+                == NSR_Success as libc::c_int as libc::c_uint
+            {
                 added += 1
             }
             if added >= (*us).c2rust_unnamed.new_source.max_new_sources {
-                break ;
+                break;
             }
         }
         i += 1
-    };
+    }
 }
 /* ================================================== */
-unsafe extern "C" fn name_resolve_handler(mut status: DNS_Status,
-                                          mut n_addrs: libc::c_int,
-                                          mut ip_addrs: *mut IPAddr,
-                                          mut anything: *mut libc::c_void) {
+unsafe extern "C" fn name_resolve_handler(
+    mut status: DNS_Status,
+    mut n_addrs: libc::c_int,
+    mut ip_addrs: *mut IPAddr,
+    mut anything: *mut libc::c_void,
+) {
     let mut us: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
     let mut i: *mut *mut UnresolvedSource = 0 as *mut *mut UnresolvedSource;
     let mut next: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
     us = anything as *mut UnresolvedSource;
     if us == resolving_source {
     } else {
-        __assert_fail(b"us == resolving_source\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"ntp_sources.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      407 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 61],
-                                                &[libc::c_char; 61]>(b"void name_resolve_handler(DNS_Status, int, IPAddr *, void *)\x00")).as_ptr());
+        __assert_fail(
+            b"us == resolving_source\x00" as *const u8 as *const libc::c_char,
+            b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+            407 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 61], &[libc::c_char; 61]>(
+                b"void name_resolve_handler(DNS_Status, int, IPAddr *, void *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"%s resolved to %d addrs\x00" as *const u8 as
-                        *const libc::c_char, (*us).name, n_addrs);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"%s resolved to %d addrs\x00" as *const u8 as *const libc::c_char,
+            (*us).name,
+            n_addrs,
+        );
     }
     match status as libc::c_uint {
-        1 => { }
-        0 => { process_resolved_name(us, ip_addrs, n_addrs); }
+        1 => {}
+        0 => {
+            process_resolved_name(us, ip_addrs, n_addrs);
+        }
         2 => {
-            LOG_Message(LOGS_WARN,
-                        b"Invalid host %s\x00" as *const u8 as
-                            *const libc::c_char, (*us).name);
+            LOG_Message(
+                LOGS_WARN,
+                b"Invalid host %s\x00" as *const u8 as *const libc::c_char,
+                (*us).name,
+            );
         }
         _ => {
-            __assert_fail(b"0\x00" as *const u8 as *const libc::c_char,
-                          b"ntp_sources.c\x00" as *const u8 as
-                              *const libc::c_char,
-                          421 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 61],
-                                                    &[libc::c_char; 61]>(b"void name_resolve_handler(DNS_Status, int, IPAddr *, void *)\x00")).as_ptr());
+            __assert_fail(
+                b"0\x00" as *const u8 as *const libc::c_char,
+                b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+                421 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 61], &[libc::c_char; 61]>(
+                    b"void name_resolve_handler(DNS_Status, int, IPAddr *, void *)\x00",
+                ))
+                .as_ptr(),
+            );
         }
     }
     next = (*us).next;
     /* Remove the source from the list on success or failure, replacements
-     are removed on any status */
-    if (*us).replacement != 0 ||
-           status as libc::c_uint !=
-               DNS_TryAgain as libc::c_int as libc::c_uint {
+    are removed on any status */
+    if (*us).replacement != 0
+        || status as libc::c_uint != DNS_TryAgain as libc::c_int as libc::c_uint
+    {
         i = &mut unresolved_sources;
         while !(*i).is_null() {
             if *i == us {
                 *i = (*us).next;
                 free((*us).name as *mut libc::c_void);
                 free(us as *mut libc::c_void);
-                break ;
-            } else { i = &mut (**i).next }
+                break;
+            } else {
+                i = &mut (**i).next
+            }
         }
     }
     resolving_source = next;
     if !next.is_null() {
         /* Continue with the next source in the list */
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"resolving %s\x00" as *const u8 as
-                            *const libc::c_char, (*next).name);
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"resolving %s\x00" as *const u8 as *const libc::c_char,
+                (*next).name,
+            );
         }
-        DNS_Name2IPAddressAsync((*next).name,
-                                Some(name_resolve_handler as
-                                         unsafe extern "C" fn(_: DNS_Status,
-                                                              _: libc::c_int,
-                                                              _: *mut IPAddr,
-                                                              _:
-                                                                  *mut libc::c_void)
-                                             -> ()),
-                                next as *mut libc::c_void);
+        DNS_Name2IPAddressAsync(
+            (*next).name,
+            Some(
+                name_resolve_handler
+                    as unsafe extern "C" fn(
+                        _: DNS_Status,
+                        _: libc::c_int,
+                        _: *mut IPAddr,
+                        _: *mut libc::c_void,
+                    ) -> (),
+            ),
+            next as *mut libc::c_void,
+        );
     } else {
         /* This was the last source in the list. If some sources couldn't
-       be resolved, try again in exponentially increasing interval. */
+        be resolved, try again in exponentially increasing interval. */
         if !unresolved_sources.is_null() {
             if resolving_interval < 2 as libc::c_int {
                 resolving_interval = 2 as libc::c_int
             } else if resolving_interval < 9 as libc::c_int {
                 resolving_interval += 1
             }
-            resolving_id =
-                SCH_AddTimeoutByDelay((7 as libc::c_int *
-                                           ((1 as libc::c_int) <<
-                                                resolving_interval)) as
-                                          libc::c_double,
-                                      Some(resolve_sources as
-                                               unsafe extern "C" fn(_:
-                                                                        *mut libc::c_void)
-                                                   -> ()),
-                                      0 as *mut libc::c_void)
-        } else { resolving_interval = 0 as libc::c_int }
+            resolving_id = SCH_AddTimeoutByDelay(
+                (7 as libc::c_int * ((1 as libc::c_int) << resolving_interval)) as libc::c_double,
+                Some(resolve_sources as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+                0 as *mut libc::c_void,
+            )
+        } else {
+            resolving_interval = 0 as libc::c_int
+        }
         /* This round of resolving is done */
         if resolving_end_handler.is_some() {
             resolving_end_handler.expect("non-null function pointer")();
@@ -1190,89 +1251,107 @@ unsafe extern "C" fn resolve_sources(mut arg: *mut libc::c_void) {
     let mut us: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
     if resolving_source.is_null() {
     } else {
-        __assert_fail(b"!resolving_source\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"ntp_sources.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      472 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 29],
-                                                &[libc::c_char; 29]>(b"void resolve_sources(void *)\x00")).as_ptr());
+        __assert_fail(
+            b"!resolving_source\x00" as *const u8 as *const libc::c_char,
+            b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+            472 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 29], &[libc::c_char; 29]>(
+                b"void resolve_sources(void *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     DNS_Reload();
     /* Start with the first source in the list, name_resolve_handler
-     will iterate over the rest */
+    will iterate over the rest */
     us = unresolved_sources;
     resolving_source = us;
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"resolving %s\x00" as *const u8 as *const libc::c_char,
-                    (*us).name);
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"resolving %s\x00" as *const u8 as *const libc::c_char,
+            (*us).name,
+        );
     }
-    DNS_Name2IPAddressAsync((*us).name,
-                            Some(name_resolve_handler as
-                                     unsafe extern "C" fn(_: DNS_Status,
-                                                          _: libc::c_int,
-                                                          _: *mut IPAddr,
-                                                          _:
-                                                              *mut libc::c_void)
-                                         -> ()), us as *mut libc::c_void);
+    DNS_Name2IPAddressAsync(
+        (*us).name,
+        Some(
+            name_resolve_handler
+                as unsafe extern "C" fn(
+                    _: DNS_Status,
+                    _: libc::c_int,
+                    _: *mut IPAddr,
+                    _: *mut libc::c_void,
+                ) -> (),
+        ),
+        us as *mut libc::c_void,
+    );
 }
 /* ================================================== */
 unsafe extern "C" fn append_unresolved_source(mut us: *mut UnresolvedSource) {
     let mut i: *mut *mut UnresolvedSource = 0 as *mut *mut UnresolvedSource;
     i = &mut unresolved_sources;
-    while !(*i).is_null() { i = &mut (**i).next }
+    while !(*i).is_null() {
+        i = &mut (**i).next
+    }
     *i = us;
     (*us).next = 0 as *mut UnresolvedSource;
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_AddSource(mut remote_addr:
-                                           *mut NTP_Remote_Address,
-                                       mut type_0: NTP_Source_Type,
-                                       mut params: *mut SourceParameters)
- -> NSR_Status {
-    return add_source(remote_addr, 0 as *mut libc::c_char, type_0, params,
-                      -(1 as libc::c_int));
+pub unsafe extern "C" fn NSR_AddSource(
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut type_0: NTP_Source_Type,
+    mut params: *mut SourceParameters,
+) -> NSR_Status {
+    return add_source(
+        remote_addr,
+        0 as *mut libc::c_char,
+        type_0,
+        params,
+        -(1 as libc::c_int),
+    );
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_AddSourceByName(mut name: *mut libc::c_char,
-                                             mut port: libc::c_int,
-                                             mut pool: libc::c_int,
-                                             mut type_0: NTP_Source_Type,
-                                             mut params:
-                                                 *mut SourceParameters)
- -> NSR_Status {
+pub unsafe extern "C" fn NSR_AddSourceByName(
+    mut name: *mut libc::c_char,
+    mut port: libc::c_int,
+    mut pool: libc::c_int,
+    mut type_0: NTP_Source_Type,
+    mut params: *mut SourceParameters,
+) -> NSR_Status {
     let mut us: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
     let mut sp: *mut SourcePool = 0 as *mut SourcePool;
-    let mut remote_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut remote_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut i: libc::c_int = 0;
     /* If the name is an IP address, don't bother with full resolving now
-     or later when trying to replace the source */
+    or later when trying to replace the source */
     if UTI_StringToIP(name, &mut remote_addr.ip_addr) != 0 {
         remote_addr.port = port as uint16_t;
-        return NSR_AddSource(&mut remote_addr, type_0, params)
+        return NSR_AddSource(&mut remote_addr, type_0, params);
     }
     /* Make sure the name is at least printable and has no spaces */
     i = 0 as libc::c_int;
     while *name.offset(i as isize) as libc::c_int != '\u{0}' as i32 {
-        if *(*__ctype_b_loc()).offset(*name.offset(i as isize) as libc::c_int
-                                          as isize) as libc::c_int &
-               _ISgraph as libc::c_int as libc::c_ushort as libc::c_int == 0 {
-            return NSR_InvalidName
+        if *(*__ctype_b_loc()).offset(*name.offset(i as isize) as libc::c_int as isize)
+            as libc::c_int
+            & _ISgraph as libc::c_int as libc::c_ushort as libc::c_int
+            == 0
+        {
+            return NSR_InvalidName;
         }
         i += 1
     }
     us =
-        Malloc(::std::mem::size_of::<UnresolvedSource>() as libc::c_ulong) as
-            *mut UnresolvedSource;
+        Malloc(::std::mem::size_of::<UnresolvedSource>() as libc::c_ulong) as *mut UnresolvedSource;
     (*us).name = Strdup(name);
     (*us).port = port;
     (*us).random_order = 0 as libc::c_int;
@@ -1287,8 +1366,7 @@ pub unsafe extern "C" fn NSR_AddSourceByName(mut name: *mut libc::c_char,
         (*sp).sources = 0 as libc::c_int;
         (*sp).max_sources = (*params).max_sources;
         (*us).c2rust_unnamed.new_source.pool =
-            ARR_GetSize(pools).wrapping_sub(1 as libc::c_int as libc::c_uint)
-                as libc::c_int;
+            ARR_GetSize(pools).wrapping_sub(1 as libc::c_int as libc::c_uint) as libc::c_int;
         (*us).c2rust_unnamed.new_source.max_new_sources = 16 as libc::c_int
     }
     append_unresolved_source(us);
@@ -1296,8 +1374,9 @@ pub unsafe extern "C" fn NSR_AddSourceByName(mut name: *mut libc::c_char,
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_SetSourceResolvingEndHandler(mut handler:
-                                                              NSR_SourceResolvingEndHandler) {
+pub unsafe extern "C" fn NSR_SetSourceResolvingEndHandler(
+    mut handler: NSR_SourceResolvingEndHandler,
+) {
     resolving_end_handler = handler;
 }
 /* ================================================== */
@@ -1328,7 +1407,7 @@ pub unsafe extern "C" fn NSR_StartSources() {
             NCR_StartInstance((*get_record(i)).data);
         }
         i = i.wrapping_add(1)
-    };
+    }
 }
 /* ================================================== */
 #[no_mangle]
@@ -1339,13 +1418,15 @@ pub unsafe extern "C" fn NSR_AutoStartSources() {
 unsafe extern "C" fn clean_source_record(mut record: *mut SourceRecord) {
     if !(*record).remote_addr.is_null() {
     } else {
-        __assert_fail(b"record->remote_addr\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"ntp_sources.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      608 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 41],
-                                                &[libc::c_char; 41]>(b"void clean_source_record(SourceRecord *)\x00")).as_ptr());
+        __assert_fail(
+            b"record->remote_addr\x00" as *const u8 as *const libc::c_char,
+            b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+            608 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 41], &[libc::c_char; 41]>(
+                b"void clean_source_record(SourceRecord *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     (*record).remote_addr = 0 as *mut NTP_Remote_Address;
     NCR_DestroyInstance((*record).data);
@@ -1356,29 +1437,32 @@ unsafe extern "C" fn clean_source_record(mut record: *mut SourceRecord) {
 }
 /* ================================================== */
 /* Procedure to remove a source.  We don't bother whether the port
-   address is matched - we're only interested in removing a record for
-   the right IP address.  Thus the caller can specify the port number
-   as zero if it wishes. */
+address is matched - we're only interested in removing a record for
+the right IP address.  Thus the caller can specify the port number
+as zero if it wishes. */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_RemoveSource(mut remote_addr:
-                                              *mut NTP_Remote_Address)
- -> NSR_Status {
+pub unsafe extern "C" fn NSR_RemoveSource(mut remote_addr: *mut NTP_Remote_Address) -> NSR_Status {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     if initialised != 0 {
     } else {
-        __assert_fail(b"initialised\x00" as *const u8 as *const libc::c_char,
-                      b"ntp_sources.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      628 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 50],
-                                                &[libc::c_char; 50]>(b"NSR_Status NSR_RemoveSource(NTP_Remote_Address *)\x00")).as_ptr());
+        __assert_fail(
+            b"initialised\x00" as *const u8 as *const libc::c_char,
+            b"ntp_sources.c\x00" as *const u8 as *const libc::c_char,
+            628 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 50], &[libc::c_char; 50]>(
+                b"NSR_Status NSR_RemoveSource(NTP_Remote_Address *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     find_slot(remote_addr, &mut slot, &mut found);
-    if found == 0 { return NSR_NoSuchSource }
+    if found == 0 {
+        return NSR_NoSuchSource;
+    }
     clean_source_record(get_record(slot as libc::c_uint));
     /* Rehash the table to make sure there are no broken probe sequences.
-     This is costly, but it's not expected to happen frequently. */
+    This is costly, but it's not expected to happen frequently. */
     rehash_records();
     return NSR_Success;
 }
@@ -1390,31 +1474,31 @@ pub unsafe extern "C" fn NSR_RemoveAllSources() {
     i = 0 as libc::c_int as libc::c_uint;
     while i < ARR_GetSize(records) {
         record = get_record(i);
-        if !(*record).remote_addr.is_null() { clean_source_record(record); }
+        if !(*record).remote_addr.is_null() {
+            clean_source_record(record);
+        }
         i = i.wrapping_add(1)
     }
     rehash_records();
 }
 /* ================================================== */
-unsafe extern "C" fn resolve_source_replacement(mut record:
-                                                    *mut SourceRecord) {
+unsafe extern "C" fn resolve_source_replacement(mut record: *mut SourceRecord) {
     let mut us: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
-    if 0 as libc::c_int != 0 &&
-           log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-        LOG_Message(LOGS_DEBUG,
-                    b"trying to replace %s\x00" as *const u8 as
-                        *const libc::c_char,
-                    UTI_IPToString(&mut (*(*record).remote_addr).ip_addr));
+    if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+        LOG_Message(
+            LOGS_DEBUG,
+            b"trying to replace %s\x00" as *const u8 as *const libc::c_char,
+            UTI_IPToString(&mut (*(*record).remote_addr).ip_addr),
+        );
     }
     us =
-        Malloc(::std::mem::size_of::<UnresolvedSource>() as libc::c_ulong) as
-            *mut UnresolvedSource;
+        Malloc(::std::mem::size_of::<UnresolvedSource>() as libc::c_ulong) as *mut UnresolvedSource;
     (*us).name = Strdup((*record).name);
     (*us).port = (*(*record).remote_addr).port as libc::c_int;
     /* If there never was a valid reply from this source (e.g. it was a bad
-     replacement), ignore the order of addresses from the resolver to not get
-     stuck to a pair of addresses if the order doesn't change, or a group of
-     IPv4/IPv6 addresses if the resolver prefers inaccessible IP family */
+    replacement), ignore the order of addresses from the resolver to not get
+    stuck to a pair of addresses if the order doesn't change, or a group of
+    IPv4/IPv6 addresses if the resolver prefers inaccessible IP family */
     (*us).random_order = (*record).tentative;
     (*us).replacement = 1 as libc::c_int;
     (*us).c2rust_unnamed.replace_source = *(*record).remote_addr;
@@ -1424,14 +1508,22 @@ unsafe extern "C" fn resolve_source_replacement(mut record:
 /* ================================================== */
 #[no_mangle]
 pub unsafe extern "C" fn NSR_HandleBadSource(mut address: *mut IPAddr) {
-    static mut last_replacement: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut now: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut remote_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    static mut last_replacement: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut now: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut remote_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
@@ -1439,24 +1531,26 @@ pub unsafe extern "C" fn NSR_HandleBadSource(mut address: *mut IPAddr) {
     remote_addr.ip_addr = *address;
     remote_addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut remote_addr, &mut slot, &mut found);
-    if found == 0 { return }
+    if found == 0 {
+        return;
+    }
     record = get_record(slot as libc::c_uint);
     /* Only sources with a name can be replaced */
-    if (*record).name.is_null() { return }
+    if (*record).name.is_null() {
+        return;
+    }
     /* Don't resolve names too frequently */
-    SCH_GetLastEventTime(0 as *mut timespec, 0 as *mut libc::c_double,
-                         &mut now);
+    SCH_GetLastEventTime(0 as *mut timespec, 0 as *mut libc::c_double, &mut now);
     diff = UTI_DiffTimespecsToDouble(&mut now, &mut last_replacement);
-    if fabs(diff) <
-           (7 as libc::c_int * ((1 as libc::c_int) << 8 as libc::c_int)) as
-               libc::c_double {
-        if 0 as libc::c_int != 0 &&
-               log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
-            LOG_Message(LOGS_DEBUG,
-                        b"replacement postponed\x00" as *const u8 as
-                            *const libc::c_char);
+    if fabs(diff) < (7 as libc::c_int * ((1 as libc::c_int) << 8 as libc::c_int)) as libc::c_double
+    {
+        if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int {
+            LOG_Message(
+                LOGS_DEBUG,
+                b"replacement postponed\x00" as *const u8 as *const libc::c_char,
+            );
         }
-        return
+        return;
     }
     last_replacement = now;
     resolve_source_replacement(record);
@@ -1473,7 +1567,7 @@ pub unsafe extern "C" fn NSR_RefreshAddresses() {
             resolve_source_replacement(record);
         }
         i = i.wrapping_add(1)
-    };
+    }
 }
 /* ================================================== */
 unsafe extern "C" fn remove_tentative_pool_sources(mut pool: libc::c_int) {
@@ -1484,72 +1578,83 @@ unsafe extern "C" fn remove_tentative_pool_sources(mut pool: libc::c_int) {
     i = removed;
     while i < ARR_GetSize(records) {
         record = get_record(i);
-        if !((*record).remote_addr.is_null() || (*record).pool != pool ||
-                 (*record).tentative == 0) {
-            if 0 as libc::c_int != 0 &&
-                   log_min_severity as libc::c_int ==
-                       LOGS_DEBUG as libc::c_int {
-                LOG_Message(LOGS_DEBUG,
-                            b"removing tentative source %s\x00" as *const u8
-                                as *const libc::c_char,
-                            UTI_IPToString(&mut (*(*record).remote_addr).ip_addr));
+        if !((*record).remote_addr.is_null() || (*record).pool != pool || (*record).tentative == 0)
+        {
+            if 0 as libc::c_int != 0 && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+            {
+                LOG_Message(
+                    LOGS_DEBUG,
+                    b"removing tentative source %s\x00" as *const u8 as *const libc::c_char,
+                    UTI_IPToString(&mut (*(*record).remote_addr).ip_addr),
+                );
             }
             clean_source_record(record);
             removed = removed.wrapping_add(1)
         }
         i = i.wrapping_add(1)
     }
-    if removed != 0 { rehash_records(); };
+    if removed != 0 {
+        rehash_records();
+    };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_GetLocalRefid(mut address: *mut IPAddr)
- -> uint32_t {
-    let mut remote_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+pub unsafe extern "C" fn NSR_GetLocalRefid(mut address: *mut IPAddr) -> uint32_t {
+    let mut remote_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     remote_addr.ip_addr = *address;
     remote_addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut remote_addr, &mut slot, &mut found);
-    if found == 0 { return 0 as libc::c_int as uint32_t }
+    if found == 0 {
+        return 0 as libc::c_int as uint32_t;
+    }
     return NCR_GetLocalRefid((*get_record(slot as libc::c_uint)).data);
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_GetName(mut address: *mut IPAddr)
- -> *mut libc::c_char {
-    let mut remote_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+pub unsafe extern "C" fn NSR_GetName(mut address: *mut IPAddr) -> *mut libc::c_char {
+    let mut remote_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     remote_addr.ip_addr = *address;
     remote_addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut remote_addr, &mut slot, &mut found);
-    if found == 0 { return 0 as *mut libc::c_char }
+    if found == 0 {
+        return 0 as *mut libc::c_char;
+    }
     record = get_record(slot as libc::c_uint);
-    if !(*record).name.is_null() { return (*record).name }
+    if !(*record).name.is_null() {
+        return (*record).name;
+    }
     return UTI_IPToString(&mut (*(*record).remote_addr).ip_addr);
 }
 /* ================================================== */
 /* This routine is called by ntp_io when a new packet arrives off the network,
-   possibly with an authentication tail */
+possibly with an authentication tail */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ProcessRx(mut remote_addr:
-                                           *mut NTP_Remote_Address,
-                                       mut local_addr: *mut NTP_Local_Address,
-                                       mut rx_ts: *mut NTP_Local_Timestamp,
-                                       mut message: *mut NTP_Packet,
-                                       mut length: libc::c_int) {
+pub unsafe extern "C" fn NSR_ProcessRx(
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut local_addr: *mut NTP_Local_Address,
+    mut rx_ts: *mut NTP_Local_Timestamp,
+    mut message: *mut NTP_Packet,
+    mut length: libc::c_int,
+) {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut pool: *mut SourcePool = 0 as *mut SourcePool;
     let mut slot: libc::c_int = 0;
@@ -1567,28 +1672,27 @@ pub unsafe extern "C" fn NSR_ProcessRx(mut remote_addr:
     if found == 2 as libc::c_int {
         /* Must match IP address AND port number */
         record = get_record(slot as libc::c_uint);
-        if NCR_ProcessRxKnown((*record).data, local_addr, rx_ts, message,
-                              length) == 0 {
-            return
+        if NCR_ProcessRxKnown((*record).data, local_addr, rx_ts, message, length) == 0 {
+            return;
         }
         if (*record).tentative != 0 {
             /* This was the first good reply from the source */
             (*record).tentative = 0 as libc::c_int;
             if (*record).pool != -(1 as libc::c_int) {
-                pool =
-                    ARR_GetElement(pools, (*record).pool as libc::c_uint) as
-                        *mut SourcePool;
+                pool = ARR_GetElement(pools, (*record).pool as libc::c_uint) as *mut SourcePool;
                 (*pool).sources += 1;
-                if 0 as libc::c_int != 0 &&
-                       log_min_severity as libc::c_int ==
-                           LOGS_DEBUG as libc::c_int {
-                    LOG_Message(LOGS_DEBUG,
-                                b"pool %s has %d confirmed sources\x00" as
-                                    *const u8 as *const libc::c_char,
-                                (*record).name, (*pool).sources);
+                if 0 as libc::c_int != 0
+                    && log_min_severity as libc::c_int == LOGS_DEBUG as libc::c_int
+                {
+                    LOG_Message(
+                        LOGS_DEBUG,
+                        b"pool %s has %d confirmed sources\x00" as *const u8 as *const libc::c_char,
+                        (*record).name,
+                        (*pool).sources,
+                    );
                 }
                 /* If the number of sources from the pool reached the configured
-           maximum, remove the remaining tentative sources */
+                maximum, remove the remaining tentative sources */
                 if (*pool).sources >= (*pool).max_sources {
                     remove_tentative_pool_sources((*record).pool);
                 }
@@ -1600,12 +1704,13 @@ pub unsafe extern "C" fn NSR_ProcessRx(mut remote_addr:
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ProcessTx(mut remote_addr:
-                                           *mut NTP_Remote_Address,
-                                       mut local_addr: *mut NTP_Local_Address,
-                                       mut tx_ts: *mut NTP_Local_Timestamp,
-                                       mut message: *mut NTP_Packet,
-                                       mut length: libc::c_int) {
+pub unsafe extern "C" fn NSR_ProcessTx(
+    mut remote_addr: *mut NTP_Remote_Address,
+    mut local_addr: *mut NTP_Local_Address,
+    mut tx_ts: *mut NTP_Local_Timestamp,
+    mut message: *mut NTP_Packet,
+    mut length: libc::c_int,
+) {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
@@ -1613,47 +1718,48 @@ pub unsafe extern "C" fn NSR_ProcessTx(mut remote_addr:
     if found == 2 as libc::c_int {
         /* Must match IP address AND port number */
         record = get_record(slot as libc::c_uint);
-        NCR_ProcessTxKnown((*record).data, local_addr, tx_ts, message,
-                           length);
+        NCR_ProcessTxKnown((*record).data, local_addr, tx_ts, message, length);
     } else {
         NCR_ProcessTxUnknown(remote_addr, local_addr, tx_ts, message, length);
     };
 }
 /* ================================================== */
-unsafe extern "C" fn slew_sources(mut raw: *mut timespec,
-                                  mut cooked: *mut timespec,
-                                  mut dfreq: libc::c_double,
-                                  mut doffset: libc::c_double,
-                                  mut change_type: LCL_ChangeType,
-                                  mut anything: *mut libc::c_void) {
+unsafe extern "C" fn slew_sources(
+    mut raw: *mut timespec,
+    mut cooked: *mut timespec,
+    mut dfreq: libc::c_double,
+    mut doffset: libc::c_double,
+    mut change_type: LCL_ChangeType,
+    mut anything: *mut libc::c_void,
+) {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut i: libc::c_uint = 0;
     i = 0 as libc::c_int as libc::c_uint;
     while i < ARR_GetSize(records) {
         record = get_record(i);
         if !(*record).remote_addr.is_null() {
-            if change_type as libc::c_uint ==
-                   LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
+            if change_type as libc::c_uint == LCL_ChangeUnknownStep as libc::c_int as libc::c_uint {
                 NCR_ResetInstance((*record).data);
                 NCR_ResetPoll((*record).data);
-            } else { NCR_SlewTimes((*record).data, cooked, dfreq, doffset); }
+            } else {
+                NCR_SlewTimes((*record).data, cooked, dfreq, doffset);
+            }
         }
         i = i.wrapping_add(1)
-    };
+    }
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_SetConnectivity(mut mask: *mut IPAddr,
-                                             mut address: *mut IPAddr,
-                                             mut connectivity:
-                                                 SRC_Connectivity)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_SetConnectivity(
+    mut mask: *mut IPAddr,
+    mut address: *mut IPAddr,
+    mut connectivity: SRC_Connectivity,
+) -> libc::c_int {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut syncpeer: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut i: libc::c_uint = 0;
     let mut any: libc::c_uint = 0;
-    if connectivity as libc::c_uint !=
-           SRC_OFFLINE as libc::c_int as libc::c_uint {
+    if connectivity as libc::c_uint != SRC_OFFLINE as libc::c_int as libc::c_uint {
         NSR_ResolveSources();
     }
     any = 0 as libc::c_int as libc::c_uint;
@@ -1662,13 +1768,15 @@ pub unsafe extern "C" fn NSR_SetConnectivity(mut mask: *mut IPAddr,
     while i < ARR_GetSize(records) {
         record = get_record(i);
         if !(*record).remote_addr.is_null() {
-            if (*address).family as libc::c_int == 0 as libc::c_int ||
-                   UTI_CompareIPs(&mut (*(*record).remote_addr).ip_addr,
-                                  address, mask) == 0 {
+            if (*address).family as libc::c_int == 0 as libc::c_int
+                || UTI_CompareIPs(&mut (*(*record).remote_addr).ip_addr, address, mask) == 0
+            {
                 any = 1 as libc::c_int as libc::c_uint;
                 if NCR_IsSyncPeer((*record).data) != 0 {
                     syncpeer = record
-                } else { NCR_SetConnectivity((*record).data, connectivity); }
+                } else {
+                    NCR_SetConnectivity((*record).data, connectivity);
+                }
             }
         }
         i = i.wrapping_add(1)
@@ -1683,8 +1791,7 @@ pub unsafe extern "C" fn NSR_SetConnectivity(mut mask: *mut IPAddr,
         while !us.is_null() {
             if !((*us).replacement != 0) {
                 any = 1 as libc::c_int as libc::c_uint;
-                (*us).c2rust_unnamed.new_source.params.connectivity =
-                    connectivity
+                (*us).c2rust_unnamed.new_source.params.connectivity = connectivity
             }
             us = (*us).next
         }
@@ -1693,185 +1800,200 @@ pub unsafe extern "C" fn NSR_SetConnectivity(mut mask: *mut IPAddr,
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMinpoll(mut address: *mut IPAddr,
-                                           mut new_minpoll: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMinpoll(
+    mut address: *mut IPAddr,
+    mut new_minpoll: libc::c_int,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMinpoll((*get_record(slot as libc::c_uint)).data,
-                          new_minpoll);
-        return 1 as libc::c_int
+        NCR_ModifyMinpoll((*get_record(slot as libc::c_uint)).data, new_minpoll);
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMaxpoll(mut address: *mut IPAddr,
-                                           mut new_maxpoll: libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMaxpoll(
+    mut address: *mut IPAddr,
+    mut new_maxpoll: libc::c_int,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMaxpoll((*get_record(slot as libc::c_uint)).data,
-                          new_maxpoll);
-        return 1 as libc::c_int
+        NCR_ModifyMaxpoll((*get_record(slot as libc::c_uint)).data, new_maxpoll);
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMaxdelay(mut address: *mut IPAddr,
-                                            mut new_max_delay: libc::c_double)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMaxdelay(
+    mut address: *mut IPAddr,
+    mut new_max_delay: libc::c_double,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMaxdelay((*get_record(slot as libc::c_uint)).data,
-                           new_max_delay);
-        return 1 as libc::c_int
+        NCR_ModifyMaxdelay((*get_record(slot as libc::c_uint)).data, new_max_delay);
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMaxdelayratio(mut address: *mut IPAddr,
-                                                 mut new_max_delay_ratio:
-                                                     libc::c_double)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMaxdelayratio(
+    mut address: *mut IPAddr,
+    mut new_max_delay_ratio: libc::c_double,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMaxdelayratio((*get_record(slot as libc::c_uint)).data,
-                                new_max_delay_ratio);
-        return 1 as libc::c_int
+        NCR_ModifyMaxdelayratio(
+            (*get_record(slot as libc::c_uint)).data,
+            new_max_delay_ratio,
+        );
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMaxdelaydevratio(mut address: *mut IPAddr,
-                                                    mut new_max_delay_dev_ratio:
-                                                        libc::c_double)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMaxdelaydevratio(
+    mut address: *mut IPAddr,
+    mut new_max_delay_dev_ratio: libc::c_double,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMaxdelaydevratio((*get_record(slot as libc::c_uint)).data,
-                                   new_max_delay_dev_ratio);
-        return 1 as libc::c_int
+        NCR_ModifyMaxdelaydevratio(
+            (*get_record(slot as libc::c_uint)).data,
+            new_max_delay_dev_ratio,
+        );
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyMinstratum(mut address: *mut IPAddr,
-                                              mut new_min_stratum:
-                                                  libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyMinstratum(
+    mut address: *mut IPAddr,
+    mut new_min_stratum: libc::c_int,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyMinstratum((*get_record(slot as libc::c_uint)).data,
-                             new_min_stratum);
-        return 1 as libc::c_int
+        NCR_ModifyMinstratum((*get_record(slot as libc::c_uint)).data, new_min_stratum);
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ModifyPolltarget(mut address: *mut IPAddr,
-                                              mut new_poll_target:
-                                                  libc::c_int)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_ModifyPolltarget(
+    mut address: *mut IPAddr,
+    mut new_poll_target: libc::c_int,
+) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
-    let mut addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+    let mut addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     addr.ip_addr = *address;
     addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut addr, &mut slot, &mut found);
     if found == 0 as libc::c_int {
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     } else {
-        NCR_ModifyPolltarget((*get_record(slot as libc::c_uint)).data,
-                             new_poll_target);
-        return 1 as libc::c_int
+        NCR_ModifyPolltarget((*get_record(slot as libc::c_uint)).data, new_poll_target);
+        return 1 as libc::c_int;
     };
 }
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_InitiateSampleBurst(mut n_good_samples:
-                                                     libc::c_int,
-                                                 mut n_total_samples:
-                                                     libc::c_int,
-                                                 mut mask: *mut IPAddr,
-                                                 mut address: *mut IPAddr)
- -> libc::c_int {
+pub unsafe extern "C" fn NSR_InitiateSampleBurst(
+    mut n_good_samples: libc::c_int,
+    mut n_total_samples: libc::c_int,
+    mut mask: *mut IPAddr,
+    mut address: *mut IPAddr,
+) -> libc::c_int {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut i: libc::c_uint = 0;
     let mut any: libc::c_int = 0;
@@ -1880,12 +2002,11 @@ pub unsafe extern "C" fn NSR_InitiateSampleBurst(mut n_good_samples:
     while i < ARR_GetSize(records) {
         record = get_record(i);
         if !(*record).remote_addr.is_null() {
-            if (*address).family as libc::c_int == 0 as libc::c_int ||
-                   UTI_CompareIPs(&mut (*(*record).remote_addr).ip_addr,
-                                  address, mask) == 0 {
+            if (*address).family as libc::c_int == 0 as libc::c_int
+                || UTI_CompareIPs(&mut (*(*record).remote_addr).ip_addr, address, mask) == 0
+            {
                 any = 1 as libc::c_int;
-                NCR_InitiateSampleBurst((*record).data, n_good_samples,
-                                        n_total_samples);
+                NCR_InitiateSampleBurst((*record).data, n_good_samples, n_total_samples);
             }
         }
         i = i.wrapping_add(1)
@@ -1894,24 +2015,27 @@ pub unsafe extern "C" fn NSR_InitiateSampleBurst(mut n_good_samples:
 }
 /* ================================================== */
 /* The ip address is assumed to be completed on input, that is how we
-   identify the source record. */
+identify the source record. */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_ReportSource(mut report: *mut RPT_SourceReport,
-                                          mut now: *mut timespec) {
-    let mut rem_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+pub unsafe extern "C" fn NSR_ReportSource(
+    mut report: *mut RPT_SourceReport,
+    mut now: *mut timespec,
+) {
+    let mut rem_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     rem_addr.ip_addr = (*report).ip_addr;
     rem_addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut rem_addr, &mut slot, &mut found);
     if found != 0 {
-        NCR_ReportSource((*get_record(slot as libc::c_uint)).data, report,
-                         now);
+        NCR_ReportSource((*get_record(slot as libc::c_uint)).data, report, now);
     } else {
         (*report).poll = 0 as libc::c_int;
         (*report).latest_meas_ago = 0 as libc::c_int as libc::c_ulong
@@ -1919,30 +2043,33 @@ pub unsafe extern "C" fn NSR_ReportSource(mut report: *mut RPT_SourceReport,
 }
 /* ================================================== */
 /* The ip address is assumed to be completed on input, that is how we
-   identify the source record. */
+identify the source record. */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_GetNTPReport(mut report: *mut RPT_NTPReport)
- -> libc::c_int {
-    let mut rem_addr: NTP_Remote_Address =
-        NTP_Remote_Address{ip_addr:
-                               IPAddr{addr: C2RustUnnamed_0{in4: 0,},
-                                      family: 0,
-                                      _pad: 0,},
-                           port: 0,};
+pub unsafe extern "C" fn NSR_GetNTPReport(mut report: *mut RPT_NTPReport) -> libc::c_int {
+    let mut rem_addr: NTP_Remote_Address = NTP_Remote_Address {
+        ip_addr: IPAddr {
+            addr: C2RustUnnamed_0 { in4: 0 },
+            family: 0,
+            _pad: 0,
+        },
+        port: 0,
+    };
     let mut slot: libc::c_int = 0;
     let mut found: libc::c_int = 0;
     rem_addr.ip_addr = (*report).remote_addr;
     rem_addr.port = 0 as libc::c_int as uint16_t;
     find_slot(&mut rem_addr, &mut slot, &mut found);
-    if found == 0 { return 0 as libc::c_int }
+    if found == 0 {
+        return 0 as libc::c_int;
+    }
     NCR_GetNTPReport((*get_record(slot as libc::c_uint)).data, report);
     return 1 as libc::c_int;
 }
 /* Procedure to add a new server or peer source. */
 /* Procedure to add a new server, peer source, or pool of servers specified by
-   name instead of address.  The name is resolved in exponentially increasing
-   intervals until it succeeds or fails with a non-temporary error.  If the
-   name is an address, it is equivalent to NSR_AddSource(). */
+name instead of address.  The name is resolved in exponentially increasing
+intervals until it succeeds or fails with a non-temporary error.  If the
+name is an address, it is equivalent to NSR_AddSource(). */
 /* Function type for handlers to be called back when an attempt
  * (possibly unsuccessful) to resolve unresolved sources ends */
 /* Set the handler, or NULL to disable the notification */
@@ -1955,19 +2082,18 @@ pub unsafe extern "C" fn NSR_GetNTPReport(mut report: *mut RPT_NTPReport)
 /* Procedure to resolve all names again */
 /* Procedure to get local reference ID corresponding to a source */
 /* Procedure to get the name of a source.  If the source doesn't have a name,
-   it returns a temporary string containing formatted address. */
+it returns a temporary string containing formatted address. */
 /* This routine is called by ntp_io when a new packet arrives off the network */
 /* This routine is called by ntp_io when a packet was sent to the network and
-   an accurate transmit timestamp was captured */
+an accurate transmit timestamp was captured */
 /* Initialisation function */
 /* Finalisation function */
 /* This routine is used to indicate that sources whose IP addresses
-   match a particular subnet should be set online or offline.  It returns
-   a flag indicating whether any hosts matched the address. */
+match a particular subnet should be set online or offline.  It returns
+a flag indicating whether any hosts matched the address. */
 /* ================================================== */
 #[no_mangle]
-pub unsafe extern "C" fn NSR_GetActivityReport(mut report:
-                                                   *mut RPT_ActivityReport) {
+pub unsafe extern "C" fn NSR_GetActivityReport(mut report: *mut RPT_ActivityReport) {
     let mut record: *mut SourceRecord = 0 as *mut SourceRecord;
     let mut i: libc::c_uint = 0;
     let mut us: *mut UnresolvedSource = 0 as *mut UnresolvedSource;
@@ -1979,16 +2105,21 @@ pub unsafe extern "C" fn NSR_GetActivityReport(mut report:
     while i < ARR_GetSize(records) {
         record = get_record(i);
         if !(*record).remote_addr.is_null() {
-            NCR_IncrementActivityCounters((*record).data,
-                                          &mut (*report).online,
-                                          &mut (*report).offline,
-                                          &mut (*report).burst_online,
-                                          &mut (*report).burst_offline);
+            NCR_IncrementActivityCounters(
+                (*record).data,
+                &mut (*report).online,
+                &mut (*report).offline,
+                &mut (*report).burst_online,
+                &mut (*report).burst_offline,
+            );
         }
         i = i.wrapping_add(1)
     }
     (*report).unresolved = 0 as libc::c_int;
     us = unresolved_sources;
-    while !us.is_null() { (*report).unresolved += 1; us = (*us).next };
+    while !us.is_null() {
+        (*report).unresolved += 1;
+        us = (*us).next
+    }
 }
 /* ================================================== */
