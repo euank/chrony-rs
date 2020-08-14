@@ -1,17 +1,18 @@
-use nom::IResult;
-use std::default::Default;
 use ipnet::{IpNet, Ipv4Net};
-use std::net::IpAddr;
-use std::path::PathBuf;
+use nom::branch::alt;
 use nom::bytes::complete::tag;
+use nom::bytes::complete::take_while1;
 use nom::character::complete::{digit1, space1};
 use nom::character::is_space;
-use nom::bytes::complete::take_while1;
+use nom::combinator::{map, map_res, not, opt};
 use nom::error::{context, ParseError, VerboseError};
 use nom::multi::many1;
-use nom::branch::alt;
-use nom::combinator::{map, map_res, not, opt};
+use nom::number::complete::double;
 use nom::sequence::{preceded, tuple};
+use nom::IResult;
+use std::default::Default;
+use std::net::IpAddr;
+use std::path::PathBuf;
 
 // IpSet is the argument that allow and deny take.
 #[derive(Debug, PartialEq, Eq)]
@@ -23,7 +24,7 @@ enum IpSet {
 #[derive(Debug, PartialEq, Eq)]
 enum BindCmdAddress {
     IpAddr(IpAddr),
-    Path(PathBuf)
+    Path(PathBuf),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -34,6 +35,20 @@ struct Broadcast {
 }
 
 #[derive(Debug, PartialEq, Eq)]
+struct RateLimit {
+    limit_localhost: bool,
+    interval: i64,
+    burst: i64,
+    leak: i64,
+}
+
+struct OptRateLimit {
+    interval: Option<i64>,
+    burst: Option<i64>,
+    leak: Option<i64>,
+}
+
+#[derive(Debug, PartialEq)]
 enum Line {
     Nothing,
     AcquisitionPort(i64),
@@ -45,11 +60,10 @@ enum Line {
     ClientLogLimit(i64),
     CmdAllow(IpSet),
     CmdDeny(IpSet),
-    // TODO: all the ones below this
-    CmdPort,
-    CmdRateLimit,
-    CombineLimit,
-    CorrTimeRatio,
+    CmdPort(i64),
+    CmdRateLimit(RateLimit),
+    CombineLimit(f64),
+    CorrTimeRatio(f64),
     Deny,
     Driftfile,
     Dumpdir,
@@ -66,30 +80,29 @@ enum Line {
     LockAll,
     Log,
     LogBanner,
-    LogChange,
+    LogChange(f64),
     LogDir,
     MailOnChange,
     MakeStep,
     Manual,
     MaxChange,
-    MaxClockError,
-    MaxDistance,
-    MaxDrift,
-    MaxJitter,
-    MaxSamples,
-    MaxSlewRate,
-    MaxUpdateSkew,
-    MinSamples,
-    MinSources,
+    MaxClockError(f64),
+    MaxDistance(f64),
+    MaxDrift(f64),
+    MaxJitter(f64),
+    MaxSamples(i64),
+    MaxSlewRate(f64),
+    MaxUpdateSkew(f64),
+    MinSources(i64),
     NoClientLog,
     NtpSignedSocket,
     Peer,
     Pool,
-    Port,
-    RateLimit,
+    Port(i64),
+    RateLimit(RateLimit),
     RefClock,
-    ReselectDist,
-    RtcAutoTrim,
+    ReselectDist(f64),
+    RtcAutoTrim(f64),
     RtcDevice,
     RtcFile,
     RtcOnUtc,
@@ -97,39 +110,35 @@ enum Line {
     SchedPriority,
     Server,
     SmoothTime,
-    StratumWeight,
+    StratumWeight(f64),
     TempComp,
     User,
 }
 
 fn parse_num<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E> {
     alt((
-        map_res(digit1, |digits: &str| {
-            digits.parse::<i64>()
-        }),
+        map_res(digit1, |digits: &str| digits.parse::<i64>()),
         map_res(preceded(tag("-"), digit1), |digits: &str| {
             digits.parse::<i64>().map(|i| i * -1)
-        })
+        }),
     ))(i)
 }
 
-fn parse_port<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, u16, E> {
-    map_res(digit1, |digits: &str| {
-        digits.parse::<u16>()
-    })(i)
+// Mimic scanf %lf, which is what the old code used
+fn parse_double<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, f64, E> {
+    nom::number::complete::double(i)
 }
 
-fn parse_acquisition_port<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    preceded(
-        tag("acquisition_port"),
-        preceded(space1, map(parse_num, |p| Line::AcquisitionPort(p))),
-    )(i)
+fn parse_port<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, u16, E> {
+    map_res(digit1, |digits: &str| digits.parse::<u16>())(i)
 }
 
 fn parse_ipset<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, IpSet, E> {
     alt((
         map(tag("all"), |_| IpSet::All),
-        map_res(take_while1(|c: char| !c.is_whitespace()), |p: &str| p.parse::<IpNet>().map(|c| IpSet::Cidr(c))),
+        map_res(take_while1(|c: char| !c.is_whitespace()), |p: &str| {
+            p.parse::<IpNet>().map(|c| IpSet::Cidr(c))
+        }),
     ))(i)
 }
 
@@ -140,8 +149,24 @@ fn parse_allow<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line,
     )(i)
 }
 
+fn parse_cmdallow<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    preceded(
+        tag("cmdallow"),
+        preceded(space1, map(parse_ipset, |p| Line::CmdAllow(p))),
+    )(i)
+}
+
+fn parse_cmddeny<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    preceded(
+        tag("cmddeny"),
+        preceded(space1, map(parse_ipset, |p| Line::CmdDeny(p))),
+    )(i)
+}
+
 fn parse_address<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, IpAddr, E> {
-    map_res(take_while1(|c: char| !c.is_whitespace()), |p: &str| p.parse::<IpAddr>())(i)
+    map_res(take_while1(|c: char| !c.is_whitespace()), |p: &str| {
+        p.parse::<IpAddr>()
+    })(i)
 }
 
 fn parse_bindacqaddress<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
@@ -166,51 +191,148 @@ fn parse_path<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, PathBu
     map(parse_string, |s| PathBuf::from(s))(i)
 }
 
-
 fn parse_bindcmdaddress<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
     preceded(
         tag("bindcmdaddress"),
-        preceded(space1,
+        preceded(
+            space1,
             alt((
-                map(parse_address, |p| Line::BindCmdAddress(BindCmdAddress::IpAddr(p))),
-                map(parse_path, |p| Line::BindCmdAddress(BindCmdAddress::Path(p))),
-            ))
-        )
+                map(parse_address, |p| {
+                    Line::BindCmdAddress(BindCmdAddress::IpAddr(p))
+                }),
+                map(parse_path, |p| {
+                    Line::BindCmdAddress(BindCmdAddress::Path(p))
+                }),
+            )),
+        ),
     )(i)
 }
 
 fn parse_broadcast<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    map(preceded(
-        tag("broadcast"),
-        tuple((parse_num, parse_address, opt(parse_port))),
-    ), |(interval, addr, port)| {
-        Line::Broadcast(Broadcast{
-            interval,
-            addr,
-            port: port.unwrap_or(123),
-        })
-    }
+    map(
+        preceded(
+            tag("broadcast"),
+            tuple((
+                preceded(space1, parse_num),
+                preceded(space1, parse_address),
+                opt(preceded(space1, parse_port)),
+            )),
+        ),
+        |(interval, addr, port)| {
+            Line::Broadcast(Broadcast {
+                interval,
+                addr,
+                port: port.unwrap_or(123),
+            })
+        },
     )(i)
 }
 
-fn parse_clientloglimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
-    map(preceded(
-        tag("clientloglimit"),
-        parse_num,
-    ), |num: i64| {
-        Line::ClientLogLimit(num)
-    })(i)
+fn parse_cmdport<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    map(
+        preceded(tag("cmdport"), preceded(space1, parse_num)),
+        |num: i64| Line::CmdPort(num),
+    )(i)
+}
+
+fn ratelimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, OptRateLimit, E> {
+    map(
+        nom::branch::permutation((
+            opt(preceded(tag("interval"), preceded(space1, parse_num))),
+            opt(preceded(tag("burst"), preceded(space1, parse_num))),
+            opt(preceded(tag("leak"), preceded(space1, parse_num))),
+        )),
+        |(interval, burst, leak)| OptRateLimit {
+            interval,
+            burst,
+            leak,
+        },
+    )(i)
+}
+
+fn parse_cmdratelimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    map(
+        preceded(tag("cmdratelimit"), preceded(space1, ratelimit)),
+        |limit: OptRateLimit| {
+            Line::CmdRateLimit(RateLimit {
+                limit_localhost: false,
+                interval: limit.interval.unwrap_or_else(|| -4),
+                burst: limit.burst.unwrap_or_else(|| 8),
+                leak: limit.leak.unwrap_or_else(|| 2),
+            })
+        },
+    )(i)
+}
+
+fn parse_ratelimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
+    map(
+        preceded(tag("ratelimit"), preceded(space1, ratelimit)),
+        |limit: OptRateLimit| {
+            Line::RateLimit(RateLimit {
+                limit_localhost: true,
+                interval: limit.interval.unwrap_or_else(|| 3),
+                burst: limit.burst.unwrap_or_else(|| 8),
+                leak: limit.leak.unwrap_or_else(|| 2),
+            })
+        },
+    )(i)
+}
+
+fn parse_num_line<'a, G, O2, E: ParseError<&'a str>, F>(
+    t: G,
+    l: F,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    F: Fn(i64) -> Line,
+    G: Fn(&'a str) -> IResult<&'a str, O2, E>,
+{
+    map(preceded(t, preceded(space1, parse_num)), move |num| l(num))
+}
+
+fn parse_float_line<'a, G, O2, E: ParseError<&'a str>, F>(
+    t: G,
+    l: F,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    F: Fn(f64) -> Line,
+    G: Fn(&'a str) -> IResult<&'a str, O2, E>,
+{
+    map(preceded(t, preceded(space1, double)), move |num| l(num))
 }
 
 fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
     alt((
-      parse_acquisition_port,
-      parse_allow,
-      parse_bindacqaddress,
-      parse_bindaddress,
-      parse_bindcmdaddress,
-      parse_broadcast,
-      parse_clientloglimit,
+        alt((
+            parse_allow,
+            parse_bindacqaddress,
+            parse_bindaddress,
+            parse_bindcmdaddress,
+            parse_broadcast,
+            parse_num_line(tag("clientloglimit"), Line::ClientLogLimit),
+            parse_cmdallow,
+            parse_cmddeny,
+            parse_cmdratelimit,
+            parse_ratelimit,
+            parse_num_line(tag("cmdport"), Line::CmdPort),
+            parse_float_line(tag("combinelimit"), Line::CombineLimit),
+            parse_float_line(tag("corrtimeratio"), Line::CorrTimeRatio),
+            parse_num_line(tag("acquisition_port"), Line::AcquisitionPort),
+            parse_float_line(tag("maxclockerror"), Line::MaxClockError),
+            parse_float_line(tag("logchange"), Line::LogChange),
+            parse_float_line(tag("maxdistance"), Line::MaxDistance),
+            parse_float_line(tag("maxdrift"), Line::MaxDrift),
+            parse_float_line(tag("maxjitter"), Line::MaxJitter),
+            parse_num_line(tag("maxsamples"), Line::MaxSamples),
+            parse_float_line(tag("maxslewrate"), Line::MaxSlewRate),
+        )),
+        alt((
+            parse_float_line(tag("maxupdateskew"), Line::MaxUpdateSkew),
+            parse_num_line(tag("minsources"), Line::MinSources),
+            parse_num_line(tag("port"), Line::Port),
+            parse_float_line(tag("reselectdist"), Line::ReselectDist),
+            parse_float_line(tag("rtcautotrim"), Line::RtcAutoTrim),
+            parse_float_line(tag("stratumweight"), Line::StratumWeight),
+        )),
     ))(i)
 }
 
@@ -222,15 +344,40 @@ mod tests {
     fn parse_test() {
         let cases = vec![
             ("allow all", Line::Allow(IpSet::All)),
-            ("allow 127.0.0.1/32", Line::Allow(IpSet::Cidr("127.0.0.1/32".parse().unwrap()))),
-            ("bindacqaddress 1.2.3.4", Line::BindAcqAddress(IpAddr::V4(Ipv4Addr::new(1, 2, 3, 4)))),
-            ("bindcmdaddress /var/sock", Line::BindCmdAddress(BindCmdAddress::Path("/var/sock".into()))),
+            (
+                "allow 127.0.0.1/32",
+                Line::Allow(IpSet::Cidr("127.0.0.1/32".parse().unwrap())),
+            ),
+            (
+                "bindacqaddress 1.2.3.4",
+                Line::BindAcqAddress(IpAddr::V4(Ipv4Addr::new(1, 2, 3, 4))),
+            ),
+            (
+                "bindcmdaddress /var/sock",
+                Line::BindCmdAddress(BindCmdAddress::Path("/var/sock".into())),
+            ),
+            ("clientloglimit 100", Line::ClientLogLimit(100)),
+            (
+                "broadcast 30 192.168.1.255",
+                Line::Broadcast(Broadcast {
+                    interval: 30,
+                    addr: IpAddr::V4(Ipv4Addr::new(192, 168, 1, 255)),
+                    port: 123,
+                }),
+            ),
+            (
+                "broadcast 40 192.168.1.254 132",
+                Line::Broadcast(Broadcast {
+                    interval: 40,
+                    addr: IpAddr::V4(Ipv4Addr::new(192, 168, 1, 254)),
+                    port: 132,
+                }),
+            ),
         ];
 
         for case in cases {
             let res: Result<_, nom::Err<VerboseError<&str>>> = parse_line(case.0);
             assert_eq!(res, Ok(("", case.1)));
         }
-
     }
 }
