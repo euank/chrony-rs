@@ -49,6 +49,12 @@ struct OptRateLimit {
 }
 
 #[derive(Debug, PartialEq)]
+struct MinMax {
+    Min: i64,
+    Max: i64,
+}
+
+#[derive(Debug, PartialEq)]
 enum Line {
     Nothing,
     AcquisitionPort(i64),
@@ -64,24 +70,23 @@ enum Line {
     CmdRateLimit(RateLimit),
     CombineLimit(f64),
     CorrTimeRatio(f64),
-    Deny,
-    Driftfile,
-    Dumpdir,
-    DumpOnExit,
-    FallbackDrift,
-    HwClockFile,
+    Deny(IpSet),
+    Driftfile(PathBuf),
+    Dumpdir(PathBuf),
+    FallbackDrift(MinMax),
+    HwClockFile(PathBuf),
     HwTimestamp,
-    Include,
+    Include(String), // Not a path due to glob support
     InitStepSlew,
-    Keyfile,
+    Keyfile(PathBuf),
     LeapsecMode,
-    LeapsecTz,
+    LeapsecTz(String), // TODO: more precise type
     Local,
     LockAll,
     Log,
     LogBanner,
     LogChange(f64),
-    LogDir,
+    LogDir(PathBuf),
     MailOnChange,
     MakeStep,
     Manual,
@@ -95,7 +100,7 @@ enum Line {
     MaxUpdateSkew(f64),
     MinSources(i64),
     NoClientLog,
-    NtpSignedSocket,
+    NtpSigndSocket(PathBuf),
     Peer,
     Pool,
     Port(i64),
@@ -103,8 +108,8 @@ enum Line {
     RefClock,
     ReselectDist(f64),
     RtcAutoTrim(f64),
-    RtcDevice,
-    RtcFile,
+    RtcDevice(String),
+    RtcFile(PathBuf),
     RtcOnUtc,
     RtcSync,
     SchedPriority,
@@ -112,7 +117,7 @@ enum Line {
     SmoothTime,
     StratumWeight(f64),
     TempComp,
-    User,
+    User(String),
 }
 
 fn parse_num<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E> {
@@ -122,6 +127,10 @@ fn parse_num<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E>
             digits.parse::<i64>().map(|i| i * -1)
         }),
     ))(i)
+}
+
+fn parse_min_max<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, i64, E> {
+    preceded(space1, parse_num)(i)
 }
 
 // Mimic scanf %lf, which is what the old code used
@@ -183,8 +192,10 @@ fn parse_bindaddress<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str,
     )(i)
 }
 
-fn parse_string<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, &'a str, E> {
-    take_while1(|c| c != '\r' && c != '\n')(i)
+fn parse_string<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, String, E> {
+    map(take_while1(|c| c != '\r' && c != '\n'), |s: &str| {
+        s.to_string()
+    })(i)
 }
 
 fn parse_path<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, PathBuf, E> {
@@ -278,6 +289,19 @@ fn parse_ratelimit<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, L
     )(i)
 }
 
+fn parse_tagged_line<'a, T, P, L, H, O2, E: ParseError<&'a str>>(
+    t: T,
+    p: P,
+    l: L,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    L: Fn(H) -> Line,
+    T: Fn(&'a str) -> IResult<&'a str, O2, E>,
+    P: Fn(&'a str) -> IResult<&'a str, H, E>,
+{
+    preceded(t, preceded(space1, map(p, l)))
+}
+
 fn parse_num_line<'a, G, O2, E: ParseError<&'a str>, F>(
     t: G,
     l: F,
@@ -286,7 +310,7 @@ where
     F: Fn(i64) -> Line,
     G: Fn(&'a str) -> IResult<&'a str, O2, E>,
 {
-    map(preceded(t, preceded(space1, parse_num)), move |num| l(num))
+    parse_tagged_line(t, parse_num, l)
 }
 
 fn parse_float_line<'a, G, O2, E: ParseError<&'a str>, F>(
@@ -297,20 +321,53 @@ where
     F: Fn(f64) -> Line,
     G: Fn(&'a str) -> IResult<&'a str, O2, E>,
 {
-    map(preceded(t, preceded(space1, double)), move |num| l(num))
+    parse_tagged_line(t, double, l)
+}
+
+fn parse_allow_deny_line<'a, G, O2, E: ParseError<&'a str>, F>(
+    t: G,
+    l: F,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    F: Fn(IpSet) -> Line,
+    G: Fn(&'a str) -> IResult<&'a str, O2, E>,
+{
+    parse_tagged_line(t, parse_ipset, l)
+}
+
+fn parse_path_line<'a, G, O2, E: ParseError<&'a str>, F>(
+    t: G,
+    l: F,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    F: Fn(PathBuf) -> Line,
+    G: Fn(&'a str) -> IResult<&'a str, O2, E>,
+{
+    parse_tagged_line(t, parse_path, l)
+}
+
+fn parse_string_line<'a, G, O2, E: ParseError<&'a str>, F>(
+    t: G,
+    l: F,
+) -> impl Fn(&'a str) -> IResult<&'a str, Line, E>
+where
+    F: Fn(String) -> Line,
+    G: Fn(&'a str) -> IResult<&'a str, O2, E>,
+{
+    parse_tagged_line(t, parse_string, l)
 }
 
 fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, E> {
     alt((
         alt((
-            parse_allow,
+            parse_allow_deny_line(tag("allow"), Line::Allow),
             parse_bindacqaddress,
             parse_bindaddress,
             parse_bindcmdaddress,
             parse_broadcast,
             parse_num_line(tag("clientloglimit"), Line::ClientLogLimit),
-            parse_cmdallow,
-            parse_cmddeny,
+            parse_allow_deny_line(tag("cmdallow"), Line::Allow),
+            parse_allow_deny_line(tag("cmddeny"), Line::Allow),
             parse_cmdratelimit,
             parse_ratelimit,
             parse_num_line(tag("cmdport"), Line::CmdPort),
@@ -332,6 +389,17 @@ fn parse_line<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Line, 
             parse_float_line(tag("reselectdist"), Line::ReselectDist),
             parse_float_line(tag("rtcautotrim"), Line::RtcAutoTrim),
             parse_float_line(tag("stratumweight"), Line::StratumWeight),
+            parse_allow_deny_line(tag("deny"), Line::Deny),
+            parse_path_line(tag("driftfile"), Line::Driftfile),
+            parse_path_line(tag("dumpdir"), Line::Dumpdir),
+            parse_path_line(tag("hwclockfile"), Line::HwClockFile),
+            parse_string_line(tag("include"), Line::Include),
+            parse_path_line(tag("keyfile"), Line::Keyfile),
+            parse_string_line(tag("leapsectz"), Line::LeapsecTz),
+            parse_path_line(tag("logdir"), Line::LogDir),
+            parse_path_line(tag("ntpsigndsocket") /* sic */, Line::NtpSigndSocket),
+            parse_path_line(tag("rtcfile"), Line::RtcFile),
+            parse_string_line(tag("user"), Line::User),
         )),
     ))(i)
 }

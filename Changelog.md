@@ -32,3 +32,4 @@ This initial version is based on the C versoin of the code. Below are the differ
   allow 2001:db8::/32
   ```
   In essence, [rfc4632](https://tools.ietf.org/html/rfc4632) cidr notation must be followed, with the exception of the special 'all' keyword.
+* The "dumponexit" directive in the config file is now an error. In chrony upstream, it was ignored entirely, but did not cause an error.
